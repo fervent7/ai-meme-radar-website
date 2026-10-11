@@ -1,0 +1,1 @@
+AI Meme Radar website update — automatic address lookup and on-page indexed market reports. Replace index.html, app.js, styles.css in the public website repo. Keep config.js unchanged. No backend change needed for market lookup. This is not on-chain verification or a sellability guarantee. Test on staging before deploying.
