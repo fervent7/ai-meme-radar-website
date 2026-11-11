@@ -12,7 +12,20 @@
     const pool = String(pair.pairAddress || '');
     return chain + ':' + (chain === 'solana' ? pool : pool.toLowerCase());
   }
-  const api = {sameAddress, matchesToken, poolKey};
+  // Provider price, valuation and transaction direction describe the base token.
+  function tokenMetrics(pair, address) {
+    const isBase = sameAddress(pair?.chainId, pair?.baseToken?.address, address);
+    return {
+      isBase,
+      priceUsd: isBase ? pair.priceUsd : null,
+      priceChange5mPct: isBase ? pair.priceChange?.m5 : null,
+      marketCap: isBase ? pair.marketCap : null,
+      fdv: isBase ? pair.fdv : null,
+      buys5m: isBase ? pair.txns?.m5?.buys : null,
+      sells5m: isBase ? pair.txns?.m5?.sells : null
+    };
+  }
+  const api = {sameAddress, matchesToken, poolKey, tokenMetrics};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.RadarIdentity = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -1,0 +1,22 @@
+name: Website research evidence tests
+on:
+  push:
+    branches: [radar-website-research-test]
+  pull_request:
+    branches: [radar-website-research-test]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: node --check app.js && node --check market-identity.js
+      - name: Run identity and token evidence checks
+        run: node --test test-market-identity.cjs test-token-metrics.cjs
