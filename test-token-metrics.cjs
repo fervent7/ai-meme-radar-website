@@ -31,7 +31,7 @@ test('missing token identity does not promote metrics',()=>{
 });
 
 // Exercise the actual card-rendering function without a DOM or network dependency.
-function render(address){
+function render(address, market=pair){
   const source=readFileSync(require('node:path').join(__dirname,'app.js'),'utf8');
   const start=source.indexOf('const pairCard=');
   const end=source.indexOf('\nrenderLivePair=',start);
@@ -43,9 +43,15 @@ function render(address){
     esc:value=>String(value),fmt:value=>String(value),pairPrice:value=>String(value),
     stat:(label,value)=>{fields[label]=value;return '';},liquidityEvidence:()=>({})};
   const card=vm.runInNewContext(source.slice(start,end)+'\npairCard',context);
-  card(pair,true);
+  card(market,true);
   return fields;
 }
+test('research card withholds invalid transaction counts and preserves zero',()=>{
+  for(const invalid of [-1, 1.5, true, '12', Infinity, Number.MAX_SAFE_INTEGER+1]){
+    const fields=render(target,{...pair,txns:{m5:{buys:invalid,sells:0}}});
+    assert.equal(fields['5m buy / sell transactions'],'— / 0');
+  }
+});
 test('research card withholds quote-token price, change, valuation and direction',()=>{
   const fields=render(pair.quoteToken.address);
   for(const label of ['Price USD','5m price change','5m buy / sell transactions'])
