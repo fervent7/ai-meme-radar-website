@@ -17,3 +17,5 @@ The newer private Sites terminal and this older repository branch still need
 careful source reconciliation. Carry the tokenMetrics helper and renderer fix
 into the selected maintained frontend source when that reconciliation is made;
 do not silently replace either source or deploy without approval.
+
+A new search cancels the previous market refresh. Responses from cancelled work cannot replace cards or update the active search status. The offline regression completes a cancelled response after the new refresh and checks that the new result remains visible. Quote endpoint integration still depends on selecting the maintained website source and verifying its access path.

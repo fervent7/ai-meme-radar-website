@@ -19,4 +19,4 @@ jobs:
       - name: Check JavaScript syntax
         run: node --check app.js && node --check market-identity.js
       - name: Run identity and token evidence checks
-        run: node --test test-market-identity.cjs test-token-metrics.cjs
+        run: node --test test-market-identity.cjs test-token-metrics.cjs test-live-refresh.cjs
