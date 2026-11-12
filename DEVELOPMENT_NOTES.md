@@ -30,3 +30,27 @@ blue/cyan radar symbol for the dashboard, favicon, app icon, and social avatar.
 The 512 px icon retains space for a circular avatar crop.
 
 Keep the approved artwork proportions and the platform tagline **Research Before Risk**.
+
+## Ecosystem and test integration
+
+The website remains the public entry point for research, documentation and
+community. The ecosystem section identifies which capabilities can be opened
+today and which are under development. The near-term OTC + Programmable roadmap
+tracks implementation. Living Ecosystem V2 describes longer-term services.
+
+The standalone review server adds authenticated, same-origin access to cached
+Radar history. It uses the protected Radar test history endpoint and projects
+only the requested token and pool. Supabase remains the persistence layer in
+Radar. The website stores no new research observations and starts no scans.
+
+Use an isolated Render **Node web service** with start command
+`node website-test-server.cjs` and health path `/healthz`. Configure a separate
+`RADAR_WEBSITE_TEST_PASSWORD` for user `reviewer` and the existing backend
+`RADAR_TEST_ACCESS_KEY` as server-side environment variables. Use HTTPS and
+pin the review commit. The static website does not enable this feature.
+
+After a test deployment, confirm the commit and asset hashes, sign in on
+Android and open the exact Whale Pad pool. Load saved history and verify both
+holder timestamps, 75 → 75 and 0%, and the separate unverified buyer label.
+Check that opening a different pool clears the selected evidence. Hosted
+authentication and persistence require environment verification.
