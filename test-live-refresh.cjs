@@ -44,3 +44,46 @@ test('a cancelled refresh cannot replace cards or overwrite the next refresh sta
   assert.deepEqual(replaced, ['new']);
   assert.equal(status.textContent, currentStatus);
 });
+
+test('foreground timeout re-enables research and a retry can complete', async () => {
+  const source = readFileSync(join(__dirname, 'app.js'), 'utf8');
+  const start = source.indexOf('async function research(');
+  const end = source.indexOf("} finally {\n clearTimeout(deadline);", start);
+  assert.ok(start >= 0 && end > start);
+  const functionEnd = source.indexOf('}}', end) + 2;
+  const searchBtn = {disabled: false};
+  const messages = {};
+  let deadline;
+  let requests = 0;
+  let notifyBodyStarted;
+  const bodyStarted = new Promise(resolve => { notifyBodyStarted = resolve; });
+  const context = {
+    AbortController, researchController: undefined,
+    $: id => id === 'searchBtn' ? searchBtn : {value: 'valid-address'},
+    valid: () => true, set: (key, value) => { messages[key] = value; },
+    stopLive() {}, liveMessage() {}, esc: value => value,
+    results: {replaceChildren() {}},
+    setTimeout(callback) { deadline = callback; },
+    clearTimeout() {},
+    fetch: async (_url, {signal}) => ({
+      ok: true,
+      json: () => ++requests === 1
+        ? new Promise((_resolve, reject) => {
+          signal.addEventListener('abort', () => reject(signal.reason), {once: true});
+          notifyBodyStarted();
+        })
+        : Promise.resolve({pairs: []})
+    })
+  };
+  const research = vm.runInNewContext(source.slice(start, functionEnd) + '\nresearch', context);
+  const first = research();
+  await bodyStarted;
+  assert.equal(searchBtn.disabled, true);
+  deadline();
+  await first;
+  assert.equal(searchBtn.disabled, false);
+  assert.match(messages.searchHelp, /timed out.*retry/);
+  await research();
+  assert.equal(searchBtn.disabled, false);
+  assert.match(messages.searchHelp, /No exact-address indexed trading pool found/);
+});
