@@ -21,3 +21,12 @@ do not silently replace either source or deploy without approval.
 A new search cancels the previous market refresh. Responses from cancelled work cannot replace cards or update the active search status. The offline regression completes a cancelled response after the new refresh and checks that the new result remains visible. Quote endpoint integration still depends on selecting the maintained website source and verifying its access path.
 
 Research cards validate reported buy and sell counts individually. Missing and invalid counts display an em dash. A reported zero remains visible. The local card regression uses synthetic provider values without network access.
+
+## Brand assets
+
+**AI Meme Radar — Intelligence Engine** is the full wordmark. Use
+`brand-wordmark.webp` over dark surfaces in shared headers. Use the supplied
+blue/cyan radar symbol for the dashboard, favicon, app icon, and social avatar.
+The 512 px icon retains space for a circular avatar crop.
+
+Keep the approved artwork proportions and the platform tagline **Research Before Risk**.
