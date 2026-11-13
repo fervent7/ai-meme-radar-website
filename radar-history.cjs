@@ -29,6 +29,16 @@ function timestamp(value) {
     /(?:Z|[+-]\d\d:\d\d)$/.test(value) && Number.isFinite(Date.parse(value)) ? value : null;
 }
 
+function instantKey(value) {
+  const fraction = /\.(\d+)(?:Z|[+-]\d\d:\d\d)$/.exec(value)?.[1] ?? '';
+  return Date.parse(value) + ':' + fraction.padEnd(6, '0').slice(3, 6);
+}
+
+function compareInstants(left, right) {
+  return Date.parse(left) - Date.parse(right) ||
+    instantKey(left).localeCompare(instantKey(right));
+}
+
 function marketNumber(value) {
   return Number.isFinite(value) && value >= 0 ? value : null;
 }
@@ -44,36 +54,45 @@ function projectHistory(data, { chain, address, pool }) {
 
   const observations = [];
   const holderCounts = new Map();
-  const marketTimes = new Set();
+  const marketTimes = new Map();
   for (const row of matching[0].observations) {
     if (row?.chain !== chain || !matches(chain, row.contract_address, address) ||
         !matches(chain, row.pool_address, pool)) throw Error('Observation identity mismatch');
     const observed = timestamp(row.observed_at_utc);
-    const marketTime = Date.parse(observed);
-    if (!observed) continue;
+    if (!observed) throw Error('Invalid market timestamp');
+    const marketTime = instantKey(observed);
     const holderTime = timestamp(row.holder_observed_at_utc);
     const verified = chain === 'solana' && row.address_identity_version === 2 &&
       row.holder_status === 'VERIFIED' && row.holder_source === 'Helius getTokenAccounts' &&
       holderTime && Number.isSafeInteger(row.holder_count) && row.holder_count >= 0;
     const count = verified ? row.holder_count : null;
     if (verified) {
-      const key = Date.parse(holderTime);
+      const key = instantKey(holderTime);
       if (holderCounts.has(key) && holderCounts.get(key).count !== count) throw Error('Conflicting holder evidence');
       holderCounts.set(key, { count, observed_at_utc: holderTime });
     }
-    if (marketTimes.has(marketTime)) continue;
-    marketTimes.add(marketTime);
-    observations.push({
+    const observation = {
       observed_at_utc: observed,
       market_source: row.source === 'DexScreener token-pairs API' ? row.source : null,
       liquidity_usd: marketNumber(row.liquidity_usd),
       volume_5m_usd: marketNumber(row.volume_5m_usd),
       holder_count: count,
       holder_observed_at_utc: verified ? holderTime : null
-    });
+    };
+    const evidence = JSON.stringify([
+      observation.market_source, observation.liquidity_usd, observation.volume_5m_usd,
+      observation.holder_count, verified ? instantKey(holderTime) : null
+    ]);
+    if (marketTimes.has(marketTime)) {
+      if (marketTimes.get(marketTime) !== evidence) throw Error('Conflicting market evidence');
+      continue;
+    }
+    marketTimes.set(marketTime, evidence);
+    observations.push(observation);
   }
 
-  const samples = [...holderCounts.entries()].sort(([left], [right]) => left - right).map(([, row]) => row);
+  const samples = [...holderCounts.values()].sort((left, right) =>
+    compareInstants(left.observed_at_utc, right.observed_at_utc));
   const first = samples[0];
   const latest = samples.at(-1);
   const change = samples.length >= 2 ? latest.count - first.count : null;
@@ -83,7 +102,7 @@ function projectHistory(data, { chain, address, pool }) {
     first, latest, growth_pct: first.count > 0 ? (change / first.count) * 100 : null
   };
 
-  observations.sort((left, right) => Date.parse(right.observed_at_utc) - Date.parse(left.observed_at_utc));
+  observations.sort((left, right) => compareInstants(right.observed_at_utc, left.observed_at_utc));
   return {
     status: observations.length ? 'READY' : 'EMPTY',
     observations, holder_trend: holderTrend, latest_holder_observation: latest ?? null

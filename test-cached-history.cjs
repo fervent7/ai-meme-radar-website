@@ -96,7 +96,7 @@ test('throttling and conflicting saved evidence produce controlled error states'
 
 test('the history panel shows distinct holder and buyer labels and supports retry', async () => {
   function element(tag) {
-    return { tag, children: [], setAttribute() {}, append(...items) { this.children.push(...items); },
+    return { tag, children: [], get childElementCount() { return this.children.length; }, setAttribute() {}, append(...items) { this.children.push(...items); },
       replaceChildren(...items) { this.children = items; },
       addEventListener(_event, callback) { this.activate = callback; } };
   }
@@ -123,4 +123,58 @@ test('the history panel shows distinct holder and buyer labels and supports retr
   assert.equal(labels[1], 'Verified holder trend: UNCHANGED · 75 → 75 (0%)');
   assert.equal(labels[2], 'Buyer growth: Unverified');
   assert.equal(labels[3], 'Holder observations: ' + first + ' → ' + latest);
+  context.fetch = async () => new Response('', { status: 503 });
+  await button.activate();
+  assert.match(status.textContent, /Showing the last saved observations/);
+  assert.equal(panel.childElementCount, 3);
+  context.fetch = async () => new Response('', { status: 401 });
+  await button.activate();
+  assert.match(status.textContent, /sign in/);
+  assert.equal(panel.childElementCount, 0);
+});
+
+test('duplicate market timestamps coalesce only when projected evidence agrees', async t => {
+  let conflict = false;
+  const origin = await start(t, async () => {
+    const data = historyFixture();
+    const rows = data.pools[0].observations;
+    rows.push({ ...rows[0], observed_at_utc: '2026-11-12T19:10:45.705362+01:00',
+      liquidity_usd: conflict ? 1 : rows[0].liquidity_usd });
+    return Response.json(data);
+  });
+  const get = () => fetch(origin + path, { headers: { authorization } });
+  const consistent = await get();
+  assert.equal(consistent.status, 200);
+  assert.equal((await consistent.json()).observations.length, 4);
+  conflict = true;
+  const inconsistent = await get();
+  assert.equal(inconsistent.status, 503);
+  assert.deepEqual(await inconsistent.json(), { status: 'UNAVAILABLE' });
+});
+
+test('distinct microsecond observations within a millisecond remain distinct', async t => {
+  const origin = await start(t, async () => {
+    const data = historyFixture();
+    const rows = data.pools[0].observations;
+    rows.push({ ...rows[0], observed_at_utc: '2026-11-12T18:10:45.705363Z',
+      holder_observed_at_utc: '2026-11-12T18:10:46.104811Z', holder_count: 76 });
+    return Response.json(data);
+  });
+  const response = await fetch(origin + path, { headers: { authorization } });
+  assert.equal(response.status, 200);
+  const history = await response.json();
+  assert.equal(history.observations.length, 5);
+  assert.equal(history.holder_trend.verified_observations, 3);
+  assert.equal(history.observations.at(-2).holder_count, 76);
+});
+
+test('unreadable market timestamps withhold an otherwise populated history', async t => {
+  const origin = await start(t, async () => {
+    const data = historyFixture();
+    data.pools[0].observations[0].observed_at_utc = '2026-11-12T18:10:45';
+    return Response.json(data);
+  });
+  const response = await fetch(origin + path, { headers: { authorization } });
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), { status: 'UNAVAILABLE' });
 });

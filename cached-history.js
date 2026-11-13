@@ -50,23 +50,25 @@
     button.addEventListener('click', async () => {
       button.disabled = true;
       status.textContent = 'Loading saved observations…';
-      panel.replaceChildren();
       const signal = AbortSignal.timeout(8500);
       try {
         const response = await fetch('/api/radar/history?' + query, {
           credentials: 'same-origin', cache: 'no-store', signal
         });
-        if (response.status === 401) {
+        if (response.status === 401 || response.status === 403) {
+          panel.replaceChildren();
           status.textContent = 'Reload the page to sign in to the test environment.';
           return;
         }
         if (response.status === 429) {
           status.textContent = 'History service is busy. Try again later.';
+          if (panel.childElementCount) status.textContent += ' Showing the last saved observations loaded.';
           return;
         }
         if (!response.ok) throw Error('History unavailable');
         const history = await response.json();
         if (history.status === 'EMPTY') {
+          panel.replaceChildren();
           status.textContent = 'No saved observations for this pool.';
           return;
         }
@@ -76,6 +78,7 @@
       } catch {
         status.textContent = signal.aborted ? 'History request timed out. Try again.'
           : 'Saved history is unavailable. Try again later.';
+        if (panel.childElementCount) status.textContent += ' Showing the last saved observations loaded.';
       } finally {
         button.disabled = false;
       }

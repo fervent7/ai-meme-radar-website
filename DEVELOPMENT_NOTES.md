@@ -54,3 +54,25 @@ Android and open the exact Whale Pad pool. Load saved history and verify both
 holder timestamps, 75 → 75 and 0%, and the separate unverified buyer label.
 Check that opening a different pool clears the selected evidence. Hosted
 authentication and persistence require environment verification.
+
+The cached-history gateway coalesces duplicate market timestamps only
+when the displayed evidence agrees. Conflicting liquidity, volume or
+holder evidence produces the existing generic unavailable response.
+Verified against the local authenticated test server with fixture data.
+
+The cached-history gateway preserves Radar's microsecond precision when
+sorting and deduplicating market and holder observations. The authenticated
+local fixture distinguishes readings one microsecond apart and still
+coalesces equivalent instants expressed with different UTC offsets.
+Hosted gateway and restart read-back verification remain pending.
+
+The history panel keeps its last successful result during temporary
+refresh failures and labels it explicitly. A sign-in or permission
+failure clears the panel, as does a successful empty response. Local
+fixtures cover the temporary outage and sign-in expiry paths. Verify
+the same flow against the hosted review service before release.
+
+A saved market row with an unreadable timestamp makes the requested
+pool history unavailable. The gateway avoids presenting partial history
+and holder comparisons derived from that partial record set. An
+authenticated local fixture covers the timezone-free timestamp case.
