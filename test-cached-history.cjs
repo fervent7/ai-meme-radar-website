@@ -31,8 +31,8 @@ function historyFixture() {
   ] }] };
 }
 
-async function start(t, request) {
-  const server = testServer({ password: 'website-fixture', radarKey: 'upstream-fixture', request });
+async function start(t, request, revision) {
+  const server = testServer({ password: 'website-fixture', radarKey: 'upstream-fixture', request, revision });
   server.listen(0, '127.0.0.1');
   await once(server, 'listening');
   t.after(() => new Promise(resolve => server.close(resolve)));
@@ -102,6 +102,27 @@ test('Radar authentication failure is separate from website sign-in', async t =>
   assert.deepEqual(await response.json(), { status: 'BACKEND_AUTH_REQUIRED', observations: [] });
 });
 
+test('the test gateway identifies its revision and recovers from an upstream timeout', async t => {
+  let attempts = 0;
+  const revision = 'a'.repeat(40);
+  const origin = await start(t, async () => {
+    if (attempts++ === 0) {
+      return new Response(new ReadableStream({
+        start(controller) { controller.error(new DOMException('Timed out', 'TimeoutError')); }
+      }));
+    }
+    return Response.json(historyFixture());
+  }, revision);
+  const health = await fetch(origin + '/healthz');
+  assert.deepEqual(await health.json(), { status: 'OK', revision });
+  assert.equal(attempts, 0);
+  const get = () => fetch(origin + path, { headers: { authorization } });
+  const timeout = await get();
+  assert.equal(timeout.status, 504);
+  assert.deepEqual(await timeout.json(), { status: 'BACKEND_TIMEOUT', observations: [] });
+  assert.equal((await (await get()).json()).status, 'READY');
+});
+
 test('the history panel shows distinct holder and buyer labels and supports retry', async () => {
   function element(tag) {
     return { tag, children: [], get childElementCount() { return this.children.length; }, setAttribute() {}, append(...items) { this.children.push(...items); },
@@ -110,7 +131,7 @@ test('the history panel shows distinct holder and buyer labels and supports retr
   }
   const window = { RADAR_CACHED_HISTORY_ENABLED: true };
   let calls = 0;
-  const context = { document: { createElement: element }, window, AbortSignal, URLSearchParams,
+  const context = { document: { createElement: element }, window, AbortController, setTimeout, clearTimeout, URLSearchParams,
     fetch: async () => !calls++ ? new Response('', { status: 429 }) : Response.json({
       status: 'READY', observations: [],
       latest_holder_observation: { count: 75, observed_at_utc: latest },
@@ -131,6 +152,11 @@ test('the history panel shows distinct holder and buyer labels and supports retr
   assert.equal(labels[1], 'Verified holder trend: UNCHANGED · 75 → 75 (0%)');
   assert.equal(labels[2], 'Buyer growth: Unverified');
   assert.equal(labels[3], 'Holder observations: ' + first + ' → ' + latest);
+  context.fetch = async () => new Response('', { status: 504 });
+  await button.activate();
+  assert.match(status.textContent, /Radar history request timed out/);
+  assert.equal(panel.childElementCount, 3);
+  assert.equal(button.disabled, false);
   context.fetch = async () => new Response('', { status: 503 });
   await button.activate();
   assert.match(status.textContent, /Showing the last saved observations/);

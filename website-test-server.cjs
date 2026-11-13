@@ -27,8 +27,9 @@ const TEST_HEADERS = {
   'Referrer-Policy': 'no-referrer'
 };
 
-function testServer({ password, radarKey, request }) {
+function testServer({ password, radarKey, request, revision }) {
   if (!password || !radarKey || password === radarKey) throw Error('Set distinct website and Radar test credentials');
+  const commit = typeof revision === 'string' && /^[a-f0-9]{40}$/.test(revision) ? revision : null;
   const expected = digest('Basic ' + Buffer.from('reviewer:' + password).toString('base64'));
 
   return createServer(async (req, res) => {
@@ -40,7 +41,7 @@ function testServer({ password, radarKey, request }) {
     let url;
     try { url = new URL(req.url, 'http://localhost'); }
     catch { return json(400, { status: 'INVALID_URL' }); }
-    if (url.pathname === '/healthz' && ['GET', 'HEAD'].includes(req.method)) return json(200, { status: 'OK' });
+    if (url.pathname === '/healthz' && ['GET', 'HEAD'].includes(req.method)) return json(200, { status: 'OK', revision: commit });
     if (!timingSafeEqual(expected, digest(req.headers.authorization || ''))) {
       return send(401, 'text/plain', 'Sign in to the website test environment.', {
         'WWW-Authenticate': 'Basic realm="AI Meme Radar website test", charset="UTF-8"'
@@ -54,7 +55,7 @@ function testServer({ password, radarKey, request }) {
         if (!target) return json(400, { status: 'INVALID_TARGET' });
         const history = await loadHistory(target, radarKey, request);
         const code = {
-          READY: 200, EMPTY: 200, RETRY_LATER: 429
+          READY: 200, EMPTY: 200, RETRY_LATER: 429, BACKEND_TIMEOUT: 504
         }[history.status] ?? 503;
         return json(code, history);
       }
@@ -75,7 +76,8 @@ function testServer({ password, radarKey, request }) {
 if (require.main === module) {
   const server = testServer({
     password: process.env.RADAR_WEBSITE_TEST_PASSWORD,
-    radarKey: process.env.RADAR_TEST_ACCESS_KEY
+    radarKey: process.env.RADAR_TEST_ACCESS_KEY,
+    revision: process.env.RENDER_GIT_COMMIT
   });
   server.listen(Number(process.env.PORT) || 10000, '0.0.0.0');
 }

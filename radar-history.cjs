@@ -140,19 +140,27 @@ async function readBounded(response) {
 async function loadHistory(target, key, request = fetch) {
   const upstream = new URL(HISTORY_URL);
   upstream.search = new URLSearchParams({ chain: target.chain, address: target.address });
-  const response = await request(upstream, {
-    headers: { Accept: 'application/json', 'X-Radar-Test-Key': key },
-    redirect: 'manual',
-    signal: AbortSignal.timeout(6500)
-  });
-  if (!response.ok) {
-    await response.body?.cancel();
-    if (response.status === 401 || response.status === 403) {
-      return { status: 'BACKEND_AUTH_REQUIRED', observations: [] };
+  const signal = AbortSignal.timeout(6500);
+  try {
+    const response = await request(upstream, {
+      headers: { Accept: 'application/json', 'X-Radar-Test-Key': key },
+      redirect: 'manual',
+      signal
+    });
+    if (!response.ok) {
+      await response.body?.cancel();
+      if (response.status === 401 || response.status === 403) {
+        return { status: 'BACKEND_AUTH_REQUIRED', observations: [] };
+      }
+      return { status: response.status === 429 ? 'RETRY_LATER' : 'UNAVAILABLE', observations: [] };
     }
-    return { status: response.status === 429 ? 'RETRY_LATER' : 'UNAVAILABLE', observations: [] };
+    return projectHistory(await readBounded(response), target);
+  } catch (error) {
+    if (signal.aborted || error?.name === 'TimeoutError') {
+      return { status: 'BACKEND_TIMEOUT', observations: [] };
+    }
+    throw error;
   }
-  return projectHistory(await readBounded(response), target);
 }
 
 module.exports = { readTarget, loadHistory };

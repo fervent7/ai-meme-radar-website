@@ -87,3 +87,12 @@ Cached liquidity and five-minute volume are withheld when market attribution is
 missing or unrecognized. Independently verified holder evidence stays visible.
 The authenticated local HTTP fixture covers both cases and preserves attributed
 zero volume. Hosted verification remains a separate check.
+
+The Node gateway's public `/healthz` reports its Render Git commit when
+provided by `RENDER_GIT_COMMIT`. A missing revision is explicit and the
+endpoint makes no Radar request. Compare the served HTML and JavaScript
+hashes with the intended review commit as a separate deployment check.
+An upstream history timeout returns HTTP 504 and the panel preserves any
+previously loaded observations for that pool with an explicit retry message.
+The browser timeout uses AbortController for compatibility with browsers
+that lack AbortSignal.timeout.
