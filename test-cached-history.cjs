@@ -169,12 +169,15 @@ test('distinct microsecond observations within a millisecond remain distinct', a
 });
 
 test('unreadable market timestamps withhold an otherwise populated history', async t => {
+  let stamp;
   const origin = await start(t, async () => {
     const data = historyFixture();
-    data.pools[0].observations[0].observed_at_utc = '2026-11-12T18:10:45';
+    data.pools[0].observations[0].observed_at_utc = stamp;
     return Response.json(data);
   });
-  const response = await fetch(origin + path, { headers: { authorization } });
-  assert.equal(response.status, 503);
-  assert.deepEqual(await response.json(), { status: 'UNAVAILABLE' });
+  for (stamp of ['2026-11-12T18:10:45', '2026-02-30T18:10:45Z', '2026-11-12T24:00:00Z']) {
+    const response = await fetch(origin + path, { headers: { authorization } });
+    assert.equal(response.status, 503, stamp);
+    assert.deepEqual(await response.json(), { status: 'UNAVAILABLE' });
+  }
 });

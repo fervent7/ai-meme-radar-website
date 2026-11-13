@@ -76,3 +76,7 @@ A saved market row with an unreadable timestamp makes the requested
 pool history unavailable. The gateway avoids presenting partial history
 and holder comparisons derived from that partial record set. An
 authenticated local fixture covers the timezone-free timestamp case.
+
+The history gateway validates calendar dates and time-of-day before
+deduplicating observations. Local authenticated fixtures cover invalid
+dates and hours that JavaScript would otherwise roll into the next day.

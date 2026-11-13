@@ -25,8 +25,13 @@ function matches(chain, actual, expected) {
 }
 
 function timestamp(value) {
-  return typeof value === 'string' && value.length <= 40 &&
-    /(?:Z|[+-]\d\d:\d\d)$/.test(value) && Number.isFinite(Date.parse(value)) ? value : null;
+  if (typeof value !== 'string') return null;
+  const match = /^(\d{4}-\d{2}-\d{2})T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,6})?(?:Z|[+-]\d\d:\d\d)$/.exec(value);
+  if (!match || !Number.isFinite(Date.parse(value))) return null;
+  // Date.parse can silently normalize a nonexistent calendar date.
+  const day = new Date(match[1] + 'T00:00:00Z');
+  return Number.isFinite(day.getTime()) && day.toISOString().slice(0, 10) === match[1]
+    ? value : null;
 }
 
 function instantKey(value) {
