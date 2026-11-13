@@ -94,6 +94,14 @@ test('throttling and conflicting saved evidence produce controlled error states'
   assert.deepEqual(await conflict.json(), { status: 'UNAVAILABLE' });
 });
 
+test('Radar authentication failure is separate from website sign-in', async t => {
+  const origin = await start(t, async () => new Response('upstream details', { status: 401 }));
+  const response = await fetch(origin + path, { headers: { authorization } });
+  assert.equal(response.status, 503);
+  assert.equal(response.headers.get('www-authenticate'), null);
+  assert.deepEqual(await response.json(), { status: 'BACKEND_AUTH_REQUIRED', observations: [] });
+});
+
 test('the history panel shows distinct holder and buyer labels and supports retry', async () => {
   function element(tag) {
     return { tag, children: [], get childElementCount() { return this.children.length; }, setAttribute() {}, append(...items) { this.children.push(...items); },

@@ -146,6 +146,9 @@ async function loadHistory(target, key, request = fetch) {
   });
   if (!response.ok) {
     await response.body?.cancel();
+    if (response.status === 401 || response.status === 403) {
+      return { status: 'BACKEND_AUTH_REQUIRED', observations: [] };
+    }
     return { status: response.status === 429 ? 'RETRY_LATER' : 'UNAVAILABLE', observations: [] };
   }
   return projectHistory(await readBounded(response), target);

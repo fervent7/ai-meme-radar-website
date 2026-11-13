@@ -65,6 +65,14 @@
           if (panel.childElementCount) status.textContent += ' Showing the last saved observations loaded.';
           return;
         }
+        if (response.status === 503) {
+          const failure = await response.json().catch(() => null);
+          if (failure?.status === 'BACKEND_AUTH_REQUIRED') {
+            panel.replaceChildren();
+            status.textContent = 'The test website could not authenticate to the Radar backend.';
+            return;
+          }
+        }
         if (!response.ok) throw Error('History unavailable');
         const history = await response.json();
         if (history.status === 'EMPTY') {

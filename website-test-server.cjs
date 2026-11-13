@@ -53,7 +53,9 @@ function testServer({ password, radarKey, request }) {
         const target = readTarget(url.searchParams);
         if (!target) return json(400, { status: 'INVALID_TARGET' });
         const history = await loadHistory(target, radarKey, request);
-        const code = history.status === 'RETRY_LATER' ? 429 : history.status === 'UNAVAILABLE' ? 503 : 200;
+        const code = {
+          READY: 200, EMPTY: 200, RETRY_LATER: 429
+        }[history.status] ?? 503;
         return json(code, history);
       }
       if (!['GET', 'HEAD'].includes(req.method)) return json(405, { status: 'METHOD_NOT_ALLOWED' });
