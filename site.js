@@ -9,6 +9,11 @@
     menu.setAttribute('aria-expanded', String(open));
   };
 
+  const mobileNavigation = window.matchMedia('(max-width: 880px)');
+  mobileNavigation.addEventListener('change', event => {
+    if (!event.matches) setOpen(false);
+  });
+
   menu.addEventListener('click', () => setOpen(menu.getAttribute('aria-expanded') !== 'true'));
   nav.addEventListener('click', event => {
     if (event.target.closest('a')) setOpen(false);

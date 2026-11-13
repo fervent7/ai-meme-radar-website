@@ -31,3 +31,37 @@ test('review pages and shared navigation are served behind the existing sign-in'
   }
   assert.equal((await fetch(origin + '/site.js', { headers })).status, 200);
 });
+
+test('mobile navigation resets when switching to the desktop layout', () => {
+  const { readFileSync } = require('node:fs');
+  const { runInNewContext } = require('node:vm');
+  const listeners = {};
+  let expanded = 'false';
+  let open = false;
+  const elements = {
+    menu: {
+      addEventListener: (_, listener) => { listeners.click = listener; },
+      getAttribute: () => expanded,
+      setAttribute: (_, value) => { expanded = value; }
+    },
+    nav: {
+      addEventListener() {},
+      classList: { toggle: (_, value) => { open = value; } }
+    },
+    year: {}
+  };
+  runInNewContext(readFileSync(require.resolve('./site.js'), 'utf8'), {
+    document: { getElementById: id => elements[id], addEventListener() {} },
+    window: { matchMedia: query => {
+      assert.equal(query, '(max-width: 880px)');
+      return { addEventListener: (_, listener) => { listeners.change = listener; } };
+    } }
+  });
+  listeners.click();
+  assert.equal(open, true);
+  assert.equal(expanded, 'true');
+  listeners.change({ matches: false });
+  listeners.change({ matches: true });
+  assert.equal(open, false);
+  assert.equal(expanded, 'false');
+});
