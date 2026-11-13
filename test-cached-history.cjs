@@ -189,3 +189,22 @@ test('unreadable market timestamps withhold an otherwise populated history', asy
     assert.deepEqual(await response.json(), { status: 'UNAVAILABLE' });
   }
 });
+
+test('cached market figures require recognized provenance independently of holder evidence', async t => {
+  const fixture = historyFixture();
+  const rows = fixture.pools[0].observations;
+  delete rows[0].source;
+  rows[1].source = 'Unrecognized market feed';
+  const origin = await start(t, async () => Response.json(fixture));
+  const response = await fetch(origin + path, { headers: { authorization } });
+  assert.equal(response.status, 200);
+  const data = await response.json();
+  for (const row of data.observations.slice(-2)) {
+    assert.equal(row.market_source, null);
+    assert.equal(row.liquidity_usd, null);
+    assert.equal(row.volume_5m_usd, null);
+    assert.equal(row.holder_count, 75);
+  }
+  assert.equal(data.observations[0].volume_5m_usd, 0);
+  assert.equal(data.holder_trend.verified_observations, 2);
+});

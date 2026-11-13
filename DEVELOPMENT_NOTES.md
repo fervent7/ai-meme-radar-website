@@ -82,3 +82,8 @@ authenticated local fixture covers the timezone-free timestamp case.
 The history gateway validates calendar dates and time-of-day before
 deduplicating observations. Local authenticated fixtures cover invalid
 dates and hours that JavaScript would otherwise roll into the next day.
+
+Cached liquidity and five-minute volume are withheld when market attribution is
+missing or unrecognized. Independently verified holder evidence stays visible.
+The authenticated local HTTP fixture covers both cases and preserves attributed
+zero volume. Hosted verification remains a separate check.

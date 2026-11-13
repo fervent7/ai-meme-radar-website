@@ -76,11 +76,12 @@ function projectHistory(data, { chain, address, pool }) {
       if (holderCounts.has(key) && holderCounts.get(key).count !== count) throw Error('Conflicting holder evidence');
       holderCounts.set(key, { count, observed_at_utc: holderTime });
     }
+    const marketSource = row.source === 'DexScreener token-pairs API' ? row.source : null;
     const observation = {
       observed_at_utc: observed,
-      market_source: row.source === 'DexScreener token-pairs API' ? row.source : null,
-      liquidity_usd: marketNumber(row.liquidity_usd),
-      volume_5m_usd: marketNumber(row.volume_5m_usd),
+      market_source: marketSource,
+      liquidity_usd: marketSource ? marketNumber(row.liquidity_usd) : null,
+      volume_5m_usd: marketSource ? marketNumber(row.volume_5m_usd) : null,
       holder_count: count,
       holder_observed_at_utc: verified ? holderTime : null
     };
