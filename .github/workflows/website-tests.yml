@@ -17,6 +17,6 @@ jobs:
         with:
           node-version: '22'
       - name: Check JavaScript syntax
-        run: node --check app.js && node --check market-identity.js && node --check cached-history.js && node --check website-test-server.cjs
+        run: node --check site.js && node --check app.js && node --check market-identity.js && node --check cached-history.js && node --check website-test-server.cjs
       - name: Run identity and token evidence checks
         run: node --test test-*.cjs

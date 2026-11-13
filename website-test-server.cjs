@@ -7,6 +7,9 @@ const { join } = require('node:path');
 const { readTarget, loadHistory } = require('./radar-history.cjs');
 
 const ASSETS = new Map([
+  ['/research.html','research.html'], ['/intelligence.html','intelligence.html'],
+  ['/liquidity.html','liquidity.html'], ['/roadmap.html','roadmap.html'],
+  ['/community.html','community.html'], ['/site.js','site.js'],
   ['/','index.html'], ['/index.html','index.html'], ['/styles.css','styles.css'],
   ['/app.js','app.js'], ['/market-identity.js','market-identity.js'],
   ['/cached-history.js','cached-history.js'], ['/config.js','config.js'],

@@ -96,3 +96,23 @@ An upstream history timeout returns HTTP 504 and the panel preserves any
 previously loaded observations for that pool with an explicit retry message.
 The browser timeout uses AbortController for compatibility with browsers
 that lack AbortSignal.timeout.
+
+## Multi-page website review
+
+The dashboard, Research Terminal, Intelligence Studio, Liquidity & OTC
+Research, Ecosystem Roadmap and Community have separate URLs. Existing
+homepage section links redirect to their new pages. Research links carry
+the chain and address into the terminal. Only the terminal starts a token
+lookup or mounts authenticated saved history. The dashboard keeps its
+existing status endpoint and links observed tokens to the terminal.
+
+The same reviewer sign-in protects all review pages. The website gateway
+continues to request the existing Radar test history endpoint server-side.
+The design shows research-stage capabilities explicitly. It adds no
+execution, provider, credential, or production configuration changes.
+
+Use the existing separate Render review Web Service. Confirm its revision
+at /healthz, then open research.html and check the Whale Pad pool on Android.
+Compare the two original holder times, the unchanged holder trend, and
+the unverified buyer label with saved history. A public health response
+confirms the build, while the signed-in check confirms the evidence flow.
