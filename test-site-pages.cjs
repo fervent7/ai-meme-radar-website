@@ -32,7 +32,7 @@ test('review pages and shared navigation are served behind the existing sign-in'
   assert.equal((await fetch(origin + '/site.js', { headers })).status, 200);
 });
 
-test('mobile navigation resets when switching to the desktop layout', () => {
+function verifyMobileNavigation(useLegacyListener) {
   const { readFileSync } = require('node:fs');
   const { runInNewContext } = require('node:vm');
   const listeners = {};
@@ -54,7 +54,9 @@ test('mobile navigation resets when switching to the desktop layout', () => {
     document: { getElementById: id => elements[id], addEventListener() {} },
     window: { matchMedia: query => {
       assert.equal(query, '(max-width: 880px)');
-      return { addEventListener: (_, listener) => { listeners.change = listener; } };
+      return useLegacyListener
+        ? { addListener: listener => { listeners.change = listener; } }
+        : { addEventListener: (_, listener) => { listeners.change = listener; } };
     } }
   });
   listeners.click();
@@ -64,4 +66,12 @@ test('mobile navigation resets when switching to the desktop layout', () => {
   listeners.change({ matches: true });
   assert.equal(open, false);
   assert.equal(expanded, 'false');
+}
+
+test('mobile navigation resets when switching to the desktop layout', () => {
+  verifyMobileNavigation(false);
+});
+
+test('mobile navigation works with legacy media-query listeners', () => {
+  verifyMobileNavigation(true);
 });

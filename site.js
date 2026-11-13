@@ -10,9 +10,14 @@
   };
 
   const mobileNavigation = window.matchMedia('(max-width: 880px)');
-  mobileNavigation.addEventListener('change', event => {
+  const resetOnDesktop = event => {
     if (!event.matches) setOpen(false);
-  });
+  };
+  if (typeof mobileNavigation.addEventListener === 'function') {
+    mobileNavigation.addEventListener('change', resetOnDesktop);
+  } else {
+    mobileNavigation.addListener(resetOnDesktop);
+  }
 
   menu.addEventListener('click', () => setOpen(menu.getAttribute('aria-expanded') !== 'true'));
   nav.addEventListener('click', event => {
