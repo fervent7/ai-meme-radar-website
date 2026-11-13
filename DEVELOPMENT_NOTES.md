@@ -37,6 +37,8 @@ The website remains the public entry point for research, documentation and
 community. The ecosystem section identifies which capabilities can be opened
 today and which are under development. The near-term OTC + Programmable roadmap
 tracks implementation. Living Ecosystem V2 describes longer-term services.
+The [Unified Master Ecosystem Roadmap](MASTER_ECOSYSTEM_ROADMAP.md) maps
+both horizons and the strategic proposals to the four website phases.
 
 The standalone review server adds authenticated, same-origin access to cached
 Radar history. It uses the protected Radar test history endpoint and projects
