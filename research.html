@@ -37,7 +37,25 @@
     </nav>
   </header>
   <main id="main" tabindex="-1">
-<section class="wrap page-intro"><h1>Research Terminal</h1><p>Search indexed markets on Solana, BNB Smart Chain, Base, Ethereum and other supported networks. Review timestamps, sources and verification status.</p></section><section class="research-section" id="research"><div class="wrap research-grid"><div><h2>Multichain token lookup</h2><p>Paste a token address to discover indexed markets across supported chains and view market evidence here. Missing security or holder data stays explicitly unknown.</p></div><div class="search-card"><h3>Multichain Token Research</h3><p>Find indexed trading pools across supported chains. Market snapshots refresh every 30 seconds after a search. Contract safety and holder verification require separate checks.</p><label for="address">Token address</label><input id="address" placeholder="Paste a token address" maxlength="128" autocomplete="off" spellcheck="false"><button class="primary search-btn" id="searchBtn">Research token</button><p class="search-help" id="searchHelp" role="status" aria-live="polite">Search supported chains by address. Enter a contract address (0x…) or a Solana mint. Supported results can also open the protected Radar research preview.</p><p id="liveResearchStatus" class="search-help" role="status">Live prices start after a token search · 30-second refresh</p></div><div id="researchResults" class="research-results" aria-live="polite"></div></div></section><section class="wrap roadmap" id="test-results" aria-labelledby="test-results-title">
+<section class="wrap page-intro terminal-intro">
+  <h1>Research Terminal</h1>
+  <p>Inspect indexed pools, market activity and saved on-chain evidence by token address.</p>
+</section>
+<section class="research-section" id="research" aria-label="Token lookup">
+  <div class="wrap terminal-workspace">
+    <div class="search-card terminal-search">
+      <label for="address">Token address</label>
+      <div class="search-controls">
+        <input id="address" placeholder="0x… or Solana mint" maxlength="128" autocomplete="off" spellcheck="false" aria-describedby="searchHelp">
+        <button class="primary search-btn" id="searchBtn" type="button">Research token</button>
+      </div>
+      <p class="search-help" id="searchHelp" role="status">Search Solana, BNB Smart Chain, Base, Ethereum and other indexed networks.</p>
+      <p id="liveResearchStatus" class="search-help" role="status">Live prices start after a token search · 30-second refresh</p>
+    </div>
+    <div id="researchResults" class="research-results" aria-live="polite"></div>
+  </div>
+</section>
+<section class="wrap roadmap" id="test-results" aria-labelledby="test-results-title">
 <div class="kicker">RESEARCH IN PRACTICE · TEST ENVIRONMENT</div>
 <h2 id="test-results-title">What a Radar lookup actually shows</h2>
 <p>On November 5, 2026, AI Meme Radar V9.45.0 identified the JAGENT trading pool on PancakeSwap and recorded a market observation on BNB Smart Chain.</p>

@@ -43,7 +43,8 @@ try:
         anonymous.close()
         screenshots = Path('browser-evidence')
         screenshots.mkdir(exist_ok=True)
-        for w,h in [(320,640),(390,844),(430,932),(768,1024),(1024,768),(1280,800),(1440,900),(1920,1080),(2560,1440)]:
+        for w,h in [(1366,768),(1440,900),(1920,1080),(1280,800),(2560,1440),
+                    (768,1024),(1024,768),(320,640),(390,844),(430,932)]:
             ctx = browser.new_context(viewport={'width':w,'height':h},has_touch=w<=1024,
                 http_credentials={'username':'reviewer','password':'browser-fixture'})
             ctx.route('**/*',intercept)
@@ -66,6 +67,15 @@ try:
                 assert menu.get_attribute('aria-expanded')=='false' and menu.evaluate('(e) => e === document.activeElement')
             else:
                 assert page.locator('.site-nav').evaluate("(e) => getComputedStyle(e).position === 'sticky'")
+                assert page.locator('#nav').is_visible() and not page.locator('#menu').is_visible()
+                market = page.locator('.market-panel').bounding_box()
+                monitor = page.locator('.dashboard-workspace .monitor-card').bounding_box()
+                assert market['width'] > monitor['width']
+                assert market['x'] + market['width'] <= monitor['x']
+                assert abs(market['y'] - monitor['y']) < 2
+                assert market['y'] < h / 2, 'Market table should be in the upper half of the workspace'
+                if w in (1366, 1440, 1920):
+                    page.screenshot(path=str(screenshots / f'dashboard-{w}.png'), animations='disabled')
             for name in routes[1:] + routes[:1]:
                 if w<=1024: page.locator('#menu').tap()
                 page.locator('#nav a[href="'+name+'"]').click()
@@ -74,6 +84,11 @@ try:
                 assert page.locator('#nav a[aria-current="page"]').get_attribute('href')==name
                 no_overflow(page)
             page.goto(origin+'/research.html')
+            if w > 1024:
+                search_input = page.locator('#address').bounding_box()
+                search_button = page.locator('#searchBtn').bounding_box()
+                assert search_input['x'] + search_input['width'] <= search_button['x']
+                assert abs(search_input['y'] - search_button['y']) < 2
             page.locator('#address').fill(mint)
             page.locator('#searchBtn').click()
             page.get_by_role('button',name='Load saved research history').click()
@@ -84,7 +99,7 @@ try:
             assert page.locator('meter').first.evaluate("(e) => e.getBoundingClientRect().width > 100 && Number(e.value) === 3164.21")
             assert not errs,errs
             no_overflow(page)
-            if w in (390,1440):
+            if w in (390,1366,1440,1920):
                 page.screenshot(path=str(screenshots / f'whale-pad-{w}.png'),animations='disabled',full_page=True)
             print(f'{w}x{h}: six navigation routes, responsive controls, table and Whale Pad saved history passed',flush=True)
             ctx.close()

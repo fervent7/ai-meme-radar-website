@@ -141,3 +141,16 @@ Future Wallet & Portfolio and Automated Trading links lead to the
 roadmap sections. The master roadmap records the multichain adapter
 boundaries and separate execution permissions. Those links introduce no
 wallet or trading functionality.
+
+## Desktop-first acceptance
+
+The primary audience is developers, professional researchers, analysts and
+investors working at 1366, 1440 and 1920 CSS pixels. At desktop widths the
+sidebar stays visible, the dashboard puts the token table beside the Radar
+monitor, and the Research Terminal puts the address and action in one row
+above full-width evidence. Phone and tablet layouts adapt those same tools.
+
+GitHub Actions exercises desktop viewports first and publishes dashboard and
+Whale Pad evidence at the three primary widths alongside the 390 px example.
+All screenshots use intercepted test responses and saved Whale Pad fixture
+data. They demonstrate the review UI and authenticated read path in CI.

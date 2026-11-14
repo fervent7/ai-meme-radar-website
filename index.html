@@ -35,15 +35,47 @@
     </nav>
   </header>
   <main id="main" tabindex="-1">
-<section class="wrap page-intro overview-intro">
-  <div><p class="brand-tagline">Research Before Risk</p><h1>Research dashboard</h1>
-  <p>Find indexed pools, inspect market activity and see which holder and risk signals have been verified.</p>
-  <a class="primary" href="research.html">Open Research Terminal →</a></div>
-  <div class="monitor-card" aria-label="Radar backend status">
-    <div class="monitor-head"><img src="brand-icon-64.png" width="36" height="36" alt=""><strong>Radar monitor</strong><span id="healthBadge">Awaiting data</span></div>
-    <div class="panel-bottom"><div><small>Status</small><strong id="statusText">Unavailable</strong></div><div><small>Scans</small><strong id="scansText">—</strong></div><div><small>Alerts</small><strong id="alertsText">—</strong></div></div>
+<section class="wrap page-intro dashboard-intro">
+  <div>
+    <p class="brand-tagline">Research Before Risk</p>
+    <h1>Research dashboard</h1>
+    <p>Discover indexed pools and compare market activity with verified on-chain evidence.</p>
   </div>
-</section><section class="metrics wrap" id="radar"><div class="section-head"><div><h2>Live Radar <span>overview</span></h2><p>Observed data from your Radar backend. Unavailable data is never presented as zero.</p></div><button class="outline" id="refresh">↻ Refresh data</button></div><div class="metric-grid"><article><small>Latest fresh pools</small><strong id="fresh">—</strong><span>Recent scan discovery</span></article><article><small>Alert candidates</small><strong id="candidates">—</strong><span>Before final verification</span></article><article><small>Eligible alerts</small><strong id="eligible">—</strong><span>Strict final safety gate</span></article><article><small>Backend status</small><strong class="status-value" id="connection">Not connected</strong><span id="updated">Waiting for a current response</span></article></div><div class="notice" id="radarNotice" role="status">Connecting to the research service. Live metrics appear only when available; missing data stays unknown.</div><div class="section-head sub"><div><h3>Recently observed tokens</h3><p>Research candidates are not recommendations to trade.</p></div></div><p class="table-guide" id="token-table-guide">Scroll the table horizontally to see all columns on smaller screens.</p><div class="tablewrap" aria-describedby="token-table-guide" role="region" aria-label="Recently observed tokens" tabindex="0"><table><thead><tr><th scope="col">Token</th><th scope="col">Network</th><th scope="col">Liquidity</th><th scope="col">5m volume</th><th scope="col">Risk</th><th scope="col">Research</th></tr></thead><tbody id="tokenRows"><tr><td colspan="6" class="empty">Live token data will appear after backend connection.</td></tr></tbody></table></div></section><div class="wrap module-grid"><article><h2>Research Terminal</h2><span class="feature-state operational">Operational</span><p>Look up indexed markets by contract address. Saved holder evidence is available in the authenticated review flow when the backend supplies it.</p><p><a class="text-link" href="research.html">Open Research Terminal →</a></p></article>
+  <a class="primary" href="research.html">Open Research Terminal →</a>
+</section>
+<section class="metrics wrap dashboard-workspace" id="radar" aria-label="Live Radar overview">
+  <div class="metric-grid" aria-label="Scan metrics">
+    <article><small>Fresh pools</small><strong id="fresh">—</strong><span>Latest discovery scan</span></article>
+    <article><small>Alert candidates</small><strong id="candidates">—</strong><span>Before verification</span></article>
+    <article><small>Eligible alerts</small><strong id="eligible">—</strong><span>After the final safety gate</span></article>
+  </div>
+  <section class="market-panel" aria-labelledby="observed-title">
+    <h2 id="observed-title">Recently observed tokens</h2>
+    <p class="table-guide" id="token-table-guide">Scroll horizontally to see all columns.</p>
+    <div class="tablewrap" aria-describedby="token-table-guide" role="region" aria-label="Recently observed tokens" tabindex="0">
+      <table>
+        <thead><tr><th scope="col">Token</th><th scope="col">Network</th><th scope="col">Liquidity</th><th scope="col">5m volume</th><th scope="col">Risk</th><th scope="col">Research</th></tr></thead>
+        <tbody id="tokenRows"><tr><td colspan="6" class="empty">Live token data will appear after backend connection.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+  <aside class="monitor-card" aria-labelledby="monitor-title">
+    <div class="monitor-head">
+      <h2 id="monitor-title">Radar monitor</h2>
+      <span id="healthBadge">Awaiting data</span>
+    </div>
+    <dl class="monitor-readings">
+      <div><dt>Connection</dt><dd id="connection">Not connected</dd></div>
+      <div><dt>Status</dt><dd id="statusText">Unavailable</dd></div>
+      <div><dt>Scans</dt><dd id="scansText">—</dd></div>
+      <div><dt>Alerts</dt><dd id="alertsText">—</dd></div>
+    </dl>
+    <p class="monitor-updated" id="updated">Waiting for a current response</p>
+    <p class="notice" id="radarNotice" role="status">Connecting to the research service.</p>
+    <button class="outline" id="refresh" type="button">Refresh data</button>
+  </aside>
+</section>
+<div class="wrap module-grid"><article><h2>Research Terminal</h2><span class="feature-state operational">Operational</span><p>Look up indexed markets by contract address. Saved holder evidence is available in the authenticated review flow when the backend supplies it.</p><p><a class="text-link" href="research.html">Open Research Terminal →</a></p></article>
 <article><h2>Intelligence Studio</h2><span class="feature-state testing">Under testing</span><p>Explore the rule evaluator and the evidence required before a research alert can qualify.</p><p><a class="text-link" href="intelligence.html">Open Intelligence Studio →</a></p></article>
 <article><h2>Liquidity &amp; OTC Research</h2><span class="feature-state testing">Under testing</span><p>Inspect reported liquidity and pool reserves. Liquidity history and institutional tools are in development.</p><p><a class="text-link" href="liquidity.html">Open Liquidity &amp; OTC Research →</a></p></article></div>
   </main>
