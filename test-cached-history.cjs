@@ -124,7 +124,9 @@ test('the test gateway identifies its revision and recovers from an upstream tim
 });
 
 test('the history panel renders authenticated gateway evidence and supports retry', async t => {
-  const origin = await start(t, async () => Response.json(historyFixture()));
+  const fixture = historyFixture();
+  delete fixture.pools[0].observations[0].source;
+  const origin = await start(t, async () => Response.json(fixture));
   function element(tag) {
     return { tag, children: [], get childElementCount() { return this.children.length; }, setAttribute() {}, append(...items) { this.children.push(...items); },
       replaceChildren(...items) { this.children = items; },
@@ -150,6 +152,9 @@ test('the history panel renders authenticated gateway evidence and supports retr
   assert.equal(labels[1], 'Verified holder trend: UNCHANGED · 75 → 75 (0%)');
   assert.equal(labels[2], 'Buyer growth: Unverified');
   assert.equal(labels[3], 'Holder observations: ' + first + ' → ' + latest);
+  const marketRows = panel.children[2].children.map(item => item.textContent);
+  assert.match(marketRows[0], /2026-11-12T18:41:00.*Liquidity .* · 5m volume \$0 · DexScreener/);
+  assert.match(marketRows.at(-1), /Liquidity Unavailable · 5m volume Unavailable · Source unavailable/);
   context.fetch = async () => new Response('', { status: 504 });
   await button.activate();
   assert.match(status.textContent, /Radar history request timed out/);
