@@ -234,3 +234,21 @@ test('cached market figures require recognized provenance independently of holde
   assert.equal(data.observations[0].volume_5m_usd, 0);
   assert.equal(data.holder_trend.verified_observations, 2);
 });
+
+test('oversized upstream history is discarded without returning partial evidence', async t => {
+  let cancelled = false;
+  let chunks = 0;
+  const upstream = new ReadableStream({
+    pull(controller) {
+      chunks++;
+      controller.enqueue(new Uint8Array(600 * 1024));
+    },
+    cancel() { cancelled = true; }
+  });
+  const origin = await start(t, async () => new Response(upstream));
+  const response = await fetch(origin + path, { headers: { authorization } });
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), { status: 'UNAVAILABLE' });
+  assert.equal(cancelled, true);
+  assert.ok(chunks <= 3, 'the gateway stops consuming the oversized response');
+});
