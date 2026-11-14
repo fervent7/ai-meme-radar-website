@@ -123,7 +123,8 @@ test('the test gateway identifies its revision and recovers from an upstream tim
   assert.equal((await (await get()).json()).status, 'READY');
 });
 
-test('the history panel shows distinct holder and buyer labels and supports retry', async () => {
+test('the history panel renders authenticated gateway evidence and supports retry', async t => {
+  const origin = await start(t, async () => Response.json(historyFixture()));
   function element(tag) {
     return { tag, children: [], get childElementCount() { return this.children.length; }, setAttribute() {}, append(...items) { this.children.push(...items); },
       replaceChildren(...items) { this.children = items; },
@@ -132,11 +133,8 @@ test('the history panel shows distinct holder and buyer labels and supports retr
   const window = { RADAR_CACHED_HISTORY_ENABLED: true };
   let calls = 0;
   const context = { document: { createElement: element }, window, AbortController, setTimeout, clearTimeout, URLSearchParams,
-    fetch: async () => !calls++ ? new Response('', { status: 429 }) : Response.json({
-      status: 'READY', observations: [],
-      latest_holder_observation: { count: 75, observed_at_utc: latest },
-      holder_trend: { status: 'UNCHANGED', first: { count: 75, observed_at_utc: first }, latest: { count: 75, observed_at_utc: latest }, growth_pct: 0 }
-    }) };
+    fetch: async (url, options) => !calls++ ? new Response('', { status: 429 })
+      : fetch(origin + url, { ...options, headers: { authorization } }) };
   vm.runInNewContext(readFileSync(require.resolve('./cached-history.js'), 'utf8'), context);
   const card = element('article');
   card.dataset = { chain, pool, token: address };
