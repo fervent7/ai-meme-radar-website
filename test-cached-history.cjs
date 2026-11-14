@@ -126,7 +126,8 @@ test('the test gateway identifies its revision and recovers from an upstream tim
 test('the history panel renders authenticated gateway evidence and supports retry', async t => {
   const fixture = historyFixture();
   delete fixture.pools[0].observations[0].source;
-  const origin = await start(t, async () => Response.json(fixture));
+  let upstream = () => Response.json(fixture);
+  const origin = await start(t, async () => upstream());
   function element(tag) {
     return { tag, children: [], get childElementCount() { return this.children.length; }, setAttribute() {}, append(...items) { this.children.push(...items); },
       replaceChildren(...items) { this.children = items; },
@@ -155,6 +156,21 @@ test('the history panel renders authenticated gateway evidence and supports retr
   const marketRows = panel.children[2].children.map(item => item.textContent);
   assert.match(marketRows[0], /2026-11-12T18:41:00.*Liquidity .* · 5m volume \$0 · DexScreener/);
   assert.match(marketRows.at(-1), /Liquidity Unavailable · 5m volume Unavailable · Source unavailable/);
+  upstream = () => Response.json({ ...fixture, pools: [] });
+  await button.activate();
+  assert.match(status.textContent, /No saved observations/);
+  assert.equal(panel.childElementCount, 0);
+
+  upstream = () => Response.json(fixture);
+  await button.activate();
+  assert.equal(panel.childElementCount, 3);
+  upstream = () => new Response('', { status: 403 });
+  await button.activate();
+  assert.match(status.textContent, /could not authenticate to the Radar backend/);
+  assert.equal(panel.childElementCount, 0);
+
+  upstream = () => Response.json(fixture);
+  await button.activate();
   context.fetch = async () => new Response('', { status: 504 });
   await button.activate();
   assert.match(status.textContent, /Radar history request timed out/);
