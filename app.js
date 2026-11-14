@@ -5,8 +5,10 @@ const short=s=>String(s||'—').length>22?String(s).slice(0,10)+'…'+String(s).
 const valid=s=>/^0x[a-fA-F0-9]{40}$/.test(s)||(/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(s));
 let researchController;
 const LIVE_INTERVAL_MS=30000;
+const LIVE_RATE_LIMIT_COOLDOWN_MS=60000;
 let liveTimer=null;
 let liveRun=null;
+let liveRetryAt=0;
 function stopLive(){
  if(liveTimer){clearInterval(liveTimer);liveTimer=null}
  const previous=liveRun;
@@ -16,14 +18,14 @@ function stopLive(){
 const liveStatus=()=>document.getElementById('liveResearchStatus');
 function liveMessage(message){const el=liveStatus();if(el)el.textContent=message}
 async function refreshLive(){
- if(liveRun||document.hidden)return;
+ if(liveRun||document.hidden||Date.now()<liveRetryAt)return;
  const cards=[...results.querySelectorAll('.research-primary[data-pool][data-chain]')];
  if(!cards.length){stopLive();return}
  const run={controller:null};
  liveRun=run;
  try{
   let successful=0;
-  for(const card of cards){
+  for(const [index,card] of cards.entries()){
    const chain=card.dataset.chain,pool=card.dataset.pool;
    if(liveRun!==run)return;
    const controller=new AbortController();
@@ -32,6 +34,13 @@ async function refreshLive(){
    try{
     const url='https://api.dexscreener.com/latest/dex/pairs/'+encodeURIComponent(chain)+'/'+encodeURIComponent(pool);
     const res=await fetch(url,{cache:'no-store',signal:controller.signal});
+    if(liveRun!==run)return;
+    if(res.status===429){
+     liveRetryAt=Date.now()+LIVE_RATE_LIMIT_COOLDOWN_MS;
+     for(const pending of cards.slice(index))pending.dataset.stale='true';
+     liveMessage('⚠ Market provider rate limited live updates · showing last available prices');
+     return;
+    }
     if(!res.ok)throw Error('HTTP '+res.status);
     const data=await res.json();
     if(liveRun!==run)return;

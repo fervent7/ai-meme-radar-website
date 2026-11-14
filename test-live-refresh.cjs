@@ -45,6 +45,49 @@ test('a cancelled refresh cannot replace cards or overwrite the next refresh sta
   assert.equal(status.textContent, currentStatus);
 });
 
+test('live research stops the pool refresh on 429 and resumes after cooldown', async () => {
+  const source = readFileSync(join(__dirname, 'app.js'), 'utf8');
+  const start = source.indexOf('const LIVE_INTERVAL_MS');
+  const end = source.indexOf('function radarPreviewLink', start);
+  const status = {textContent: ''};
+  let now = 0;
+  let rateLimited = true;
+  const requests = [];
+  const cards = ['first', 'limited', 'last'].map(pool => ({
+    dataset: {chain: 'solana', pool, token: 'mint'}, replaceWith() {}
+  }));
+  const context = {
+    AbortController, setTimeout, clearTimeout, setInterval, clearInterval,
+    Date: class extends Date { static now() { return now; } },
+    results: {querySelectorAll: () => cards},
+    document: {hidden: false, getElementById: () => status},
+    window: {RadarIdentity: require('./market-identity.js')},
+    fetch: async url => {
+      const pool = url.split('/').at(-1);
+      requests.push(pool);
+      if (rateLimited && pool === 'limited') return {ok: false, status: 429};
+      return {ok: true, json: async () => ({pairs: [
+        {chainId: 'solana', pairAddress: pool, baseToken: {address: 'mint'}}
+      ]})};
+    }
+  };
+  const api = vm.runInNewContext(source.slice(start, end) +
+    '\nrenderLivePair = pair => pair; ({refreshLive, stopLive})', context);
+  await api.refreshLive();
+  assert.deepEqual(requests, ['first', 'limited']);
+  assert.deepEqual(cards.map(card => card.dataset.stale), [undefined, 'true', 'true']);
+  assert.match(status.textContent, /rate limited/);
+  api.stopLive();
+  now = 30000;
+  await api.refreshLive();
+  assert.equal(requests.length, 2);
+  rateLimited = false;
+  now = 60000;
+  await api.refreshLive();
+  assert.deepEqual(requests, ['first', 'limited', 'first', 'limited', 'last']);
+  assert.match(status.textContent, /updated/);
+});
+
 test('foreground timeout, retry, rate limit and private errors produce safe research states', async () => {
   const source = readFileSync(join(__dirname, 'app.js'), 'utf8');
   const start = source.indexOf('async function research(');
