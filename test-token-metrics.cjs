@@ -40,9 +40,11 @@ function render(address, market=pair){
   const context={address,window:{RadarIdentity:identity},Date,
     document:{createElement:()=>({dataset:{},append(){}})},
     num:value=>value!==null&&value!==undefined&&value!==''&&Number.isFinite(Number(value))?Number(value):null,
-    esc:value=>String(value),fmt:value=>String(value),pairPrice:value=>String(value),
+    esc:value=>String(value),pairPrice:value=>String(value),
     stat:(label,value)=>{fields[label]=value;return '';},liquidityEvidence:()=>({})};
-  const card=vm.runInNewContext(source.slice(start,end)+'\npairCard',context);
+  const formatter=source.split('\n').find(line=>line.startsWith('const fmt='));
+  assert.ok(formatter,'Market formatter must be present');
+  const card=vm.runInNewContext(formatter+'\n'+source.slice(start,end)+'\npairCard',context);
   card(market,true);
   return fields;
 }
@@ -57,13 +59,23 @@ test('research card withholds quote-token price, change, valuation and direction
   for(const label of ['Price USD','5m price change','5m buy / sell transactions'])
     assert.equal(fields[label],'Unavailable for quote token');
   for(const label of ['Market cap (reported)','FDV (reported)'])assert.equal(fields[label],'Unavailable');
-  assert.equal(fields['Liquidity (reported)'],'5000');
-  assert.equal(fields['5m volume'],'700');
+  assert.equal(fields['Liquidity (reported)'],'$5,000');
+  assert.equal(fields['5m volume'],'$700');
 });
 test('research card keeps base-token direction and market evidence',()=>{
   const fields=render(target);
   assert.equal(fields['Price USD'],'2');
   assert.equal(fields['5m price change'],'+10%');
   assert.equal(fields['5m buy / sell transactions'],'12 / 4');
-  assert.equal(fields['Market cap (reported)'],'100000');
+  assert.equal(fields['Market cap (reported)'],'$100,000');
+});
+
+test('research card does not display malformed market amounts as dollars',()=>{
+  for(const invalid of [false, true, [], ' ', '0', -1, Infinity, null]){
+    const fields=render(target,{...pair,liquidity:{usd:invalid},volume:{m5:invalid,h24:0}});
+    assert.equal(fields['Liquidity (reported)'],'Unavailable');
+    assert.equal(fields['5m volume'],'Unavailable');
+    assert.equal(fields['24h volume'],'$0');
+  }
+  assert.equal(render(target,{...pair,volume:{m5:0.001}})['5m volume'],'Less than $0.01');
 });
