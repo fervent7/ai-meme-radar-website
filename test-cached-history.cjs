@@ -53,7 +53,14 @@ test('the test server authenticates and retrieves only exact saved pool evidence
   assert.equal(calls.length, 0);
 
   const config = await fetch(origin + '/config.js', { headers: { authorization } });
-  assert.match(await config.text(), /RADAR_CACHED_HISTORY_ENABLED = true/);
+  const configBody = await config.text();
+  assert.match(configBody, /RADAR_CACHED_HISTORY_ENABLED = true/);
+  assert.doesNotMatch(configBody, /upstream-fixture/);
+  const document = await fetch(origin + '/research.html', { headers: { authorization } });
+  const policy = document.headers.get('content-security-policy');
+  assert.match(policy, /default-src 'self'/);
+  assert.match(policy, /frame-ancestors 'none'/);
+  assert.doesNotMatch(policy, /unsafe-inline|unsafe-eval/);
   const response = await fetch(origin + path, { headers: { authorization } });
   assert.equal(response.status, 200);
   assert.equal(response.headers.get('cache-control'), 'no-store');

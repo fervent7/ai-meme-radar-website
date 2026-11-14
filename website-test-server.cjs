@@ -24,6 +24,14 @@ const TYPES = {
 };
 const digest = value => createHash('sha256').update(value).digest();
 const TEST_HEADERS = {
+  'Content-Security-Policy': [
+    "default-src 'self'",
+    "connect-src 'self' https://api.dexscreener.com https://ai-meme-radar-005g.onrender.com",
+    "frame-ancestors 'none'",
+    "base-uri 'none'",
+    "object-src 'none'",
+    "form-action 'self'"
+  ].join('; '),
   'Cache-Control': 'no-store',
   'X-Content-Type-Options': 'nosniff',
   'X-Robots-Tag': 'noindex, nofollow',
