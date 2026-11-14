@@ -126,6 +126,7 @@ test('the test gateway identifies its revision and recovers from an upstream tim
 test('the history panel renders authenticated gateway evidence and supports retry', async t => {
   const fixture = historyFixture();
   delete fixture.pools[0].observations[0].source;
+  fixture.pools[0].observations[1].volume_5m_usd = 0.0001;
   let upstream = () => Response.json(fixture);
   const origin = await start(t, async () => upstream());
   function element(tag) {
@@ -155,6 +156,7 @@ test('the history panel renders authenticated gateway evidence and supports retr
   assert.equal(labels[3], 'Holder observations: ' + first + ' → ' + latest);
   const marketRows = panel.children[2].children.map(item => item.textContent);
   assert.match(marketRows[0], /2026-11-12T18:41:00.*Liquidity .* · 5m volume \$0 · DexScreener/);
+  assert.match(marketRows.at(-2), /5m volume Less than \$0\.01/);
   assert.match(marketRows.at(-1), /Liquidity Unavailable · 5m volume Unavailable · Source unavailable/);
   upstream = () => Response.json({ ...fixture, pools: [] });
   await button.activate();

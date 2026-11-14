@@ -7,6 +7,12 @@
     return element;
   };
 
+  function formatUsd(value) {
+    if (value === null) return 'Unavailable';
+    if (value > 0 && value < 0.01) return 'Less than $0.01';
+    return '$' + value.toLocaleString();
+  }
+
   function render(panel, history) {
     const holder = history.latest_holder_observation;
     const trend = history.holder_trend;
@@ -24,8 +30,8 @@
     }
     const rows = create('ul');
     for (const observation of history.observations) {
-      const liquidity = observation.liquidity_usd === null ? 'Unavailable' : '$' + observation.liquidity_usd.toLocaleString();
-      const volume = observation.volume_5m_usd === null ? 'Unavailable' : '$' + observation.volume_5m_usd.toLocaleString();
+      const liquidity = formatUsd(observation.liquidity_usd);
+      const volume = formatUsd(observation.volume_5m_usd);
       rows.append(create('li', observation.observed_at_utc + ' · Liquidity ' + liquidity +
         ' · 5m volume ' + volume + ' · ' + (observation.market_source ?? 'Source unavailable')));
     }
