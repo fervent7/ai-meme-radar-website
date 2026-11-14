@@ -26,8 +26,15 @@ test('review pages and shared navigation are served behind the existing sign-in'
     assert.ok(html.includes('href="' + route + '" aria-current="page"'));
     assert.equal([...html.matchAll(/<h1[ >]/g)].length, 1, route);
     for (const link of routes) assert.ok(html.includes('href="' + link + '"'));
+    assert.match(html, /href="roadmap.html#wallet-portfolio"/);
+    assert.match(html, /href="roadmap.html#automated-trading"/);
     assert.ok(html.includes('Research Before Risk'));
     assert.equal(html.includes('src="cached-history.js"'), route === 'research.html');
+  }
+  const roadmap = await fetch(origin + '/roadmap.html', { headers }).then(response => response.text());
+  assert.equal([...roadmap.matchAll(/Planned — Not Available Yet/g)].length, 2);
+  for (const section of ['wallet-portfolio', 'automated-trading']) {
+    assert.match(roadmap, new RegExp('id="' + section + '"'));
   }
   assert.equal((await fetch(origin + '/site.js', { headers })).status, 200);
 });

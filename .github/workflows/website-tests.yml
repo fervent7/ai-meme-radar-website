@@ -1,7 +1,7 @@
 name: Website research evidence tests
 on:
   push:
-    branches: [radar-website-research-test]
+    branches: [radar-website-research-test, review/verified-research-terminal]
   pull_request:
     branches: [radar-website-research-test]
   workflow_dispatch:
