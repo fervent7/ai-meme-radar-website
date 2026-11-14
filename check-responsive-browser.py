@@ -19,6 +19,7 @@ const server = testServer({password:'browser-fixture', radarKey:'backend-fixture
 server.listen(0, '127.0.0.1', () => console.log(server.address().port));
 """, mint, pool], stdout=subprocess.PIPE, text=True)
 routes = ['index.html','research.html','intelligence.html','liquidity.html','roadmap.html','community.html']
+community_urls = {'X': 'https://x.com/aimemeradar', 'Telegram': 'https://t.me/AIMemeRadarCommunity'}
 origin = 'http://127.0.0.1:' + server.stdout.readline().strip()
 pair = {'chainId':'solana','dexId':'raydium','pairAddress':pool,
         'baseToken':{'address':mint,'name':'Whale Pad','symbol':'WHALE'},
@@ -35,6 +36,14 @@ def intercept(route):
         route.abort()
 def no_overflow(page):
     assert page.evaluate('document.documentElement.scrollWidth === innerWidth'), page.url
+
+def verify_community_links(container):
+    for name, url in community_urls.items():
+        link = container.get_by_role('link', name=name, exact=True)
+        assert link.is_visible() and link.get_attribute('href') == url
+        assert link.bounding_box()['height'] >= 44
+        link.click(trial=True)
+
 try:
     with sync_playwright() as p:
         browser = p.chromium.launch()
@@ -76,6 +85,12 @@ try:
                 assert market['y'] < h / 2, 'Market table should be in the upper half of the workspace'
                 if w in (1366, 1440, 1920):
                     page.screenshot(path=str(screenshots / f'dashboard-{w}.png'), animations='disabled')
+            verify_community_links(page.locator('.community-panel'))
+            if w<=1024:
+                page.locator('#menu').tap()
+            verify_community_links(page.locator('.sidebar-community'))
+            if w<=1024:
+                page.keyboard.press('Escape')
             for name in routes[1:] + routes[:1]:
                 if w<=1024: page.locator('#menu').tap()
                 page.locator('#nav a[href="'+name+'"]').click()
@@ -83,6 +98,8 @@ try:
                 assert page.locator('main h1').count()==1
                 assert page.locator('#nav a[aria-current="page"]').get_attribute('href')==name
                 no_overflow(page)
+                verify_community_links(page.locator('footer'))
+                page.evaluate('scrollTo(0, 0)')
             page.goto(origin+'/research.html')
             if w > 1024:
                 search_input = page.locator('#address').bounding_box()
@@ -101,7 +118,7 @@ try:
             no_overflow(page)
             if w in (390,1366,1440,1920):
                 page.screenshot(path=str(screenshots / f'whale-pad-{w}.png'),animations='disabled',full_page=True)
-            print(f'{w}x{h}: six navigation routes, responsive controls, table and Whale Pad saved history passed',flush=True)
+            print(f'{w}x{h}: six routes, community links, responsive controls, table and Whale Pad saved history passed',flush=True)
             ctx.close()
 finally:
     server.terminate()

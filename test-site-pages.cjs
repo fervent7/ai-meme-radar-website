@@ -29,6 +29,19 @@ test('review pages and shared navigation are served behind the existing sign-in'
     assert.match(html, /href="roadmap.html#wallet-portfolio"/);
     assert.match(html, /href="roadmap.html#automated-trading"/);
     assert.ok(html.includes('Research Before Risk'));
+    const sidebar = html.match(/<nav id="nav"[\s\S]*?<\/nav>/)[0];
+    const footer = html.match(/<footer[\s\S]*?<\/footer>/)[0];
+    const main = html.match(/<main[\s\S]*?<\/main>/)[0];
+    for (const [name, url] of [
+      ['X', 'https://x.com/aimemeradar'],
+      ['Telegram', 'https://t.me/AIMemeRadarCommunity']
+    ]) {
+      const link = `href="${url}">${name}</a>`;
+      assert.ok(sidebar.includes(link), `${route} sidebar ${name}`);
+      assert.ok(footer.includes(link), `${route} footer ${name}`);
+      if (route === 'index.html') assert.ok(main.includes(link), `Dashboard ${name}`);
+      if (route === 'community.html') assert.ok(main.includes(`href="${url}"`), `Community ${name}`);
+    }
     assert.equal(html.includes('src="cached-history.js"'), route === 'research.html');
   }
   const roadmap = await fetch(origin + '/roadmap.html', { headers }).then(response => response.text());
