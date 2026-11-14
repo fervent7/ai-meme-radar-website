@@ -9,7 +9,7 @@
     menu.setAttribute('aria-expanded', String(open));
   };
 
-  const mobileNavigation = window.matchMedia('(max-width: 880px)');
+  const mobileNavigation = window.matchMedia('(max-width: 1024px)');
   const resetOnDesktop = event => {
     if (!event.matches) setOpen(false);
   };

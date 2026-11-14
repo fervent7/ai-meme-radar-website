@@ -91,6 +91,33 @@ user-facing modules.
   require separate authorization. The Personal BSC Auto-Trader stays in its own
   repository and deployment.
 
+### Wallet & Portfolio and Automated Trading — Planned — Not Available Yet
+
+The roadmap links to both future areas from the shared navigation. The six
+research and community pages remain the current site. The first wallet and
+execution network is BNB Smart Chain. The independent Personal BSC Auto-Trader
+is intended to evolve into a multichain engine supporting Solana, Base and
+Ethereum in later, separately verified releases. Its repository, runtime and
+release process remain independent.
+
+| Interface | Future responsibilities |
+| --- | --- |
+| Wallet authentication | Chain-tagged address identity and proof of control using an expiring, single-use challenge scoped to the website origin. A session authenticates the user. Seed phrases and private keys never enter the website. |
+| Portfolio reads | Separately consented balances, holdings, transaction history and performance. Preserve chain, asset, units, source, observation time and valuation provenance. |
+| Strategy and risk | Network-independent inputs and outputs for allocation, concurrent positions, exposure, gas reserves, trailing-stop settings and emergency stop. Settings create versioned policy records. |
+| Chain adapters | Network-specific wallet identity, address validation, routing, signing, native fees or gas, transaction submission and finality. Use explicit chain and asset identifiers throughout. |
+| Execution service | The independent engine owns credentials, permission enforcement, idempotency, submission, confirmation, reconciliation and append-only execution logs. The website can present previews and request status through a versioned, scoped service interface. |
+| Delegated permissions | Explicit, separately granted consent scoped to wallet, chain, allowed operations, spending and expiry. Revocation and emergency stop block further submissions. Record permission changes and order outcomes in an audit trail. |
+
+Research alerts remain in the research service. A research result can be
+reviewed by a user as evidence. Alert delivery confers no execution permission.
+Connecting a wallet also grants no execution permission. The website will show
+execution status, transaction previews, current permissions and audit history
+once the independent engine and its integration pass security and end-to-end
+verification and live use is separately approved. Each additional network
+requires its own adapter and verification. This review introduces navigation
+and documentation only.
+
 ## Interfaces and sequencing
 
 | Boundary | Minimum design contract |
@@ -103,7 +130,7 @@ user-facing modules.
 
 Near term, finish the authorized test deployment and authenticated restart
 read-back. Use the saved Whale Pad report to verify both labels and original
-timestamps on Android. Continue offline regression work while hosted access or
+timestamps across phone, tablet and desktop layouts. Continue offline regression work while hosted access or
 provider evidence is pending. Keep the approved branding and existing research
 interface in place. Preserve the working public service and release only from
 verified evidence.

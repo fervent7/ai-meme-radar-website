@@ -29,13 +29,27 @@
         ' → ' + trend.latest.observed_at_utc));
     }
     const rows = create('ul');
+    rows.className = 'saved-market-rows';
+    const maxLiquidity = Math.max(0, ...history.observations.map(row => row.liquidity_usd ?? 0));
     for (const observation of history.observations) {
       const liquidity = formatUsd(observation.liquidity_usd);
       const volume = formatUsd(observation.volume_5m_usd);
-      rows.append(create('li', observation.observed_at_utc + ' · Liquidity ' + liquidity +
-        ' · 5m volume ' + volume + ' · ' + (observation.market_source ?? 'Source unavailable')));
+      const row = create('li', observation.observed_at_utc + ' · Liquidity ' + liquidity +
+        ' · 5m volume ' + volume + ' · ' + (observation.market_source ?? 'Source unavailable'));
+      if (maxLiquidity > 0 && observation.liquidity_usd !== null) {
+        const bar = create('meter');
+        bar.setAttribute('min', '0');
+        bar.setAttribute('max', String(maxLiquidity));
+        bar.setAttribute('value', String(observation.liquidity_usd));
+        bar.setAttribute('aria-hidden', 'true');
+        row.append(bar);
+      }
+      rows.append(row);
     }
-    panel.replaceChildren(metrics, create('h5', 'Saved market observations'), rows);
+    const marketHeading = maxLiquidity > 0
+      ? 'Saved market observations · bars show relative liquidity'
+      : 'Saved market observations';
+    panel.replaceChildren(metrics, create('h5', marketHeading), rows);
   }
 
   function mount(card) {

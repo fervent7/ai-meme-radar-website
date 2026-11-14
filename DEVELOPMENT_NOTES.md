@@ -120,3 +120,24 @@ confirms the build, while the signed-in check confirms the evidence flow.
 The public token search distinguishes provider rate limits from timeouts and
 other failures without exposing raw exception details. Offline tests exercise
 these states and confirm that search can be retried after a timeout.
+
+## Responsive review and future navigation
+
+The six routes share a sticky workspace sidebar above 1024 CSS pixels and
+a collapsible menu at smaller widths. The token table scrolls within its
+region on narrow screens. The Research Terminal uses the full workspace
+for results. Saved observation bars show relative liquidity for the same
+listed pool while retaining readable values, sources and timestamps.
+
+The browser check uses the local authenticated review gateway, an
+intercepted market response and the recorded Whale Pad numbers in a test
+fixture. It blocks external browser requests and makes no provider scans.
+Run it from this directory with `python check-responsive-browser.py`
+after installing Playwright and Chromium. Hosted CI saves phone and
+desktop screenshots of the fixture. Physical-device and Render
+verification remain separate.
+
+Future Wallet & Portfolio and Automated Trading links lead to the
+roadmap sections. The master roadmap records the multichain adapter
+boundaries and separate execution permissions. Those links introduce no
+wallet or trading functionality.

@@ -53,7 +53,7 @@ function verifyMobileNavigation(useLegacyListener) {
   runInNewContext(readFileSync(require.resolve('./site.js'), 'utf8'), {
     document: { getElementById: id => elements[id], addEventListener() {} },
     window: { matchMedia: query => {
-      assert.equal(query, '(max-width: 880px)');
+      assert.equal(query, '(max-width: 1024px)');
       return useLegacyListener
         ? { addListener: listener => { listeners.change = listener; } }
         : { addEventListener: (_, listener) => { listeners.change = listener; } };
