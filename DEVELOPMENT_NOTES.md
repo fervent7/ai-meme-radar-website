@@ -116,3 +116,7 @@ at /healthz, then open research.html and check the Whale Pad pool on Android.
 Compare the two original holder times, the unchanged holder trend, and
 the unverified buyer label with saved history. A public health response
 confirms the build, while the signed-in check confirms the evidence flow.
+
+The public token search distinguishes provider rate limits from timeouts and
+other failures without exposing raw exception details. Offline tests exercise
+these states and confirm that search can be retried after a timeout.

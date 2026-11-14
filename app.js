@@ -76,12 +76,13 @@ const controller = new AbortController();
 researchController = controller;
 const {signal} = controller;
 let timedOut = false;
+let rateLimited = false;
 const deadline = setTimeout(() => {
  timedOut = true;
  controller.abort();
 }, 12000);
 set('searchHelp','Searching indexed trading pairs across networks…');results.replaceChildren();liveMessage('Searching…');$('searchBtn').disabled=true;
-try{const response=await fetch('https://api.dexscreener.com/latest/dex/search?q='+encodeURIComponent(address),{signal,cache:'no-store'});if(!response.ok)throw Error('Market provider returned HTTP '+response.status);const data=await response.json();
+try{const response=await fetch('https://api.dexscreener.com/latest/dex/search?q='+encodeURIComponent(address),{signal,cache:'no-store'});if(!response.ok){rateLimited=response.status===429;throw Error('Market provider request failed');}const data=await response.json();
 if(researchController!==controller)return;
 if(signal.aborted)throw new Error('Market research timed out');
 const matches=(Array.isArray(data.pairs)?data.pairs:[]).filter(x=>(!selectedChain||x.chainId===selectedChain)&&window.RadarIdentity.matchesToken(x,address));
@@ -114,14 +115,18 @@ function liquidityEvidence(pair){
 }
 const pairCard=(pair,primary)=>{const tx=pair.txns?.m5||{};const name=(pair.baseToken?.symbol||'?')+' / '+(pair.quoteToken?.symbol||'?');const created=num(pair.pairCreatedAt);const age=created!==null?new Date(created).toLocaleString():'Unavailable';const tokenMetrics=window.RadarIdentity.tokenMetrics(pair,address);const marketCap=num(tokenMetrics.marketCap);const fdv=num(tokenMetrics.fdv);const tokenSide=window.RadarIdentity.sameAddress(pair.chainId,pair.baseToken?.address,address)?pair.baseToken:pair.quoteToken;const el=document.createElement('article');el.className='research-pool'+(primary?' research-primary':'');if(primary){el.dataset.chain=String(pair.chainId||'');el.dataset.pool=String(pair.pairAddress||'');el.dataset.token=address};el.innerHTML='<div class="research-pool-head"><strong>'+esc(tokenSide?.name||tokenSide?.symbol||'Token')+' · '+esc(name)+'</strong>'+(primary?'<span class="research-pill">Top liquidity pool</span>':'')+'</div><div class="research-mini">DEX: '+esc(pair.dexId||'Unknown')+' · Network: '+esc(pair.chainId||'Unknown')+'</div><div class="research-mini">Token: <code>'+esc(tokenSide?.address||'Unavailable')+'</code></div><div class="research-mini">Pool: <code>'+esc(pair.pairAddress||'Unavailable')+'</code></div><div class="research-stats">'+stat('Liquidity (reported)',fmt(pair.liquidity?.usd))+stat('Market cap (reported)',marketCap===null?'Unavailable':fmt(marketCap))+stat('Price USD',tokenMetrics.isBase?pairPrice(tokenMetrics.priceUsd):'Unavailable for quote token')+stat('5m price change',!tokenMetrics.isBase?'Unavailable for quote token':num(tokenMetrics.priceChange5mPct)===null?'Unavailable':(num(tokenMetrics.priceChange5mPct)>0?'+':'')+num(tokenMetrics.priceChange5mPct)+'%')+stat('5m volume',fmt(pair.volume?.m5))+stat('5m buy / sell transactions',tokenMetrics.isBase?(tokenMetrics.buys5m??'—')+' / '+(tokenMetrics.sells5m??'—'):'Unavailable for quote token')+stat('24h volume',fmt(pair.volume?.h24))+stat('Unique buyers / sellers','Not verified')+stat('Unique traders','Not verified')+stat('Token holders','Not verified')+stat('Holder growth','Not verified')+stat('FDV (reported)',fdv===null?'Unavailable':fmt(fdv))+stat('Pool created',age)+'</div><p class="research-warning">Liquidity and market cap are provider-reported snapshots, not independently verified reserves. Buy/sell figures count transactions, not unique wallets. Holders, wallet activity, sellability and contract safety require separate on-chain checks. No safety guarantee.</p>';el.append(liquidityEvidence(pair));if(primary)window.RadarCachedHistory?.mount(el);return el};
 renderLivePair=(pair)=>pairCard(pair,true);for(const [chain,pairs] of groups){pairs.sort((a,b)=>(num(b.liquidity?.usd)??-1)-(num(a.liquidity?.usd)??-1));const section=document.createElement('section');section.className='research-chain';const heading=document.createElement('h4');heading.textContent=chain.toUpperCase()+' · '+pairs.length+' indexed pool(s)';section.append(heading);section.append(pairCard(pairs[0],true));const preview=radarPreviewLink(chain,address);if(preview){const handoff=node('p');handoff.append(preview);section.append(handoff)}if(pairs.length>1){const details=document.createElement('details');details.className='research-other';const summary=document.createElement('summary');summary.textContent='View other '+(pairs.length-1)+' pools';details.append(summary);const note=document.createElement('p');note.className='research-mini';note.textContent='These are other indexed markets for this exact address. They may be inactive, illiquid or duplicated by data providers.';details.append(note);for(const pair of pairs.slice(1)){const row=document.createElement('button');row.type='button';row.className='research-other-row';row.textContent=(pair.baseToken?.symbol||'?')+' / '+(pair.quoteToken?.symbol||'?')+' · '+(pair.dexId||'DEX')+' · '+fmt(pair.liquidity?.usd);row.addEventListener('click',()=>{const old=section.querySelector('.research-primary');old.replaceWith(pairCard(pair,true));section.scrollIntoView({behavior:'smooth',block:'start'})});details.append(row)}section.append(details)}results.append(section)}startLive();
-} catch (error) {
+} catch {
  if (researchController !== controller) return;
  stopLive();
  liveMessage('⚠ Live updates unavailable');
  set('searchHelp', timedOut ? 'Market research timed out. Tap Research token to retry.' :
   'Market research unavailable. Try again later. No safety conclusion can be drawn.');
- results.innerHTML = '<div class="research-note">Could not retrieve indexed pools: ' +
-  esc(timedOut ? 'Request timed out' : error.message) + '</div>';
+ const message = timedOut ? 'The market provider did not respond in time.' :
+  rateLimited ? 'The market provider is rate limiting requests. Try again later.' :
+  'Indexed trading pools could not be retrieved. Try again later.';
+ const note = node('div', message);
+ note.className = 'research-note';
+ results.replaceChildren(note);
 } finally {
  clearTimeout(deadline);
  if (researchController === controller) $('searchBtn').disabled = false;

@@ -45,7 +45,7 @@ test('a cancelled refresh cannot replace cards or overwrite the next refresh sta
   assert.equal(status.textContent, currentStatus);
 });
 
-test('foreground timeout re-enables research and a retry can complete', async () => {
+test('foreground timeout, retry, rate limit and private errors produce safe research states', async () => {
   const source = readFileSync(join(__dirname, 'app.js'), 'utf8');
   const start = source.indexOf('async function research(');
   const end = source.indexOf("} finally {\n clearTimeout(deadline);", start);
@@ -53,6 +53,7 @@ test('foreground timeout re-enables research and a retry can complete', async ()
   const functionEnd = source.indexOf('}}', end) + 2;
   const searchBtn = {disabled: false};
   const messages = {};
+  let note;
   let deadline;
   let requests = 0;
   let notifyBodyStarted;
@@ -61,8 +62,9 @@ test('foreground timeout re-enables research and a retry can complete', async ()
     AbortController, researchController: undefined,
     $: id => id === 'searchBtn' ? searchBtn : {value: 'valid-address'},
     valid: () => true, set: (key, value) => { messages[key] = value; },
-    stopLive() {}, liveMessage() {}, esc: value => value,
-    results: {replaceChildren() {}},
+    stopLive() {}, liveMessage() {},
+    node: (_tag, textContent) => ({textContent}),
+    results: {replaceChildren(child) { note = child; }},
     setTimeout(callback) { deadline = callback; },
     clearTimeout() {},
     fetch: async (_url, {signal}) => ({
@@ -83,7 +85,14 @@ test('foreground timeout re-enables research and a retry can complete', async ()
   await first;
   assert.equal(searchBtn.disabled, false);
   assert.match(messages.searchHelp, /timed out.*retry/);
+  assert.match(note.textContent, /did not respond in time/);
   await research();
   assert.equal(searchBtn.disabled, false);
   assert.match(messages.searchHelp, /No exact-address indexed trading pool found/);
+  context.fetch = async () => ({ok: false, status: 429});
+  await research();
+  assert.match(note.textContent, /rate limiting requests/);
+  context.fetch = async () => { throw new Error('private upstream diagnostic'); };
+  await research();
+  assert.equal(note.textContent, 'Indexed trading pools could not be retrieved. Try again later.');
 });
