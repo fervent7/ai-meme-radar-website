@@ -271,3 +271,13 @@ test('oversized upstream history is discarded without returning partial evidence
   assert.equal(cancelled, true);
   assert.ok(chunks <= 3, 'the gateway stops consuming the oversized response');
 });
+
+test('invalid upstream text encoding makes saved history unavailable', async t => {
+  const fixture = historyFixture();
+  const payload = Buffer.from(JSON.stringify(fixture).replace('backend-only', 'invalid-encoding'));
+  payload[payload.indexOf('invalid-encoding')] = 0xff;
+  const origin = await start(t, async () => new Response(payload));
+  const response = await fetch(origin + path, { headers: { authorization } });
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), { status: 'UNAVAILABLE' });
+});

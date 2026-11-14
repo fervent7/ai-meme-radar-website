@@ -134,7 +134,7 @@ async function readBounded(response) {
   } finally {
     reader.releaseLock();
   }
-  return JSON.parse(Buffer.concat(chunks, size).toString('utf8'));
+  return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks, size)));
 }
 
 async function loadHistory(target, key, request = fetch) {
