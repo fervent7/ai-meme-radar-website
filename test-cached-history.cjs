@@ -189,8 +189,18 @@ test('the history panel renders authenticated gateway evidence and supports retr
   await button.activate();
   assert.match(status.textContent, /Showing the last saved observations/);
   assert.equal(panel.childElementCount, 3);
-  context.fetch = async () => new Response('', { status: 401 });
+  let finish;
+  let pendingCalls = 0;
+  context.fetch = () => {
+    pendingCalls++;
+    return new Promise(resolve => { finish = resolve; });
+  };
+  const refresh = button.activate();
   await button.activate();
+  assert.equal(pendingCalls, 1);
+  assert.match(status.textContent, /Loading.*last saved observations/);
+  finish(new Response('', { status: 401 }));
+  await refresh;
   assert.match(status.textContent, /sign in/);
   assert.equal(panel.childElementCount, 0);
 });

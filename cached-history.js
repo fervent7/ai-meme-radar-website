@@ -68,8 +68,10 @@
     card.append(wrapper);
 
     button.addEventListener('click', async () => {
+      if (button.disabled) return;
       button.disabled = true;
       status.textContent = 'Loading saved observations…';
+      if (panel.childElementCount) status.textContent += ' Showing the last saved observations loaded.';
       const controller = new AbortController();
       const signal = controller.signal;
       const timer = setTimeout(() => controller.abort(), 8500);
