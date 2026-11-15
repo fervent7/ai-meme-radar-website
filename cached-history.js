@@ -52,6 +52,31 @@
     panel.replaceChildren(metrics, create('h5', marketHeading), rows);
   }
 
+  function renderOnchain(panel, history) {
+    const evidenceSections = [
+      ['Holder distribution', history.holders, sample => sample.holder_count +
+        ' positive-balance owner addresses · Top 10 concentration ' + sample.concentration_pct + '%'],
+      ['Classified swaps', history.swaps, sample => sample.direction +
+        ' · Organic activity unverified · Transaction ' + sample.signature],
+      ['Pool reserve history', history.reserves, sample => sample.vaults.map(vault => {
+        const digits = vault.reserve_raw.padStart(vault.decimals + 1, '0');
+        const amount = vault.decimals ? digits.slice(0, -vault.decimals) + '.' + digits.slice(-vault.decimals) : digits;
+        return amount + ' · Mint ' + vault.mint;
+      }).join(' | ')]
+    ];
+    for (const [label, rows, describe] of evidenceSections) {
+      const list = create('ul');
+      list.className = 'saved-market-rows';
+      for (const sample of rows) {
+        list.append(create('li', sample.verification === 'VERIFIED'
+          ? describe(sample) + ' · Slot ' + sample.slot + ' · Block ' + sample.block_time_utc +
+            ' · Recorded ' + sample.observed_at_utc + ' · ' + sample.source
+          : 'Unavailable · ' + sample.observed_at_utc));
+      }
+      panel.append(create('h5', label), rows.length ? list : create('p', 'Unavailable'));
+    }
+  }
+
   function mount(card) {
     const { chain, pool, token } = card.dataset;
     if (!window.RADAR_CACHED_HISTORY_ENABLED || !supportedChains.has(chain) || !pool || !token) return;
@@ -66,6 +91,38 @@
     const query = new URLSearchParams({ chain, address: token, pool });
     wrapper.append(button, status, panel);
     card.append(wrapper);
+    if (chain === 'solana') {
+      const evidence = create('section');
+      const onchainButton = create('button', 'Load finalized on-chain evidence');
+      onchainButton.type = 'button';
+      onchainButton.className = 'outline';
+      const onchainStatus = create('p');
+      onchainStatus.setAttribute('role', 'status');
+      const onchainPanel = create('div');
+      evidence.append(onchainButton, onchainStatus, onchainPanel);
+      wrapper.append(evidence);
+      onchainButton.addEventListener('click', async () => {
+        if (onchainButton.disabled) return;
+        onchainButton.disabled = true;
+        onchainPanel.replaceChildren();
+        onchainStatus.textContent = 'Loading saved on-chain evidence…';
+        try {
+          const response = await fetch('/api/radar/onchain-history?' + query, {
+            credentials: 'same-origin', cache: 'no-store', signal: AbortSignal.timeout(8500)
+          });
+          if (!response.ok) throw Error('On-chain history unavailable');
+          const data = await response.json();
+          if (data.status === 'READY') renderOnchain(onchainPanel, data);
+          onchainStatus.textContent = data.status === 'READY' ? 'Saved on-chain evidence loaded.'
+            : 'No saved on-chain evidence for this token and pool.';
+        } catch {
+          onchainPanel.replaceChildren();
+          onchainStatus.textContent = 'Saved on-chain evidence is unavailable. Try again later.';
+        } finally {
+          onchainButton.disabled = false;
+        }
+      });
+    }
 
     button.addEventListener('click', async () => {
       if (button.disabled) return;

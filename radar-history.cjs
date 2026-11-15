@@ -1,6 +1,7 @@
 'use strict';
 
 const HISTORY_URL = 'https://ai-meme-radar-verify-test.onrender.com/api/research/risk-history';
+const ONCHAIN_URL = new URL('/api/research/onchain-history', HISTORY_URL);
 const CHAINS = new Set(['solana', 'bsc', 'base', 'ethereum']);
 const MAX_BYTES = 1024 * 1024;
 
@@ -137,9 +138,67 @@ async function readBounded(response) {
   return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks, size)));
 }
 
-async function loadHistory(target, key, request = fetch) {
-  const upstream = new URL(HISTORY_URL);
-  upstream.search = new URLSearchParams({ chain: target.chain, address: target.address });
+function projectOnchain(data, target) {
+  if (data?.chain !== 'solana' || data.token_address !== target.address ||
+      data.pool_address !== target.pool) throw Error('Invalid on-chain history identity');
+
+  function projectRows(rows, kind, pool, project) {
+    if (!Array.isArray(rows) || rows.length > 24) throw Error('Invalid on-chain history');
+    return rows.map(row => {
+      if (row?.kind !== kind || row.chain !== 'solana' || row.token_address !== target.address ||
+          row.pool_address !== pool || !timestamp(row.observed_at_utc) ||
+          !['VERIFIED', 'UNAVAILABLE', 'ERROR'].includes(row.verification)) {
+        throw Error('Invalid on-chain observation');
+      }
+      const observed = { observed_at_utc: row.observed_at_utc, verification: row.verification };
+      if (row.verification !== 'VERIFIED') return observed;
+      const source = new URL(row.source);
+      if (source.protocol !== 'https:' || source.username || source.password ||
+          !Number.isSafeInteger(row.payload?.slot) || row.payload.slot < 1 ||
+          !timestamp(row.payload.block_time_utc)) throw Error('Invalid on-chain provenance');
+      return { ...observed, source: source.origin, slot: row.payload.slot,
+        block_time_utc: row.payload.block_time_utc, ...project(row.payload, row.reference) };
+    });
+  }
+
+  const raw = value => {
+    if (typeof value !== 'string' || !/^\d{1,20}$/.test(value)) throw Error('Invalid raw amount');
+    return value;
+  };
+  const holders = projectRows(data.holder_observations, 'holder_distribution', null, (value, ref) => {
+    if (!Number.isSafeInteger(value.holder_count) || value.holder_count < 0 ||
+        value.method_version !== 'top-10-positive-owner-balances-v1' || ref !== String(value.slot)) {
+      throw Error('Invalid holder evidence');
+    }
+    const supply = BigInt(raw(value.total_supply_raw));
+    const top = BigInt(raw(value.top_10_balance_raw));
+    if (supply <= 0n || top > supply) throw Error('Invalid holder concentration');
+    return { holder_count: value.holder_count, concentration_pct: Number((top * 10000n + supply / 2n) / supply) / 100 };
+  });
+  const swaps = projectRows(data.swaps, 'pool_swaps', target.pool, (value, ref) => {
+    if (!['BUY', 'SELL'].includes(value.direction) || typeof ref !== 'string' ||
+        !/^[1-9A-HJ-NP-Za-km-z]{64,88}$/.test(ref)) throw Error('Invalid swap evidence');
+    return { direction: value.direction, signature: ref, organic: 'UNVERIFIED' };
+  });
+  const reserves = projectRows(data.reserves, 'pool_reserves', target.pool, (value, ref) => {
+    if (value.protocol !== 'raydium-cpmm' || ref !== String(value.slot) ||
+        !Array.isArray(value.vaults) || value.vaults.length !== 2 ||
+        new Set(value.vaults.map(vault => vault.mint)).size !== 2 ||
+        !value.vaults.some(vault => vault.mint === target.address)) throw Error('Invalid pool reserves');
+    return { vaults: value.vaults.map(vault => {
+      if (!validAddress('solana', vault.mint) || !Number.isInteger(vault.decimals) ||
+          vault.decimals < 0 || vault.decimals > 255) throw Error('Invalid vault evidence');
+      return { mint: vault.mint, reserve_raw: raw(vault.reserve_raw), decimals: vault.decimals };
+    }) };
+  });
+  return { status: holders.length || swaps.length || reserves.length ? 'READY' : 'EMPTY',
+    holders, swaps, reserves };
+}
+
+async function loadHistory(target, key, request = fetch, onchain = false) {
+  const upstream = new URL(onchain ? ONCHAIN_URL : HISTORY_URL);
+  upstream.search = new URLSearchParams(onchain ? { address: target.address, pool: target.pool }
+    : { chain: target.chain, address: target.address });
   const signal = AbortSignal.timeout(6500);
   try {
     const response = await request(upstream, {
@@ -154,7 +213,8 @@ async function loadHistory(target, key, request = fetch) {
       }
       return { status: response.status === 429 ? 'RETRY_LATER' : 'UNAVAILABLE', observations: [] };
     }
-    return projectHistory(await readBounded(response), target);
+    const data = await readBounded(response);
+    return onchain ? projectOnchain(data, target) : projectHistory(data, target);
   } catch (error) {
     if (signal.aborted || error?.name === 'TimeoutError') {
       return { status: 'BACKEND_TIMEOUT', observations: [] };

@@ -60,11 +60,12 @@ function testServer({ password, radarKey, request, revision }) {
     }
 
     try {
-      if (url.pathname === '/api/radar/history') {
+      const onchain = url.pathname === '/api/radar/onchain-history';
+      if (onchain || url.pathname === '/api/radar/history') {
         if (req.method !== 'GET') return json(405, { status: 'METHOD_NOT_ALLOWED' });
         const target = readTarget(url.searchParams);
-        if (!target) return json(400, { status: 'INVALID_TARGET' });
-        const history = await loadHistory(target, radarKey, request);
+        if (!target || (onchain && target.chain !== 'solana')) return json(400, { status: 'INVALID_TARGET' });
+        const history = await loadHistory(target, radarKey, request, onchain);
         const code = {
           READY: 200, EMPTY: 200, RETRY_LATER: 429, BACKEND_TIMEOUT: 504
         }[history.status] ?? 503;

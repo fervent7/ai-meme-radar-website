@@ -336,3 +336,44 @@ test('gateway preserves the authenticated Radar SQLite response contract', async
   assert.equal(other.status, 200);
   assert.equal((await other.json()).status, 'EMPTY');
 });
+
+test('on-chain gateway serves finalized evidence for the selected mint and pool only', async t => {
+  const sample = (kind, pool_address, reference, payload) => ({
+    kind, chain, token_address: address, pool_address, reference,
+    observed_at_utc: latest, verification: 'VERIFIED', source: 'https://rpc.example.invalid/path',
+    payload: { slot: 10, block_time_utc: first, ...payload }
+  });
+  const reply = { chain, token_address: address, pool_address: pool,
+    holder_observations: [sample('holder_distribution', null, '10', {
+      method_version: 'top-10-positive-owner-balances-v1', holder_count: 73,
+      total_supply_raw: '10000', top_10_balance_raw: '9864'
+    })],
+    swaps: [sample('pool_swaps', pool, 'A'.repeat(88), { direction: 'SELL' })],
+    reserves: [sample('pool_reserves', pool, '10', { protocol: 'raydium-cpmm', vaults: [
+      { mint: address, decimals: 6, reserve_raw: '152' },
+      { mint: 'So11111111111111111111111111111111111111112', decimals: 9, reserve_raw: '31' }
+    ] })]
+  };
+  let calls = 0;
+  const origin = await start(t, async (url, options) => {
+    calls++;
+    assert.equal(url.pathname, '/api/research/onchain-history');
+    assert.deepEqual([...url.searchParams], [['address', address], ['pool', pool]]);
+    assert.equal(options.redirect, 'manual');
+    return Response.json(reply);
+  });
+  const endpoint = origin + path.replace('/history?', '/onchain-history?');
+  assert.equal((await fetch(endpoint)).status, 401);
+  assert.equal(calls, 0);
+  const response = await fetch(endpoint, { headers: { authorization } });
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  const body = await response.json();
+  assert.equal(body.holders[0].concentration_pct, 98.64);
+  assert.equal(body.holders[0].source, 'https://rpc.example.invalid');
+  assert.equal(body.swaps[0].organic, 'UNVERIFIED');
+  assert.equal(body.reserves[0].vaults[0].reserve_raw, '152');
+
+  reply.reserves[0].pool_address = '1'.repeat(32);
+  assert.equal((await fetch(endpoint, { headers: { authorization } })).status, 503);
+});
