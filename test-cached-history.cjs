@@ -314,3 +314,25 @@ test('history gateway refuses upstream redirects and withholds destination detai
   assert.equal(response.headers.get('location'), null);
   assert.deepEqual(await response.json(), { status: 'UNAVAILABLE', observations: [] });
 });
+
+test('gateway preserves the authenticated Radar SQLite response contract', async t => {
+  // Synthetic observations returned by Radar's local ASGI app after SQLite restore.
+  const { target, history } = require('./test-fixtures/radar-restored-history.json');
+  const origin = await start(t, async () => Response.json(history));
+  const params = new URLSearchParams({
+    chain: target.chain, address: target.token_address, pool: target.pool_address
+  });
+  const get = () => fetch(origin + '/api/radar/history?' + params, { headers: { authorization } });
+  const response = await get();
+  assert.equal(response.status, 200);
+  const saved = await response.json();
+  assert.equal(saved.status, 'READY');
+  assert.deepEqual(saved.observations.map(row => row.observed_at_utc),
+    history.pools[0].observations.map(row => row.observed_at_utc).reverse());
+  assert.equal(saved.holder_trend.verified_observations, 2);
+  assert.equal(saved.holder_trend.growth_pct, 20);
+  params.set('pool', '11111111111111111111111111111111');
+  const other = await get();
+  assert.equal(other.status, 200);
+  assert.equal((await other.json()).status, 'EMPTY');
+});
