@@ -157,7 +157,7 @@ test('the history panel renders authenticated gateway evidence and supports retr
   await button.activate();
   assert.match(status.textContent, /loaded/);
   const labels = panel.children[0].children.map(item => item.textContent);
-  assert.match(labels[0], /75.*2026-11-12T18:37:48/);
+  assert.match(labels[0], /^Verified holder owner addresses: 75.*2026-11-12T18:37:48/);
   assert.equal(labels[1], 'Verified holder trend: UNCHANGED · 75 → 75 (0%)');
   assert.equal(labels[2], 'Buyer growth: Unverified');
   assert.equal(labels[3], 'Holder observations: ' + first + ' → ' + latest);

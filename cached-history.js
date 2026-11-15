@@ -17,9 +17,9 @@
     const holder = history.latest_holder_observation;
     const trend = history.holder_trend;
     const metrics = create('ul');
-    if (holder) {
-      metrics.append(create('li', 'Verified holder wallets: ' + holder.count + ' · ' + holder.observed_at_utc + ' · Helius getTokenAccounts'));
-    }
+    metrics.append(create('li', holder
+      ? 'Verified holder owner addresses: ' + holder.count + ' · ' + holder.observed_at_utc + ' · Helius getTokenAccounts'
+      : 'Verified holder count: Unavailable'));
     const growth = trend && trend.growth_pct !== null ? ' (' + Number(trend.growth_pct.toFixed(2)) + '%)' : '';
     const label = trend ? 'Verified holder trend: ' + trend.status + ' · ' + trend.first.count + ' → ' + trend.latest.count + growth
       : 'Verified holder trend: Insufficient saved evidence';
