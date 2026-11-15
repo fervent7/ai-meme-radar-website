@@ -290,3 +290,17 @@ test('invalid upstream text encoding makes saved history unavailable', async t =
   assert.equal(response.status, 503);
   assert.deepEqual(await response.json(), { status: 'UNAVAILABLE' });
 });
+
+test('history gateway refuses upstream redirects and withholds destination details', async t => {
+  let calls = 0;
+  const origin = await start(t, async (_url, options) => {
+    calls++;
+    assert.equal(options.redirect, 'manual');
+    return Response.redirect('https://example.invalid/private-location', 307);
+  });
+  const response = await fetch(origin + path, { headers: { authorization }, redirect: 'manual' });
+  assert.equal(calls, 1);
+  assert.equal(response.status, 503);
+  assert.equal(response.headers.get('location'), null);
+  assert.deepEqual(await response.json(), { status: 'UNAVAILABLE', observations: [] });
+});
