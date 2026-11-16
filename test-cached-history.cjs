@@ -374,6 +374,16 @@ test('on-chain gateway serves finalized evidence for the selected mint and pool 
   assert.equal(body.swaps[0].organic, 'UNVERIFIED');
   assert.equal(body.reserves[0].vaults[0].reserve_raw, '152');
 
+  const get = () => fetch(endpoint, { headers: { authorization } });
+  const vault = reply.reserves[0].payload.vaults[0];
+  vault.reserve_raw = '18446744073709551615';
+  const max = await get();
+  assert.equal(max.status, 200);
+  assert.equal((await max.json()).reserves[0].vaults[0].reserve_raw, vault.reserve_raw);
+  vault.reserve_raw = '18446744073709551616';
+  assert.equal((await get()).status, 503);
+  vault.reserve_raw = '152';
+
   reply.reserves[0].pool_address = '1'.repeat(32);
   assert.equal((await fetch(endpoint, { headers: { authorization } })).status, 503);
 });

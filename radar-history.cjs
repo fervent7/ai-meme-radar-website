@@ -162,7 +162,8 @@ function projectOnchain(data, target) {
   }
 
   const raw = value => {
-    if (typeof value !== 'string' || !/^\d{1,20}$/.test(value)) throw Error('Invalid raw amount');
+    if (typeof value !== 'string' || !/^\d{1,20}$/.test(value) ||
+        BigInt(value) > 0xffffffffffffffffn) throw Error('Invalid raw amount');
     return value;
   };
   const holders = projectRows(data.holder_observations, 'holder_distribution', null, (value, ref) => {
