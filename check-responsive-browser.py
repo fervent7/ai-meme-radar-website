@@ -14,8 +14,29 @@ const observations = ['18:10:46.104810', '18:37:48.240216'].map((time, index) =>
  holder_count: 75, holder_status: 'VERIFIED', holder_source: 'Helius getTokenAccounts',
  source: 'DexScreener token-pairs API', liquidity_usd: 3164.21, volume_5m_usd: 0
 }));
+const stamp = '2026-11-14T22:31:28.964826+00:00';
+const sample = (kind, pool_address, reference, payload) => ({
+ kind, chain, token_address: address, pool_address, reference, observed_at_utc: stamp,
+ verification: 'VERIFIED', source: 'https://api.mainnet-beta.solana.com',
+ payload: {slot: 469496016, block_time_utc: stamp, ...payload}
+});
+const onchain = {
+ chain, token_address: address, pool_address: pool,
+ holder_observations: [sample('holder_distribution', null, '469496016', {
+  method_version: 'top-10-positive-owner-balances-v1', holder_count: 73,
+  total_supply_raw: '995586144003707', top_10_balance_raw: '982029418470268'
+ })],
+ swaps: [sample('pool_swaps', pool, 'A'.repeat(88), {direction: 'SELL'})],
+ reserves: [sample('pool_reserves', pool, '469496016', {
+  protocol: 'raydium-cpmm', vaults: [
+   {mint: address, reserve_raw: '953483215311515', decimals: 6},
+   {mint: 'So11111111111111111111111111111111111111112', reserve_raw: '18520422483', decimals: 9}
+  ]
+ })]
+};
 const server = testServer({password:'browser-fixture', radarKey:'backend-fixture',
- request: async () => Response.json({chain, contract_address:address, pools:[{pool_address:pool, observations}]})});
+ request: async url => Response.json(url.pathname === '/api/research/onchain-history' ? onchain :
+  {chain, contract_address: address, pools: [{pool_address: pool, observations}]})});
 server.listen(0, '127.0.0.1', () => console.log(server.address().port));
 """, mint, pool], stdout=subprocess.PIPE, text=True)
 routes = ['index.html','research.html','intelligence.html','liquidity.html','roadmap.html','community.html']
@@ -114,6 +135,14 @@ try:
             assert page.get_by_text('2026-11-12T18:10:46.104810',exact=False).count()
             assert page.locator('meter').count()==2
             assert page.locator('meter').first.evaluate("(e) => e.getBoundingClientRect().width > 100 && Number(e.value) === 3164.21")
+            page.get_by_role('button', name='Load finalized on-chain evidence').click()
+            page.get_by_text('Saved on-chain evidence loaded.', exact=True).wait_for()
+            for heading in ('Holder distribution', 'Classified swaps', 'Pool reserve history'):
+                assert page.get_by_role('heading', name=heading, exact=True).is_visible()
+            assert page.get_by_text('Top 10 concentration 98.64%', exact=False).is_visible()
+            assert page.get_by_text('SELL · Organic activity unverified', exact=False).is_visible()
+            assert page.get_by_text('18.520422483', exact=False).is_visible()
+            assert page.get_by_text('Slot 469496016', exact=False).count() == 3
             assert not errs,errs
             no_overflow(page)
             if w in (390,1366,1440,1920):
