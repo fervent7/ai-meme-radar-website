@@ -110,8 +110,15 @@
           const response = await fetch('/api/radar/onchain-history?' + query, {
             credentials: 'same-origin', cache: 'no-store', signal: AbortSignal.timeout(8500)
           });
+          if (response.status === 401 || response.status === 403) {
+            onchainStatus.textContent = 'Reload the page to sign in to the test environment.';
+            return;
+          }
           if (!response.ok) throw Error('On-chain history unavailable');
           const data = await response.json();
+          if (data.status !== 'READY' && data.status !== 'EMPTY') {
+            throw Error('On-chain history unavailable');
+          }
           if (data.status === 'READY') renderOnchain(onchainPanel, data);
           onchainStatus.textContent = data.status === 'READY' ? 'Saved on-chain evidence loaded.'
             : 'No saved on-chain evidence for this token and pool.';

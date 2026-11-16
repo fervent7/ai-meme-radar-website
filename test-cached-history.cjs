@@ -145,7 +145,7 @@ test('the history panel renders authenticated gateway evidence and supports retr
   const window = { RADAR_CACHED_HISTORY_ENABLED: true };
   let calls = 0;
   let now = 0;
-  const context = { Date: class extends Date { static now() { return now; } }, document: { createElement: element }, window, AbortController, setTimeout, clearTimeout, URLSearchParams,
+  const context = { Date: class extends Date { static now() { return now; } }, document: { createElement: element }, window, AbortController, AbortSignal, setTimeout, clearTimeout, URLSearchParams,
     fetch: async (url, options) => !calls++ ? new Response('', { status: 429 })
       : fetch(origin + url, { ...options, headers: { authorization } }) };
   vm.runInNewContext(readFileSync(require.resolve('./cached-history.js'), 'utf8'), context);
@@ -211,6 +211,17 @@ test('the history panel renders authenticated gateway evidence and supports retr
   await refresh;
   assert.match(status.textContent, /sign in/);
   assert.equal(panel.childElementCount, 0);
+
+  const [onchainButton, onchainStatus] = card.children[0].children[3].children;
+  context.fetch = async () => new Response('', { status: 401 });
+  await onchainButton.activate();
+  assert.match(onchainStatus.textContent, /sign in/);
+  context.fetch = async () => Response.json({ status: 'UNAVAILABLE' });
+  await onchainButton.activate();
+  assert.match(onchainStatus.textContent, /is unavailable/);
+  context.fetch = async () => Response.json({ status: 'EMPTY' });
+  await onchainButton.activate();
+  assert.match(onchainStatus.textContent, /No saved on-chain evidence/);
 });
 
 test('duplicate market timestamps coalesce only when projected evidence agrees', async t => {
