@@ -87,7 +87,7 @@ test('the test server authenticates and retrieves only exact saved pool evidence
 test('throttling and conflicting saved evidence produce controlled error states', async t => {
   let calls = 0;
   const origin = await start(t, async () => {
-    if (!calls++) return new Response('upstream details', { status: 429 });
+    if (!calls++) return new Response('upstream details', { status: 429, headers: { 'Retry-After': '45' } });
     const data = historyFixture();
     data.pools[0].observations[1].holder_count = 76;
     return Response.json(data);
@@ -95,7 +95,8 @@ test('throttling and conflicting saved evidence produce controlled error states'
   const get = () => fetch(origin + path, { headers: { authorization } });
   const throttled = await get();
   assert.equal(throttled.status, 429);
-  assert.equal((await throttled.json()).status, 'RETRY_LATER');
+  assert.equal(throttled.headers.get('Retry-After'), '45');
+  assert.deepEqual(await throttled.json(), { status: 'RETRY_LATER', observations: [], retry_after_seconds: 45 });
   const conflict = await get();
   assert.equal(conflict.status, 503);
   assert.deepEqual(await conflict.json(), { status: 'UNAVAILABLE' });
@@ -143,7 +144,8 @@ test('the history panel renders authenticated gateway evidence and supports retr
   }
   const window = { RADAR_CACHED_HISTORY_ENABLED: true };
   let calls = 0;
-  const context = { document: { createElement: element }, window, AbortController, setTimeout, clearTimeout, URLSearchParams,
+  let now = 0;
+  const context = { Date: class extends Date { static now() { return now; } }, document: { createElement: element }, window, AbortController, setTimeout, clearTimeout, URLSearchParams,
     fetch: async (url, options) => !calls++ ? new Response('', { status: 429 })
       : fetch(origin + url, { ...options, headers: { authorization } }) };
   vm.runInNewContext(readFileSync(require.resolve('./cached-history.js'), 'utf8'), context);
@@ -152,9 +154,15 @@ test('the history panel renders authenticated gateway evidence and supports retr
   window.RadarCachedHistory.mount(card);
   const [button, status, panel] = card.children[0].children;
   await button.activate();
-  assert.match(status.textContent, /busy/);
+  assert.match(status.textContent, /Try again in 30 seconds/);
   assert.equal(button.disabled, false);
+  now = 29000;
   await button.activate();
+  assert.equal(calls, 1);
+  assert.match(status.textContent, /Try again in 1 second/);
+  now = 30000;
+  await button.activate();
+  assert.equal(calls, 2);
   assert.match(status.textContent, /loaded/);
   const labels = panel.children[0].children.map(item => item.textContent);
   assert.match(labels[0], /^Verified holder owner addresses: 75.*2026-11-12T18:37:48/);

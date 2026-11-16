@@ -124,8 +124,19 @@
       });
     }
 
+    let retryAt = 0;
+    function showCooldown() {
+      const seconds = Math.ceil((retryAt - Date.now()) / 1000);
+      status.textContent = 'History service is busy. Try again in ' + seconds + (seconds === 1 ? ' second.' : ' seconds.');
+      if (panel.childElementCount) status.textContent += ' Showing the last saved observations loaded.';
+    }
+
     button.addEventListener('click', async () => {
       if (button.disabled) return;
+      if (Date.now() < retryAt) {
+        showCooldown();
+        return;
+      }
       button.disabled = true;
       status.textContent = 'Loading saved observations…';
       if (panel.childElementCount) status.textContent += ' Showing the last saved observations loaded.';
@@ -142,8 +153,9 @@
           return;
         }
         if (response.status === 429) {
-          status.textContent = 'History service is busy. Try again later.';
-          if (panel.childElementCount) status.textContent += ' Showing the last saved observations loaded.';
+          const delay = Number(response.headers.get('Retry-After'));
+          retryAt = Date.now() + (Number.isSafeInteger(delay) && delay > 0 ? delay : 30) * 1000;
+          showCooldown();
           return;
         }
         if (response.status === 504) {

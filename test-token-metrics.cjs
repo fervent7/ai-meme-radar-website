@@ -79,3 +79,20 @@ test('research card does not display malformed market amounts as dollars',()=>{
   }
   assert.equal(render(target,{...pair,volume:{m5:0.001}})['5m volume'],'Less than $0.01');
 });
+
+test('research handoff displays only the link label and uses the exact token URL', () => {
+  const source = readFileSync(require.resolve('./app.js'), 'utf8');
+  const builder = source.match(/const node=.*?return e};/)[0];
+  const linkBuilder = source.slice(source.indexOf('function radarPreviewLink'), source.indexOf('async function research'));
+  const mount = source.match(/const preview=radarPreviewLink\(chain,address\);if\(preview\)\{[^}]+\}/)[0];
+  const section = { children: [], append(child) { this.children.push(child); } };
+  const document = { createElement: () => ({
+    textContent: '', append(child) { this.textContent += child.textContent; }
+  }) };
+  vm.runInNewContext(builder + linkBuilder + mount, { document, URL, section, chain: 'bsc', address: target });
+  assert.equal(section.children[0].textContent, 'Open Radar test research (sign-in required)');
+  const link = vm.runInNewContext(builder + linkBuilder + "radarPreviewLink('bsc', address)", { document, URL, address: target });
+  assert.equal(new URL(link.href).searchParams.get('address'), target);
+  assert.equal(new URL(link.href).searchParams.get('chain'), 'bsc');
+  assert.equal(vm.runInNewContext(builder + "node('p').textContent", { document }), '');
+});

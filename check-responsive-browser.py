@@ -129,6 +129,9 @@ try:
                 assert abs(search_input['y'] - search_button['y']) < 2
             page.locator('#address').fill(mint)
             page.locator('#searchBtn').click()
+            handoff = page.get_by_role('link', name='Open Radar test research (sign-in required)', exact=True)
+            handoff.wait_for()
+            assert handoff.locator('..').text_content() == 'Open Radar test research (sign-in required)'
             page.get_by_role('button',name='Load saved research history').click()
             page.get_by_text('Verified holder trend: UNCHANGED · 75 → 75 (0%)',exact=True).wait_for()
             assert page.get_by_text('Buyer growth: Unverified',exact=True).is_visible()

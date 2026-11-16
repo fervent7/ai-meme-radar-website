@@ -48,7 +48,7 @@ function testServer({ password, radarKey, request, revision }) {
       res.writeHead(code, { ...TEST_HEADERS, 'Content-Type': type, ...headers });
       res.end(req.method === 'HEAD' ? undefined : body);
     };
-    const json = (code, body) => send(code, 'application/json', JSON.stringify(body));
+    const json = (code, body, headers) => send(code, 'application/json', JSON.stringify(body), headers);
     let url;
     try { url = new URL(req.url, 'http://localhost'); }
     catch { return json(400, { status: 'INVALID_URL' }); }
@@ -69,7 +69,8 @@ function testServer({ password, radarKey, request, revision }) {
         const code = {
           READY: 200, EMPTY: 200, RETRY_LATER: 429, BACKEND_TIMEOUT: 504
         }[history.status] ?? 503;
-        return json(code, history);
+        const headers = code === 429 ? { 'Retry-After': String(history.retry_after_seconds) } : undefined;
+        return json(code, history, headers);
       }
       if (!['GET', 'HEAD'].includes(req.method)) return json(405, { status: 'METHOD_NOT_ALLOWED' });
       const file = ASSETS.get(url.pathname);

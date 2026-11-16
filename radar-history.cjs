@@ -212,7 +212,14 @@ async function loadHistory(target, key, request = fetch, onchain = false) {
       if (response.status === 401 || response.status === 403) {
         return { status: 'BACKEND_AUTH_REQUIRED', observations: [] };
       }
-      return { status: response.status === 429 ? 'RETRY_LATER' : 'UNAVAILABLE', observations: [] };
+      if (response.status === 429) {
+        const header = response.headers.get('Retry-After') ?? '';
+        const seconds = /^\d+$/.test(header) ? Number(header)
+          : Math.ceil((Date.parse(header) - Date.now()) / 1000);
+        const retryAfter = Number.isSafeInteger(seconds) && seconds > 0 ? seconds : 30;
+        return { status: 'RETRY_LATER', observations: [], retry_after_seconds: retryAfter };
+      }
+      return { status: 'UNAVAILABLE', observations: [] };
     }
     const data = await readBounded(response);
     return onchain ? projectOnchain(data, target) : projectHistory(data, target);
