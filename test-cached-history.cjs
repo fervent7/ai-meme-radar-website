@@ -228,6 +228,13 @@ test('the history panel renders authenticated gateway evidence and supports retr
   context.fetch = async () => Response.json({ status: 'EMPTY' });
   await onchainButton.activate();
   assert.match(onchainStatus.textContent, /No saved on-chain evidence/);
+  const unavailable = { verification: 'ERROR', observed_at_utc: latest };
+  context.fetch = async () => Response.json({
+    status: 'READY', holders: [unavailable], swaps: [], reserves: []
+  });
+  await onchainButton.activate();
+  assert.match(onchainStatus.textContent, /could not be verified/);
+  assert.ok(card.children[0].children[3].children[2].childElementCount > 0);
   let onchainCalls = 0;
   context.fetch = async () => ++onchainCalls === 1
     ? new Response('', { status: 429, headers: { 'Retry-After': '45' } })

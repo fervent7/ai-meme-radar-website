@@ -146,9 +146,15 @@
           if (data.status !== 'READY' && data.status !== 'EMPTY') {
             throw Error('On-chain history unavailable');
           }
-          if (data.status === 'READY') renderOnchain(onchainPanel, data);
-          onchainStatus.textContent = data.status === 'READY' ? 'Saved on-chain evidence loaded.'
-            : 'No saved on-chain evidence for this token and pool.';
+          if (data.status === 'EMPTY') {
+            onchainStatus.textContent = 'No saved on-chain evidence for this token and pool.';
+            return;
+          }
+          renderOnchain(onchainPanel, data);
+          const hasVerified = [data.holders, data.swaps, data.reserves].some(rows =>
+            rows.some(row => row.verification === 'VERIFIED'));
+          onchainStatus.textContent = hasVerified ? 'Saved on-chain evidence loaded.'
+            : 'Saved observations are unavailable or could not be verified.';
         } catch {
           onchainPanel.replaceChildren();
           onchainStatus.textContent = 'Saved on-chain evidence is unavailable. Try again later.';
