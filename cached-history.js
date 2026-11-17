@@ -99,10 +99,20 @@
       const onchainStatus = create('p');
       onchainStatus.setAttribute('role', 'status');
       const onchainPanel = create('div');
+      let onchainRetryAt = 0;
+      function showOnchainCooldown() {
+        const seconds = Math.ceil((onchainRetryAt - Date.now()) / 1000);
+        onchainStatus.textContent = 'On-chain history service is busy. Try again in ' +
+          seconds + (seconds === 1 ? ' second.' : ' seconds.');
+      }
       evidence.append(onchainButton, onchainStatus, onchainPanel);
       wrapper.append(evidence);
       onchainButton.addEventListener('click', async () => {
         if (onchainButton.disabled) return;
+        if (Date.now() < onchainRetryAt) {
+          showOnchainCooldown();
+          return;
+        }
         onchainButton.disabled = true;
         onchainPanel.replaceChildren();
         onchainStatus.textContent = 'Loading saved on-chain evidence…';
@@ -112,6 +122,12 @@
           });
           if (response.status === 401 || response.status === 403) {
             onchainStatus.textContent = 'Reload the page to sign in to the test environment.';
+            return;
+          }
+          if (response.status === 429) {
+            const delay = Number(response.headers.get('Retry-After'));
+            onchainRetryAt = Date.now() + (Number.isSafeInteger(delay) && delay > 0 ? delay : 30) * 1000;
+            showOnchainCooldown();
             return;
           }
           if (response.status === 504) {

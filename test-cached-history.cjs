@@ -228,6 +228,20 @@ test('the history panel renders authenticated gateway evidence and supports retr
   context.fetch = async () => Response.json({ status: 'EMPTY' });
   await onchainButton.activate();
   assert.match(onchainStatus.textContent, /No saved on-chain evidence/);
+  let onchainCalls = 0;
+  context.fetch = async () => ++onchainCalls === 1
+    ? new Response('', { status: 429, headers: { 'Retry-After': '45' } })
+    : Response.json({ status: 'EMPTY' });
+  await onchainButton.activate();
+  assert.match(onchainStatus.textContent, /Try again in 45 seconds/);
+  now += 44000;
+  await onchainButton.activate();
+  assert.equal(onchainCalls, 1);
+  assert.match(onchainStatus.textContent, /Try again in 1 second/);
+  now += 1000;
+  await onchainButton.activate();
+  assert.equal(onchainCalls, 2);
+  assert.match(onchainStatus.textContent, /No saved on-chain evidence/);
 });
 
 test('duplicate market timestamps coalesce only when projected evidence agrees', async t => {
