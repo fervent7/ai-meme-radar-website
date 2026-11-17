@@ -176,6 +176,10 @@ test('the history panel renders authenticated gateway evidence and supports retr
   upstream = () => Response.json({ ...fixture, pools: [] });
   await button.activate();
   assert.match(status.textContent, /No saved observations/);
+  assert.ok(status.textContent.includes('Chain: ' + chain));
+  assert.ok(status.textContent.includes('Token: ' + address));
+  assert.ok(status.textContent.includes('Pool: ' + pool));
+  assert.match(status.textContent, /indexed market listing does not establish saved research history/);
   assert.equal(panel.childElementCount, 0);
 
   upstream = () => Response.json(fixture);

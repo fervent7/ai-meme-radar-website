@@ -215,7 +215,9 @@
         const history = await response.json();
         if (history.status === 'EMPTY') {
           panel.replaceChildren();
-          status.textContent = 'No saved observations for this pool.';
+          status.textContent = 'No saved observations for this pool. Chain: ' + chain +
+            ' · Token: ' + token + ' · Pool: ' + pool +
+            '. An indexed market listing does not establish saved research history.';
           return;
         }
         if (history.status !== 'READY') throw Error('History unavailable');
