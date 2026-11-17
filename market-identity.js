@@ -28,7 +28,19 @@
       sells5m: isBase ? transactionCount(pair.txns?.m5?.sells) : null
     };
   }
-  const api = {sameAddress, matchesToken, poolKey, tokenMetrics};
+  const dexNames = new Map([
+    ['pancakeswap', 'PancakeSwap'], ['uniswap', 'Uniswap'],
+    ['raydium', 'Raydium'], ['orca', 'Orca'], ['meteora', 'Meteora'],
+    ['aerodrome', 'Aerodrome'], ['sushiswap', 'SushiSwap']
+  ]);
+  function dexDisplay(pair) {
+    const id = typeof pair.dexId === 'string' ? pair.dexId.trim() : '';
+    if (/^0x[0-9a-f]{40}$/i.test(id)) {
+      return { label: id.slice(0, 8) + '…' + id.slice(-6), fullId: id };
+    }
+    return { label: dexNames.get(id.toLowerCase()) ?? (id || 'Unknown DEX'), fullId: null };
+  }
+  const api = {sameAddress, matchesToken, poolKey, tokenMetrics, dexDisplay};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.RadarIdentity = api;
 })(typeof window !== 'undefined' ? window : globalThis);
