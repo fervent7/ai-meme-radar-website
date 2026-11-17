@@ -114,6 +114,17 @@
             onchainStatus.textContent = 'Reload the page to sign in to the test environment.';
             return;
           }
+          if (response.status === 504) {
+            onchainStatus.textContent = 'Radar on-chain history request timed out. Try again.';
+            return;
+          }
+          if (response.status === 503) {
+            const failure = await response.json().catch(() => null);
+            if (failure?.status === 'BACKEND_AUTH_REQUIRED') {
+              onchainStatus.textContent = 'The test website could not authenticate to the Radar backend.';
+              return;
+            }
+          }
           if (!response.ok) throw Error('On-chain history unavailable');
           const data = await response.json();
           if (data.status !== 'READY' && data.status !== 'EMPTY') {

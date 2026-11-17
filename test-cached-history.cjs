@@ -216,6 +216,12 @@ test('the history panel renders authenticated gateway evidence and supports retr
   context.fetch = async () => new Response('', { status: 401 });
   await onchainButton.activate();
   assert.match(onchainStatus.textContent, /sign in/);
+  context.fetch = async () => Response.json({ status: 'BACKEND_AUTH_REQUIRED' }, { status: 503 });
+  await onchainButton.activate();
+  assert.match(onchainStatus.textContent, /could not authenticate to the Radar backend/);
+  context.fetch = async () => new Response('', { status: 504 });
+  await onchainButton.activate();
+  assert.match(onchainStatus.textContent, /timed out/);
   context.fetch = async () => Response.json({ status: 'UNAVAILABLE' });
   await onchainButton.activate();
   assert.match(onchainStatus.textContent, /is unavailable/);
