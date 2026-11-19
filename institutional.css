@@ -1,0 +1,54 @@
+/* Institutional research interface — visual-only review branch enhancement.
+   Existing application IDs, network requests, and data status semantics are unchanged. */
+:root {
+  --institutional-surface: #0d1928;
+  --institutional-raised: #122338;
+  --institutional-border: #294158;
+  --institutional-text: #edf5ff;
+  --institutional-muted: #a8bbcd;
+  --institutional-accent: #55e7c3;
+}
+body {
+  background: radial-gradient(ellipse 60% 32% at 75% -8%, rgba(42,115,129,.13), transparent 70%), #08111e;
+  color: var(--institutional-text);
+}
+.site-nav { background: #0b1726; }
+.site-nav nav a[aria-current="page"] { color: var(--institutional-accent); font-weight: 750; }
+.page-intro { border-bottom: 1px solid var(--institutional-border); margin-bottom: 22px; }
+.page-intro h1 { letter-spacing: -.045em; line-height: 1.1; }
+.page-intro p { max-width: 65ch; color: var(--institutional-muted); }
+.brand-tagline { text-transform: uppercase; letter-spacing: .16em; font-size: .72rem !important; font-weight: 800; color: var(--institutional-accent) !important; }
+.dashboard-workspace .metric-grid article,
+.monitor-card, .market-panel, .terminal-search,
+.module-grid article, .research-results > article {
+  background: linear-gradient(155deg, var(--institutional-raised), var(--institutional-surface));
+  border: 1px solid var(--institutional-border);
+  border-radius: 14px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.12);
+}
+.dashboard-workspace .metric-grid article { min-height: 118px; }
+.dashboard-workspace .metric-grid strong { font-size: clamp(1.45rem, 2.3vw, 2rem); letter-spacing: -.03em; }
+.market-panel, .monitor-card { padding: 18px; }
+.market-panel .tablewrap { border-radius: 10px; }
+.market-panel thead th { background: #162b40; color: #c6d7e6; text-transform: uppercase; letter-spacing: .055em; font-size: .69rem; }
+.market-panel tbody tr:hover { background: #172b3b; }
+.monitor-readings dd { font-variant-numeric: tabular-nums; }
+.terminal-search { padding: clamp(18px, 2.8vw, 28px); }
+.terminal-search input { background: #081827; border-color: #38546b; }
+.primary { background: var(--institutional-accent); color: #061a1b; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #8df9d9; outline-offset: 3px; }
+@media (min-width: 1025px) {
+  .site-nav { background: #0b1726; }
+  .dashboard-workspace { grid-template-columns: minmax(0, 1fr) minmax(255px, 28%); }
+}
+@media (max-width: 760px) {
+  .page-intro { margin-bottom: 14px; }
+  .dashboard-workspace .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .market-panel, .monitor-card { padding: 14px; }
+}
+@media (max-width: 420px) {
+  .dashboard-workspace .metric-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
