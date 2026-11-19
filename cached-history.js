@@ -116,9 +116,12 @@
         onchainButton.disabled = true;
         onchainPanel.replaceChildren();
         onchainStatus.textContent = 'Loading saved on-chain evidence…';
+        const controller = new AbortController();
+        const signal = controller.signal;
+        const timer = setTimeout(() => controller.abort(), 8500);
         try {
           const response = await fetch('/api/radar/onchain-history?' + query, {
-            credentials: 'same-origin', cache: 'no-store', signal: AbortSignal.timeout(8500)
+            credentials: 'same-origin', cache: 'no-store', signal
           });
           if (response.status === 401 || response.status === 403) {
             onchainStatus.textContent = 'Reload the page to sign in to the test environment.';
@@ -157,8 +160,10 @@
             : 'Saved observations are unavailable or could not be verified.';
         } catch {
           onchainPanel.replaceChildren();
-          onchainStatus.textContent = 'Saved on-chain evidence is unavailable. Try again later.';
+          onchainStatus.textContent = signal.aborted ? 'On-chain history request timed out. Try again.'
+            : 'Saved on-chain evidence is unavailable. Try again later.';
         } finally {
+          clearTimeout(timer);
           onchainButton.disabled = false;
         }
       });
@@ -236,3 +241,4 @@
 
   window.RadarCachedHistory = { mount };
 })();
+
