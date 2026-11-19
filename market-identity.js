@@ -12,7 +12,35 @@
     const pool = String(pair.pairAddress || '');
     return chain + ':' + (chain === 'solana' ? pool : pool.toLowerCase());
   }
-  const api = {sameAddress, matchesToken, poolKey};
+  function transactionCount(value) {
+    return Number.isSafeInteger(value) && value >= 0 ? value : null;
+  }
+  // Provider price, valuation and transaction direction describe the base token.
+  function tokenMetrics(pair, address) {
+    const isBase = sameAddress(pair?.chainId, pair?.baseToken?.address, address);
+    return {
+      isBase,
+      priceUsd: isBase ? pair.priceUsd : null,
+      priceChange5mPct: isBase ? pair.priceChange?.m5 : null,
+      marketCap: isBase ? pair.marketCap : null,
+      fdv: isBase ? pair.fdv : null,
+      buys5m: isBase ? transactionCount(pair.txns?.m5?.buys) : null,
+      sells5m: isBase ? transactionCount(pair.txns?.m5?.sells) : null
+    };
+  }
+  const dexNames = new Map([
+    ['pancakeswap', 'PancakeSwap'], ['uniswap', 'Uniswap'],
+    ['raydium', 'Raydium'], ['orca', 'Orca'], ['meteora', 'Meteora'],
+    ['aerodrome', 'Aerodrome'], ['sushiswap', 'SushiSwap']
+  ]);
+  function dexDisplay(pair) {
+    const id = typeof pair.dexId === 'string' ? pair.dexId.trim() : '';
+    if (/^0x[0-9a-f]{40}$/i.test(id)) {
+      return { label: id.slice(0, 8) + '…' + id.slice(-6), fullId: id };
+    }
+    return { label: dexNames.get(id.toLowerCase()) ?? (id || 'Unknown DEX'), fullId: null };
+  }
+  const api = {sameAddress, matchesToken, poolKey, tokenMetrics, dexDisplay};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.RadarIdentity = api;
 })(typeof window !== 'undefined' ? window : globalThis);

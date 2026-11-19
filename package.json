@@ -1,0 +1,9 @@
+{
+  "name": "ai-meme-radar-website",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node website-test-server.cjs",
+    "test": "node --test test-*.cjs"
+  }
+}
