@@ -52,3 +52,41 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* Shared page system: compact, consistent, and touch-friendly. */
+:root { color-scheme: dark; }
+main { min-width: 0; }
+.page-intro { padding-top: clamp(28px, 5vw, 58px); padding-bottom: clamp(20px, 3vw, 34px); }
+.page-intro h1 { font-size: clamp(2rem, 4.5vw, 3.35rem); max-width: 18ch; }
+.page-intro .primary { align-self: center; }
+.market-panel h2, .monitor-card h2 { letter-spacing: -.02em; }
+.dashboard-workspace { gap: clamp(14px, 2vw, 24px); }
+.market-panel .tablewrap { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; }
+.market-panel table { width: 100%; border-collapse: collapse; }
+.market-panel th, .market-panel td { padding: 12px 14px; text-align: left; }
+.market-panel tbody td { border-top: 1px solid rgba(145, 177, 196, .15); }
+.market-panel td, .monitor-readings dd { overflow-wrap: anywhere; }
+.terminal-workspace { min-width: 0; }
+.terminal-search .search-controls { display: flex; flex-wrap: wrap; gap: 12px; }
+.terminal-search input { flex: 1 1 280px; min-width: 0; }
+.terminal-search button { min-height: 44px; }
+.terminal-search label { font-weight: 750; letter-spacing: .01em; }
+.research-results { min-width: 0; }
+.research-results article { overflow-wrap: anywhere; }
+.module-grid article { transition: border-color .15s ease; }
+.module-grid article:hover { border-color: #4a7084; }
+.site-nav a, .site-nav button { min-height: 40px; }
+.site-nav a[aria-current="page"] { text-decoration-thickness: 2px; text-underline-offset: 5px; }
+@media (max-width: 760px) {
+  .page-intro { padding-top: 24px; padding-bottom: 18px; }
+  .page-intro h1 { font-size: clamp(1.85rem, 8vw, 2.5rem); }
+  .terminal-search .search-controls { flex-direction: column; align-items: stretch; }
+  .terminal-search input, .terminal-search button { width: 100%; flex-basis: auto; }
+  .dashboard-workspace { display: block; }
+  .dashboard-workspace > * + * { margin-top: 14px; }
+  .market-panel .tablewrap { -webkit-overflow-scrolling: touch; }
+}
+@media (max-width: 360px) {
+  .market-panel, .monitor-card, .terminal-search { padding: 12px; }
+  .market-panel th, .market-panel td { padding: 10px 9px; }
+}
