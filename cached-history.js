@@ -55,7 +55,8 @@
   function renderOnchain(panel, history) {
     const evidenceSections = [
       ['Holder distribution', history.holders, sample => sample.holder_count +
-        ' positive-balance owner addresses · Top 10 concentration ' + sample.concentration_pct + '%'],
+        ' positive-balance owner addresses · Top 10 share of total mint supply ' + sample.concentration_pct +
+        '% · Legacy method v1; infrastructure owners are not excluded'],
       ['Classified swaps', history.swaps, sample => sample.direction +
         ' · Organic activity unverified · Transaction ' + sample.signature],
       ['Pool reserve history', history.reserves, sample => sample.vaults.map(vault => {
@@ -241,4 +242,5 @@
 
   window.RadarCachedHistory = { mount };
 })();
+
 

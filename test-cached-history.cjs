@@ -232,6 +232,18 @@ test('the history panel renders authenticated gateway evidence and supports retr
   context.fetch = async () => Response.json({ status: 'EMPTY' });
   await onchainButton.activate();
   assert.match(onchainStatus.textContent, /No saved on-chain evidence/);
+  context.fetch = async () => Response.json({
+    status: 'READY', holders: [{ verification: 'VERIFIED', holder_count: 73,
+      concentration_pct: 98.64, method_version: 'top-10-positive-owner-balances-v1',
+      supply_basis: 'total_mint_supply', slot: 10, block_time_utc: first,
+      observed_at_utc: latest, source: 'https://rpc.example.invalid' }], swaps: [], reserves: []
+  });
+  await onchainButton.activate();
+  const onchainPanel = card.children[0].children[3].children[2];
+  const holderLabel = onchainPanel.children[1].children[0].textContent;
+  assert.match(holderLabel, /Top 10 share of total mint supply 98\.64%/);
+  assert.match(holderLabel, /Legacy method v1; infrastructure owners are not excluded/);
+  assert.match(holderLabel, /Slot 10.*Block.*Recorded/);
   const unavailable = { verification: 'ERROR', observed_at_utc: latest };
   context.fetch = async () => Response.json({
     status: 'READY', holders: [unavailable], swaps: [], reserves: []
@@ -420,9 +432,18 @@ test('on-chain gateway serves finalized evidence for the selected mint and pool 
   assert.equal(response.headers.get('cache-control'), 'no-store');
   const body = await response.json();
   assert.equal(body.holders[0].concentration_pct, 98.64);
+  assert.equal(body.holders[0].method_version, 'top-10-positive-owner-balances-v1');
+  assert.equal(body.holders[0].supply_basis, 'total_mint_supply');
   assert.equal(body.holders[0].source, 'https://rpc.example.invalid');
   assert.equal(body.swaps[0].organic, 'UNVERIFIED');
   assert.equal(body.reserves[0].vaults[0].reserve_raw, '152');
+
+  const holderPayload = reply.holder_observations[0].payload;
+  holderPayload.method_version = 'top-10-ordinary-owner-total-mint-supply-v2';
+  const unsupported = await fetch(endpoint, { headers: { authorization } });
+  assert.equal(unsupported.status, 503);
+  assert.deepEqual(await unsupported.json(), { status: 'UNAVAILABLE' });
+  holderPayload.method_version = 'top-10-positive-owner-balances-v1';
 
   const get = () => fetch(endpoint, { headers: { authorization } });
   const vault = reply.reserves[0].payload.vaults[0];
@@ -437,3 +458,4 @@ test('on-chain gateway serves finalized evidence for the selected mint and pool 
   reply.reserves[0].pool_address = '1'.repeat(32);
   assert.equal((await fetch(endpoint, { headers: { authorization } })).status, 503);
 });
+

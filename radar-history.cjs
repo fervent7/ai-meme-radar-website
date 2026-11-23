@@ -174,7 +174,9 @@ function projectOnchain(data, target) {
     const supply = BigInt(raw(value.total_supply_raw));
     const top = BigInt(raw(value.top_10_balance_raw));
     if (supply <= 0n || top > supply) throw Error('Invalid holder concentration');
-    return { holder_count: value.holder_count, concentration_pct: Number((top * 10000n + supply / 2n) / supply) / 100 };
+    return { holder_count: value.holder_count, method_version: value.method_version,
+      supply_basis: 'total_mint_supply',
+      concentration_pct: Number((top * 10000n + supply / 2n) / supply) / 100 };
   });
   const swaps = projectRows(data.swaps, 'pool_swaps', target.pool, (value, ref) => {
     if (!['BUY', 'SELL'].includes(value.direction) || typeof ref !== 'string' ||
@@ -232,3 +234,4 @@ async function loadHistory(target, key, request = fetch, onchain = false) {
 }
 
 module.exports = { readTarget, loadHistory };
+
