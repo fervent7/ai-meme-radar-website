@@ -1,6 +1,6 @@
 import subprocess
 from pathlib import Path
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 
 mint = '22oDtUuTerJC5sbiYD8UQngsJaGe9pgiMxX3RA3mjJCh'
 pool = 'DH2nkUP6GA85ydDjo8Rz7smVcUkq841frwmNwfVCRBhC'
@@ -195,9 +195,11 @@ try:
                 page.route('**/api/radar/onchain-history?*', lambda route: route.fulfill(
                     status=429, body='', headers={'Retry-After':'30'}))
                 page.get_by_role('button', name='Load finalized on-chain evidence').click()
-                page.get_by_text('Showing previously loaded saved evidence; refresh not confirmed.', exact=False).wait_for()
+                # Retention text also exists while loading: wait for the terminal
+                # rate-limit response, then the finally-cleared busy state.
+                page.get_by_text('On-chain history service is busy. Try again in ', exact=False).wait_for()
                 assert evidence_panel.inner_text() == before
-                assert evidence_panel.get_attribute('aria-busy') == 'false'
+                expect(evidence_panel).to_have_attribute('aria-busy', 'false')
                 evidence_panel.screenshot(path=str(screenshots / f'retained-onchain-{w}.png'),animations='disabled')
             assert not errs,errs
             no_overflow(page)

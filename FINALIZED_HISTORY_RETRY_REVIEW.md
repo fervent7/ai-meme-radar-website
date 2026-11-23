@@ -29,3 +29,15 @@ copy, architecture/tokenomics, new module naming or IP/legal clearance claim.
 Private bot genuine capture still pending (last45253589133), no repeated action
 request or new signing. Radar companion authenticates/cache-projects coverage;
 PostgreSQL remains frozen. Keep draft/unmerged/undeployed. Nothing delegated.
+
+
+## Actual browser failure and follow-up
+Source e05d9bc run 45269634362: Node50 tests passed; responsive-browser failed
+at390px on the new aria-busy=false assertion, after eight viewport checks and
+the1440px retention check passed. The observed log did not print the actual
+attribute value. Verified test defect: the wait text was shared by LOADING and
+terminal429 messages, so it did not wait for refresh completion. An early busy
+assertion is the source-supported cause; the corrected CI must verify it.
+The browser check now waits for the terminal busy/rate-limit message and uses
+Playwright's retrying attribute assertion. Product component unchanged.
+No unchanged rerun or local-browser retry; inspect the new exact-head result.
