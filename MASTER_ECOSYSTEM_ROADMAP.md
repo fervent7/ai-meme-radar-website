@@ -118,6 +118,34 @@ verification and live use is separately approved. Each additional network
 requires its own adapter and verification. This review introduces navigation
 and documentation only.
 
+## Verification addendum — 23 November 2026
+
+Website review remains source-tested; authenticated hosted history, exact deployed
+revision and physical Android acceptance are still HOLD. No new deployment is
+established by this document.
+
+The separate Personal BSC Auto-Trader has [signed disposable V3 receipt evidence](https://github.com/fervent7/personal-bsc-auto-trader/actions/runs/45228671174),
+including sequential Transfer/tax/gas accounting and restart recovery. Its
+scanner assertions and monitor prices in that artifact are synthetic/controlled,
+so this is SIGNED_FORK partial proof, not autonomous scanner-to-exit acceptance.
+The user's manual AIN transaction remains MANUAL_MAINNET and is not a bot trade.
+
+[Review 8a52ec8](https://github.com/fervent7/personal-bsc-auto-trader/commit/8a52ec86a462583296e1be12bfb89c8e3e101276)
+adds a bounded one-seed fresh normal-scanner capture alternative to inaccessible
+retained TEST files. [Source CI](https://github.com/fervent7/personal-bsc-auto-trader/actions/runs/45238846526)
+passed 1,143 tests. Genuine capture has NOT RUN; missing holder/security evidence
+is not fabricated, and its read-only preview/cassette never authorizes trading.
+See the [precise engineering handoff](https://github.com/fervent7/personal-bsc-auto-trader/blob/8a52ec86a462583296e1be12bfb89c8e3e101276/HOURLY_ACCEPTANCE_HANDOFF.md).
+
+The independent engine's graduation sequence is: same genuine candidate through
+an adversarial isolated fork and actual monitor decisions; at least 24 hours of
+read-only mainnet shadow evidence; then a separately approved limited canary.
+These gates are planned/blocked, not passed. Forks do not reproduce real mempool
+conditions, and read-only calls cannot prove settlement or MEV protection.
+Production personal-bsc-auto-trader remains user-suspended. Website wallet and
+trading integration remains NOT AVAILABLE. No deployment, activation, provider
+retry, new credential, paid service or token issuance is introduced here.
+
 ## Interfaces and sequencing
 
 | Boundary | Minimum design contract |
