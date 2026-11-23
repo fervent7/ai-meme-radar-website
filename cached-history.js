@@ -72,7 +72,7 @@
         list.append(create('li', sample.verification === 'VERIFIED'
           ? describe(sample) + ' · Slot ' + sample.slot + ' · Block ' + sample.block_time_utc +
             ' · Recorded ' + sample.observed_at_utc + ' · ' + sample.source
-          : 'Unavailable · ' + sample.observed_at_utc));
+          : (sample.verification === 'ERROR' ? 'Error · Observation could not be verified · ' : 'Unavailable · ') + sample.observed_at_utc));
       }
       panel.append(create('h5', label), rows.length ? list : create('p', 'Unavailable'));
     }
@@ -155,10 +155,16 @@
             return;
           }
           renderOnchain(onchainPanel, data);
-          const hasVerified = [data.holders, data.swaps, data.reserves].some(rows =>
-            rows.some(row => row.verification === 'VERIFIED'));
-          onchainStatus.textContent = hasVerified ? 'Saved on-chain evidence loaded.'
-            : 'Saved observations are unavailable or could not be verified.';
+          const observations = [].concat(data.holders, data.swaps, data.reserves);
+          const hasVerified = observations.some(row => row.verification === 'VERIFIED');
+          const hasErrors = observations.some(row => row.verification === 'ERROR');
+          const hasUnavailable = observations.some(row => row.verification === 'UNAVAILABLE');
+          onchainStatus.textContent = hasVerified
+            ? (hasErrors || hasUnavailable
+              ? 'Saved on-chain evidence partially loaded. Some observations are unavailable or have errors.'
+              : 'Saved on-chain evidence loaded.')
+            : (hasErrors ? 'Saved observations include errors and could not be verified.'
+              : 'Saved observations are unavailable or could not be verified.');
         } catch {
           onchainPanel.replaceChildren();
           onchainStatus.textContent = signal.aborted ? 'On-chain history request timed out. Try again.'

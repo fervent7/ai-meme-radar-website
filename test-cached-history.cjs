@@ -251,6 +251,27 @@ test('the history panel renders authenticated gateway evidence and supports retr
   await onchainButton.activate();
   assert.match(onchainStatus.textContent, /could not be verified/);
   assert.ok(card.children[0].children[3].children[2].childElementCount > 0);
+  assert.match(onchainStatus.textContent, /include errors/);
+  assert.match(onchainPanel.children[1].children[0].textContent, /^Error · Observation could not be verified · /);
+  assert.ok(onchainPanel.children[1].children[0].textContent.endsWith(latest));
+  const verifiedHolder = { verification: 'VERIFIED', holder_count: 73,
+    concentration_pct: 98.64, method_version: 'top-10-positive-owner-balances-v1',
+    supply_basis: 'total_mint_supply', slot: 10, block_time_utc: first,
+    observed_at_utc: latest, source: 'https://rpc.example.invalid' };
+  context.fetch = async () => Response.json({ status: 'READY',
+    holders: [verifiedHolder, unavailable, { verification: 'UNAVAILABLE', observed_at_utc: first }],
+    swaps: [], reserves: [] });
+  await onchainButton.activate();
+  assert.match(onchainStatus.textContent, /partially loaded/);
+  const partialRows = onchainPanel.children[1].children;
+  assert.match(partialRows[0].textContent, /73 positive-balance owner addresses/);
+  assert.match(partialRows[1].textContent, /^Error ·/);
+  assert.equal(partialRows[2].textContent, 'Unavailable · ' + first);
+  context.fetch = async () => Response.json({ status: 'READY',
+    holders: [{ verification: 'UNAVAILABLE', observed_at_utc: first }], swaps: [], reserves: [] });
+  await onchainButton.activate();
+  assert.match(onchainStatus.textContent, /unavailable or could not be verified/);
+  assert.doesNotMatch(onchainStatus.textContent, /include errors|loaded/);
   let onchainCalls = 0;
   context.fetch = async () => ++onchainCalls === 1
     ? new Response('', { status: 429, headers: { 'Retry-After': '45' } })
