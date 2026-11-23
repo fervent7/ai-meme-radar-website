@@ -169,6 +169,15 @@ test('the history panel renders authenticated gateway evidence and supports retr
   assert.equal(labels[1], 'Verified holder trend: UNCHANGED · 75 → 75 (0%)');
   assert.equal(labels[2], 'Buyer growth: Unverified');
   assert.equal(labels[3], 'Holder observations: ' + first + ' → ' + latest);
+  const coverage = panel.children[3];
+  assert.equal(coverage.className, 'evidence-coverage');
+  assert.match(coverage.children[1].textContent, /not a current security clearance/);
+  const evidenceCards = coverage.children[2].children;
+  assert.equal(evidenceCards[0].children[1].textContent, 'Verified saved count');
+  assert.match(evidenceCards[0].children[2].textContent, /75 owner addresses.*2026-11-12T18:37:48/);
+  assert.equal(evidenceCards[1].children[1].textContent, 'Reported saved value');
+  assert.equal(evidenceCards[2].children[1].textContent, 'Unverified');
+  assert.equal(evidenceCards[3].children[1].textContent, 'Unavailable');
   const marketRows = panel.children[2].children.map(item => item.textContent);
   assert.match(marketRows[0], /2026-11-12T18:41:00.*Liquidity .* · 5m volume \$0 · DexScreener/);
   assert.match(marketRows.at(-2), /5m volume Less than \$0\.01/);
@@ -184,7 +193,7 @@ test('the history panel renders authenticated gateway evidence and supports retr
 
   upstream = () => Response.json(fixture);
   await button.activate();
-  assert.equal(panel.childElementCount, 3);
+  assert.equal(panel.childElementCount, 4);
   upstream = () => new Response('', { status: 403 });
   await button.activate();
   assert.match(status.textContent, /could not authenticate to the Radar backend/);
@@ -195,12 +204,12 @@ test('the history panel renders authenticated gateway evidence and supports retr
   context.fetch = async () => new Response('', { status: 504 });
   await button.activate();
   assert.match(status.textContent, /Radar history request timed out/);
-  assert.equal(panel.childElementCount, 3);
+  assert.equal(panel.childElementCount, 4);
   assert.equal(button.disabled, false);
   context.fetch = async () => new Response('', { status: 503 });
   await button.activate();
   assert.match(status.textContent, /Showing the last saved observations/);
-  assert.equal(panel.childElementCount, 3);
+  assert.equal(panel.childElementCount, 4);
   let finish;
   let pendingCalls = 0;
   context.fetch = () => {

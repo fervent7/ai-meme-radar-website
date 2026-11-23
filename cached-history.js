@@ -13,6 +13,35 @@
     return '$' + value.toLocaleString();
   }
 
+  function coverage(history) {
+    const section = create('section');
+    section.className = 'evidence-coverage';
+    section.setAttribute('aria-label', 'Saved evidence coverage');
+    section.append(create('h5', 'Evidence coverage'), create('p',
+      'Saved observations, not a current security clearance. Loading history does not refresh its original timestamps.'));
+    const grid = create('div');
+    grid.className = 'evidence-coverage-grid';
+    const holder = history.latest_holder_observation;
+    const liquidity = history.observations.find(row => row.liquidity_usd !== null);
+    const rows = [
+      ['Holder evidence', holder ? 'Verified saved count' : 'Unavailable',
+        holder ? holder.count + ' owner addresses · ' + holder.observed_at_utc + ' · Helius getTokenAccounts'
+          : 'No verified holder observation supplied.'],
+      ['Liquidity evidence', liquidity ? 'Reported saved value' : 'Unavailable',
+        liquidity ? formatUsd(liquidity.liquidity_usd) + ' · ' + liquidity.observed_at_utc + ' · ' + liquidity.market_source
+          : 'No attributed liquidity observation supplied.'],
+      ['Buyer verification', 'Unverified', 'Unique buyer-wallet growth is not established by this saved history.'],
+      ['Security checks', 'Unavailable', 'Contract restrictions and sequential sellability proof are not supplied by this history.']
+    ];
+    for (const [label, state, detail] of rows) {
+      const card = create('article');
+      card.append(create('h6', label), create('strong', state), create('p', detail));
+      grid.append(card);
+    }
+    section.append(grid);
+    return section;
+  }
+
   function render(panel, history) {
     const holder = history.latest_holder_observation;
     const trend = history.holder_trend;
@@ -49,7 +78,7 @@
     const marketHeading = maxLiquidity > 0
       ? 'Saved market observations · bars show relative liquidity'
       : 'Saved market observations';
-    panel.replaceChildren(metrics, create('h5', marketHeading), rows);
+    panel.replaceChildren(metrics, create('h5', marketHeading), rows, coverage(history));
   }
 
   function renderOnchain(panel, history) {

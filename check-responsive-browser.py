@@ -168,6 +168,14 @@ try:
             page.get_by_role('button',name='Load saved research history').click()
             page.get_by_text('Verified holder trend: UNCHANGED · 75 → 75 (0%)',exact=True).wait_for()
             assert page.get_by_text('Buyer growth: Unverified',exact=True).is_visible()
+            coverage = page.get_by_role('region', name='Saved evidence coverage')
+            assert coverage.locator('article').count() == 4
+            assert coverage.get_by_text('Reported saved value',exact=True).is_visible()
+            assert coverage.get_by_text('Unavailable',exact=True).count() == 1
+            assert 'not a current security clearance' in coverage.inner_text()
+            no_overflow(page)
+            if w in (390,1440):
+                coverage.screenshot(path=str(screenshots / f'evidence-coverage-{w}.png'), animations='disabled')
             assert page.get_by_text('2026-11-12T18:10:46.104810',exact=False).count()
             assert page.locator('meter').count()==2
             assert page.locator('meter').first.evaluate("(e) => e.getBoundingClientRect().width > 100 && Number(e.value) === 3164.21")
