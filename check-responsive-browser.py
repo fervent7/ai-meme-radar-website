@@ -188,6 +188,17 @@ try:
             assert page.get_by_text('SELL · Organic activity unverified', exact=False).is_visible()
             assert page.get_by_text('18.520422483', exact=False).is_visible()
             assert page.get_by_text('Slot 469496016', exact=False).count() == 3
+            if w in (390,1440):
+                heading = page.get_by_role('heading', name='Holder distribution', exact=True)
+                evidence_panel = heading.locator('..')
+                before = evidence_panel.inner_text()
+                page.route('**/api/radar/onchain-history?*', lambda route: route.fulfill(
+                    status=429, body='', headers={'Retry-After':'30'}))
+                page.get_by_role('button', name='Load finalized on-chain evidence').click()
+                page.get_by_text('Showing previously loaded saved evidence; refresh not confirmed.', exact=False).wait_for()
+                assert evidence_panel.inner_text() == before
+                assert evidence_panel.get_attribute('aria-busy') == 'false'
+                evidence_panel.screenshot(path=str(screenshots / f'retained-onchain-{w}.png'),animations='disabled')
             assert not errs,errs
             no_overflow(page)
             if w in (390,1366,1440,1920):

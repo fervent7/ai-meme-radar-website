@@ -130,10 +130,14 @@
       onchainStatus.setAttribute('role', 'status');
       const onchainPanel = create('div');
       let onchainRetryAt = 0;
+      function onchainMessage(message) {
+        onchainStatus.textContent = message + (onchainPanel.childElementCount
+          ? ' Showing previously loaded saved evidence; refresh not confirmed.' : '');
+      }
       function showOnchainCooldown() {
         const seconds = Math.ceil((onchainRetryAt - Date.now()) / 1000);
-        onchainStatus.textContent = 'On-chain history service is busy. Try again in ' +
-          seconds + (seconds === 1 ? ' second.' : ' seconds.');
+        onchainMessage('On-chain history service is busy. Try again in ' +
+          seconds + (seconds === 1 ? ' second.' : ' seconds.'));
       }
       evidence.append(onchainButton, onchainStatus, onchainPanel);
       wrapper.append(evidence);
@@ -144,8 +148,8 @@
           return;
         }
         onchainButton.disabled = true;
-        onchainPanel.replaceChildren();
-        onchainStatus.textContent = 'Loading saved on-chain evidence…';
+        onchainPanel.setAttribute('aria-busy', 'true');
+        onchainMessage('Loading saved on-chain evidence…');
         const controller = new AbortController();
         const signal = controller.signal;
         const timer = setTimeout(() => controller.abort(), 8500);
@@ -154,6 +158,7 @@
             credentials: 'same-origin', cache: 'no-store', signal
           });
           if (response.status === 401 || response.status === 403) {
+            onchainPanel.replaceChildren();
             onchainStatus.textContent = 'Reload the page to sign in to the test environment.';
             return;
           }
@@ -164,12 +169,13 @@
             return;
           }
           if (response.status === 504) {
-            onchainStatus.textContent = 'Radar on-chain history request timed out. Try again.';
+            onchainMessage('Radar on-chain history request timed out. Try again.');
             return;
           }
           if (response.status === 503) {
             const failure = await response.json().catch(() => null);
             if (failure?.status === 'BACKEND_AUTH_REQUIRED') {
+              onchainPanel.replaceChildren();
               onchainStatus.textContent = 'The test website could not authenticate to the Radar backend.';
               return;
             }
@@ -180,10 +186,15 @@
             throw Error('On-chain history unavailable');
           }
           if (data.status === 'EMPTY') {
+            onchainPanel.replaceChildren();
             onchainStatus.textContent = 'No saved on-chain evidence for this token and pool.';
             return;
           }
-          renderOnchain(onchainPanel, data);
+          // Build off-panel: malformed/partial rendering must not destroy the
+          // previously loaded evidence or replace it with a partial new result.
+          const nextPanel = create('div');
+          renderOnchain(nextPanel, data);
+          onchainPanel.replaceChildren(...nextPanel.children);
           const observations = [].concat(data.holders, data.swaps, data.reserves);
           const hasVerified = observations.some(row => row.verification === 'VERIFIED');
           const hasErrors = observations.some(row => row.verification === 'ERROR');
@@ -195,11 +206,11 @@
             : (hasErrors ? 'Saved observations include errors and could not be verified.'
               : 'Saved observations are unavailable or could not be verified.');
         } catch {
-          onchainPanel.replaceChildren();
-          onchainStatus.textContent = signal.aborted ? 'On-chain history request timed out. Try again.'
-            : 'Saved on-chain evidence is unavailable. Try again later.';
+          onchainMessage(signal.aborted ? 'On-chain history request timed out. Try again.'
+            : 'Saved on-chain evidence is unavailable. Try again later.');
         } finally {
           clearTimeout(timer);
+          onchainPanel.setAttribute('aria-busy', 'false');
           onchainButton.disabled = false;
         }
       });
