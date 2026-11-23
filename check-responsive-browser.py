@@ -142,7 +142,8 @@ try:
             page.get_by_text('Saved on-chain evidence loaded.', exact=True).wait_for()
             for heading in ('Holder distribution', 'Classified swaps', 'Pool reserve history'):
                 assert page.get_by_role('heading', name=heading, exact=True).is_visible()
-            assert page.get_by_text('Top 10 concentration 98.64%', exact=False).is_visible()
+            assert page.get_by_text('Top 10 share of total mint supply 98.64%', exact=False).is_visible()
+            assert page.get_by_text('Legacy method v1; infrastructure owners are not excluded', exact=False).is_visible()
             assert page.get_by_text('SELL · Organic activity unverified', exact=False).is_visible()
             assert page.get_by_text('18.520422483', exact=False).is_visible()
             assert page.get_by_text('Slot 469496016', exact=False).count() == 3
