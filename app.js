@@ -99,9 +99,9 @@ if(!matches.length){set('searchHelp','No exact-address indexed trading pool foun
 const groups=new Map();const seen=new Set();for(const pair of matches){const chain=String(pair.chainId||'unknown');const key=window.RadarIdentity.poolKey(pair);if(seen.has(key))continue;seen.add(key);if(!groups.has(chain))groups.set(chain,[]);groups.get(chain).push(pair)}
 const total=[...groups.values()].reduce((n,arr)=>n+arr.length,0);
 set('searchHelp',total+' exact-address indexed pool(s) on '+groups.size+' network(s). Showing the strongest reported-liquidity pool on each network; other pools are collapsed.');
-const num=x=>x!==null&&x!==undefined&&x!==''&&Number.isFinite(Number(x))?Number(x):null;
+const num=x=>{if(typeof x==='number')return Number.isFinite(x)?x:null;if(typeof x!=='string')return null;const value=x.trim();return /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(value)&&Number.isFinite(Number(value))?Number(value):null;};
 const stat=(label,value)=>'<div><small>'+esc(label)+'</small><b>'+esc(value)+'</b></div>';
-const pairPrice=x=>num(x)===null?'Unavailable':'$'+String(x);
+const pairPrice=x=>num(x)===null||num(x)<0?'Unavailable':'$'+String(x).trim();
 const reserveAmount=(raw,symbol)=>{
  const amount=num(raw);
  if((typeof raw!=='number'&&typeof raw!=='string')||String(raw).trim()===''||amount===null||amount<0)return 'Unavailable';

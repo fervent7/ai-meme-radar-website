@@ -39,12 +39,14 @@ function render(address, market=pair){
   const fields={};
   const context={address,window:{RadarIdentity:identity},Date,
     document:{createElement:()=>({dataset:{},append(){}})},
-    num:value=>value!==null&&value!==undefined&&value!==''&&Number.isFinite(Number(value))?Number(value):null,
-    esc:value=>String(value),pairPrice:value=>String(value),
+    esc:value=>String(value),
     stat:(label,value)=>{fields[label]=value;return '';},liquidityEvidence:()=>({})};
   const formatter=source.split('\n').find(line=>line.startsWith('const fmt='));
   assert.ok(formatter,'Market formatter must be present');
-  const card=vm.runInNewContext(formatter+'\n'+source.slice(start,end)+'\npairCard',context);
+  const numeric=source.split('\n').find(line=>line.startsWith('const num='));
+  const price=source.split('\n').find(line=>line.startsWith('const pairPrice='));
+  assert.ok(numeric&&price,'Use the actual market numeric/price formatters');
+  const card=vm.runInNewContext(formatter+'\n'+numeric+'\n'+price+'\n'+source.slice(start,end)+'\npairCard',context);
   card(market,true);
   return fields;
 }
@@ -64,7 +66,7 @@ test('research card withholds quote-token price, change, valuation and direction
 });
 test('research card keeps base-token direction and market evidence',()=>{
   const fields=render(target);
-  assert.equal(fields['Price USD'],'2');
+  assert.equal(fields['Price USD'],'$2');
   assert.equal(fields['5m price change'],'+10%');
   assert.equal(fields['5m buy / sell transactions'],'12 / 4');
   assert.equal(fields['Market cap (reported)'],'$100,000');
@@ -95,4 +97,26 @@ test('research handoff displays only the link label and uses the exact token URL
   assert.equal(new URL(link.href).searchParams.get('address'), target);
   assert.equal(new URL(link.href).searchParams.get('chain'), 'bsc');
   assert.equal(vm.runInNewContext(builder + "node('p').textContent", { document }), '');
+});
+
+test('actual card formatters withhold malformed price, change and valuation fields',()=>{
+  for(const invalid of [false,true,[],{},' ','0x10','Infinity',Infinity,null,undefined]){
+    const fields=render(target,{...pair,priceUsd:invalid,priceChange:{m5:invalid},
+      marketCap:invalid,fdv:invalid});
+    for(const label of ['Price USD','5m price change','Market cap (reported)','FDV (reported)'])
+      assert.equal(fields[label],'Unavailable',label+' must withhold malformed input');
+  }
+  assert.equal(render(target,{...pair,priceUsd:-1})['Price USD'],'Unavailable');
+  assert.equal(render(target,{...pair,priceUsd:'-0.01'})['Price USD'],'Unavailable');
+});
+test('actual formatters preserve zero, small decimal prices and negative price changes',()=>{
+  const zero=render(target,{...pair,priceUsd:'0',priceChange:{m5:0},marketCap:0,fdv:'0'});
+  assert.equal(zero['Price USD'],'$0');
+  assert.equal(zero['5m price change'],'0%');
+  assert.equal(zero['Market cap (reported)'],'$0');
+  assert.equal(zero['FDV (reported)'],'$0');
+  const small=render(target,{...pair,priceUsd:'0.00000001',priceChange:{m5:'-2.5'}});
+  assert.equal(small['Price USD'],'$0.00000001');
+  assert.equal(small['5m price change'],'-2.5%');
+  assert.equal(render(target,{...pair,priceUsd:'1e-8'})['Price USD'],'$1e-8');
 });
