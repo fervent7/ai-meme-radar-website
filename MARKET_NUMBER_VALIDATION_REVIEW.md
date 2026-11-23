@@ -65,3 +65,27 @@ research 45158193574, security 45158193585 and link audit 45158193602 passed.
 PostgreSQL runtime remains frozen pending required human review; authenticated
 restart retention still needs separate evidence. No new provider or restart
 attempt was made. Nothing was delegated.
+
+
+## Pool timestamp follow-up — reviewed parent 71b4127
+
+An out-of-range numeric pairCreatedAt (for example 1e30) rendered "Invalid Date".
+The actual card now accepts only nonnegative integer milliseconds within the
+JavaScript Date range. Missing, malformed, fractional, negative and out-of-range
+values show Unavailable; valid numeric/string timestamps, including zero, retain
+their original date display. This validates format only, not source authenticity
+or token age/security. Provider/source time is not replaced with fetch time.
+
+The card regression executes the actual poolCreated helper. npm test passed
+43 tests locally with synthetic fixtures. No physical Android, live report,
+public deployment or new provider access is claimed. New exact-head hosted
+browser/security results must be checked; prior browser run 45173585448 passed
+ten viewport sizes at parent 71b4127, not this new revision.
+
+Bot continuation: review change ed6b9a38f06e6e45313859960745eb0e6863ba50
+protects retained acceptance inputs from report overwrites. Its source tests
+do not supply genuine scanner data or establish FULL_AUTONOMOUS_ACCEPTANCE.
+The [updated exact continuation](https://github.com/fervent7/personal-bsc-auto-trader/blob/ed6b9a38f06e6e45313859960745eb0e6863ba50/HOURLY_ACCEPTANCE_HANDOFF.md)
+keeps production suspended and the unchanged TEST access request unrepeated.
+Radar remains at 42e944a with passing CI and PostgreSQL review freeze.
+Nothing was delegated; no deployment, signing or real-money action occurred.

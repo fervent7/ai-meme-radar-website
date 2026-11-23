@@ -45,8 +45,9 @@ function render(address, market=pair){
   assert.ok(formatter,'Market formatter must be present');
   const numeric=source.split('\n').find(line=>line.startsWith('const num='));
   const price=source.split('\n').find(line=>line.startsWith('const pairPrice='));
-  assert.ok(numeric&&price,'Use the actual market numeric/price formatters');
-  const card=vm.runInNewContext(formatter+'\n'+numeric+'\n'+price+'\n'+source.slice(start,end)+'\npairCard',context);
+  const created=source.split('\n').find(line=>line.startsWith('const poolCreated='));
+  assert.ok(numeric&&price&&created,'Use the actual market numeric/price/date formatters');
+  const card=vm.runInNewContext(formatter+'\n'+numeric+'\n'+price+'\n'+created+'\n'+source.slice(start,end)+'\npairCard',context);
   card(market,true);
   return fields;
 }
@@ -119,4 +120,15 @@ test('actual formatters preserve zero, small decimal prices and negative price c
   assert.equal(small['Price USD'],'$0.00000001');
   assert.equal(small['5m price change'],'-2.5%');
   assert.equal(render(target,{...pair,priceUsd:'1e-8'})['Price USD'],'$1e-8');
+});
+
+test('pool creation timestamp withholds invalid millisecond values without inventing a date',()=>{
+  for(const invalid of [null,undefined,true,false,[],{},'', ' ', '0x10',-1,1.5,Infinity,
+                        8640000000000001,1e30,'1e30']){
+    assert.equal(render(target,{...pair,pairCreatedAt:invalid})['Pool created'],'Unavailable');
+  }
+  for(const valid of [0,'0',1795440000000,'1795440000000']){
+    assert.equal(render(target,{...pair,pairCreatedAt:valid})['Pool created'],
+      new Date(Number(valid)).toLocaleString());
+  }
 });
