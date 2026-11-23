@@ -73,6 +73,15 @@ try:
         anonymous.close()
         screenshots = Path('browser-evidence')
         screenshots.mkdir(exist_ok=True)
+        fallback = browser.new_context(viewport={'width':390,'height':844}, java_script_enabled=False,
+            reduced_motion='reduce', http_credentials={'username':'reviewer','password':'browser-fixture'})
+        fallback.route('**/*',intercept)
+        static = fallback.new_page()
+        static.goto(origin+'/index.html')
+        assert static.locator('#service-cards article:visible').count() == 6
+        assert not static.locator('#service-filter').is_visible()
+        no_overflow(static)
+        fallback.close()
         for w,h in [(1366,768),(1440,900),(1920,1080),(1280,800),(2560,1440),
                     (768,1024),(1024,768),(320,640),(390,844),(430,932)]:
             ctx = browser.new_context(viewport={'width':w,'height':h},has_touch=w<=1024,
@@ -107,6 +116,24 @@ try:
                 if w in (1366, 1440, 1920):
                     page.screenshot(path=str(screenshots / f'dashboard-{w}.png'), animations='disabled')
             verify_community_links(page.locator('.community-panel'))
+            # Original service chooser: keyboard/touch, honest badges and no overflow.
+            services = page.locator('#service-cards')
+            assert services.locator('article:visible').count() == 6
+            developer_filter = page.get_by_role('button', name='Developers', exact=True)
+            developer_filter.focus()
+            page.keyboard.press('Enter')
+            assert developer_filter.get_attribute('aria-pressed') == 'true'
+            assert services.locator('article:visible').count() == 4
+            assert page.locator('#service-results').inner_text().startswith('4 service areas for developers')
+            assert services.locator('[data-service="developer"] .feature-state').inner_text() == 'Planned'
+            page.get_by_role('button', name='Everyone', exact=True).click()
+            assert services.locator('article:visible').count() == 6
+            for button in page.locator('#service-filter button').all():
+                assert button.bounding_box()['height'] >= 44
+            no_overflow(page)
+            if w in (390,1440):
+                page.locator('.ecosystem-workspace').screenshot(path=str(screenshots / f'ecosystem-{w}.png'), animations='disabled')
+            page.evaluate('scrollTo(0, 0)')
             if w<=1024:
                 page.locator('#menu').tap()
             verify_community_links(page.locator('.sidebar-community'))
@@ -117,6 +144,12 @@ try:
                 page.locator('#nav a[href="'+name+'"]').click()
                 page.wait_for_url(origin+'/'+name)
                 assert page.locator('main h1').count()==1
+                if name == 'intelligence.html':
+                    example = page.locator('#developer-contract details')
+                    example.locator('summary').click()
+                    assert example.locator('pre').is_visible()
+                    assert example.locator('pre').get_attribute('tabindex') == '0'
+                    assert 'not a token observation' in example.inner_text()
                 assert page.locator('#nav a[aria-current="page"]').get_attribute('href')==name
                 no_overflow(page)
                 verify_community_links(page.locator('footer'))

@@ -13,6 +13,7 @@
   <script src="site.js" defer></script>
   <script src="config.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="ecosystem.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -89,9 +90,60 @@
     <a href="https://t.me/AIMemeRadarCommunity">Telegram</a>
   </div>
 </section>
-<div class="wrap module-grid"><article><h2>Research Terminal</h2><span class="feature-state operational">Operational</span><p>Look up indexed markets by contract address. Saved holder evidence is available in the authenticated review flow when the backend supplies it.</p><p><a class="text-link" href="research.html">Open Research Terminal →</a></p></article>
-<article><h2>Intelligence Studio</h2><span class="feature-state testing">Under testing</span><p>Explore the rule evaluator and the evidence required before a research alert can qualify.</p><p><a class="text-link" href="intelligence.html">Open Intelligence Studio →</a></p></article>
-<article><h2>Liquidity &amp; OTC Research</h2><span class="feature-state testing">Under testing</span><p>Inspect reported liquidity and pool reserves. Liquidity history and institutional tools are in development.</p><p><a class="text-link" href="liquidity.html">Open Liquidity &amp; OTC Research →</a></p></article></div>
+<section class="wrap ecosystem-workspace" aria-labelledby="ecosystem-title">
+  <div class="ecosystem-heading">
+    <div><p class="kicker">Evidence-first services</p><h2 id="ecosystem-title">One research foundation.<br>Useful tools for different needs.</h2></div>
+    <p>AI Meme Radar is building a multichain research ecosystem for people and products. Utility comes from better evidence, repeatable workflows and integration—not token price promises.</p>
+  </div>
+  <div class="service-filter" id="service-filter" hidden role="group" aria-label="Find services for your work">
+    <span>Explore tools for</span>
+    <button type="button" data-audience="all" aria-pressed="true">Everyone</button>
+    <button type="button" data-audience="individuals" aria-pressed="false">Everyday users</button>
+    <button type="button" data-audience="researchers" aria-pressed="false">Researchers</button>
+    <button type="button" data-audience="developers" aria-pressed="false">Developers</button>
+    <button type="button" data-audience="organizations" aria-pressed="false">Teams &amp; businesses</button>
+  </div>
+  <p class="service-results" id="service-results" role="status" aria-live="polite" aria-atomic="true">6 service areas. Review features and planned services are labelled separately.</p>
+  <div class="services-grid" id="service-cards">
+    <article class="service-card" data-service="market" data-audiences="individuals researchers organizations" aria-labelledby="service-market">
+      <div class="service-card-top"><span class="service-number" aria-hidden="true">01</span><span class="feature-state review">Review build</span></div>
+      <h3 id="service-market">Market Intelligence</h3><p class="service-benefit">Compare activity with its evidence.</p><p>Research emerging pools across Solana, BSC, Base and Ethereum. Keep reported market data separate from verified holder observations.</p>
+      <p class="service-audience"><span>Who benefits</span>Everyday users, researchers and project teams</p>
+      <a class="service-link" href="research.html">Open research tools <span aria-hidden="true">↗</span></a>
+    </article>
+    <article class="service-card" data-service="rules" data-audiences="researchers developers organizations" aria-labelledby="service-rules">
+      <div class="service-card-top"><span class="service-number" aria-hidden="true">02</span><span class="feature-state testing">In development</span></div>
+      <h3 id="service-rules">Radar Rules Engine</h3><p class="service-benefit">Make your research criteria repeatable.</p><p>Define holder, liquidity and risk conditions around timestamped evidence. Hosted alerts, webhooks and workflow delivery are still pending.</p>
+      <p class="service-audience"><span>Who benefits</span>Researchers, developers and operations teams</p>
+      <a class="service-link" href="intelligence.html">Explore rule requirements <span aria-hidden="true">↗</span></a>
+    </article>
+    <article class="service-card" data-service="liquidity" data-audiences="individuals researchers organizations" aria-labelledby="service-liquidity">
+      <div class="service-card-top"><span class="service-number" aria-hidden="true">03</span><span class="feature-state testing">In development</span></div>
+      <h3 id="service-liquidity">Radar Liquidity Intelligence</h3><p class="service-benefit">Understand liquidity before trusting a quote.</p><p>Inspect reported liquidity and available pool evidence. Depth, trade-size impact and slippage analysis need further verified integration.</p>
+      <p class="service-audience"><span>Who benefits</span>Users, projects and institutional researchers</p>
+      <a class="service-link" href="liquidity.html">Inspect liquidity research <span aria-hidden="true">↗</span></a>
+    </article>
+    <article class="service-card" data-service="risk" data-audiences="individuals researchers developers organizations" aria-labelledby="service-risk">
+      <div class="service-card-top"><span class="service-number" aria-hidden="true">04</span><span class="feature-state testing">In development</span></div>
+      <h3 id="service-risk">Radar Risk Intelligence</h3><p class="service-benefit">Investigate uncertainty, not just a score.</p><p>Compare holder concentration, wallet movements and security evidence with their source and time. Missing checks remain unavailable.</p>
+      <p class="service-audience"><span>Who benefits</span>Users, analysts, developers and project teams</p>
+      <a class="service-link" href="research.html">Review evidence states <span aria-hidden="true">↗</span></a>
+    </article>
+    <article class="service-card" data-service="developer" data-audiences="developers organizations" aria-labelledby="service-developer">
+      <div class="service-card-top"><span class="service-number" aria-hidden="true">05</span><span class="feature-state planned">Planned</span></div>
+      <h3 id="service-developer">Radar Developer API</h3><p class="service-benefit">Build with traceable research inputs.</p><p>A provenance-rich API and history feed are planned for dashboards and integrations. Public API access, quotas and entitlements are not available.</p>
+      <p class="service-audience"><span>Who benefits</span>Developers, businesses and research platforms</p>
+      <a class="service-link" href="intelligence.html#developer-contract">View the contract preview <span aria-hidden="true">↗</span></a>
+    </article>
+    <article class="service-card" data-service="access" data-audiences="individuals researchers developers organizations" aria-labelledby="service-access">
+      <div class="service-card-top"><span class="service-number" aria-hidden="true">06</span><span class="feature-state planned">Planned</span></div>
+      <h3 id="service-access">Radar Access Services</h3><p class="service-benefit">Support useful tools through service access.</p><p>Potential memberships, API subscriptions and specialist research services could fund ongoing delivery. Pricing and paid access are not launched.</p>
+      <p class="service-audience"><span>Who benefits</span>Users, developers, businesses and institutions</p>
+      <a class="service-link" href="roadmap.html">See the service roadmap <span aria-hidden="true">↗</span></a>
+    </article>
+  </div>
+  <aside class="service-boundary"><strong>Research access, with clear limits.</strong><p>These are review-build tools and development plans, not a public release announcement. No live OTC desk or matching service is offered. The Personal BSC Auto-Trader is a separate private project; research and wallet access grant no trading permission. Future RFQ or execution services require separate safety and legal review. Optional token-gated access is exploratory; no token launch or financial benefit is promised.</p></aside>
+</section>
   </main>
   <footer class="wrap">
     <div><strong>AI Meme Radar · Research Before Risk</strong><p>Independent token research. Crypto assets can lose value.</p></div>

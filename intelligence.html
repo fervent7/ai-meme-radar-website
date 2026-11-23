@@ -42,6 +42,32 @@
 <article><h2>Conditional research alerts</h2><span class="feature-state testing">Under testing</span><p>The evaluator checks holder concentration, consecutive one-minute buy-volume increases and minimum liquidity. Verified input feeds and live notification delivery are pending.</p></article>
 <article><h2>Wallet analytics</h2><span class="feature-state planned">Planned</span><p>Research concentration, transfers and coordinated activity with attributable evidence.</p></article>
 <article><h2>Developer APIs</h2><span class="feature-state planned">Planned</span><p>Expose documented research data when account access, limits and evidence controls are verified.</p></article></div><section class="wrap page-note"><p>Programmable Intelligence is research-only. It has no trading execution.</p><a class="text-link" href="roadmap.html">See development milestones →</a></section>
+<section class="wrap page-note developer-contract" id="developer-contract" aria-labelledby="developer-contract-title">
+  <p class="kicker">Developer contract preview · Planned API</p>
+  <h2 id="developer-contract-title">Build around evidence, not an unexplained signal.</h2>
+  <p>Use chain, token and pool identity together. Preserve the source, original observation time and verification state for every metric across dashboards, rules and history. Public API access and subscriptions are not launched.</p>
+  <details><summary>View illustrative evidence shape (test data only)</summary>
+    <p>This shortened example contains placeholders, not a token observation or a working endpoint. Missing verification must stay explicit.</p>
+    <pre tabindex="0" aria-label="Illustrative test-data evidence shape"><code>{
+  "schema_version": 1,
+  "identity": {
+    "chain": "bsc",
+    "token_address": "[token address]",
+    "pool_address": "[pool address]"
+  },
+  "metrics": {
+    "holder_count": {
+      "verification": "UNVERIFIED",
+      "value": null,
+      "source": null,
+      "observed_at_utc": null
+    }
+  }
+}</code></pre>
+  </details>
+  <p>For developers: trace inputs through your own application. For businesses and researchers: audit why a metric was accepted or rejected. Backend assertions still require trusted producers; a label alone is not independent on-chain verification.</p>
+  <a class="text-link" href="research.html">Inspect the research evidence interface →</a>
+</section>
   </main>
   <footer class="wrap">
     <div><strong>AI Meme Radar · Research Before Risk</strong><p>Independent token research. Crypto assets can lose value.</p></div>
