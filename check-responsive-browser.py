@@ -173,6 +173,15 @@ try:
             assert coverage.get_by_text('Reported saved value',exact=True).is_visible()
             assert coverage.get_by_text('Unavailable',exact=True).count() == 1
             assert 'not a current security clearance' in coverage.inner_text()
+            audit = coverage.locator('details.saved-evidence-identity')
+            audit.get_by_text('Research identity and saved window',exact=True).click()
+            assert audit.get_by_text(mint,exact=True).is_visible()
+            assert audit.locator('dt').count() == 6
+            assert 'distinct from holder lookup times' in audit.inner_text()
+            no_overflow(page)
+            if w in (390,1440):
+                audit.screenshot(path=str(screenshots / f'saved-identity-{w}.png'),animations='disabled')
+            audit.get_by_text('Research identity and saved window',exact=True).click()
             no_overflow(page)
             if w in (390,1440):
                 coverage.screenshot(path=str(screenshots / f'evidence-coverage-{w}.png'), animations='disabled')

@@ -13,7 +13,7 @@
     return '$' + value.toLocaleString();
   }
 
-  function coverage(history) {
+  function coverage(history, identity) {
     const section = create('section');
     section.className = 'evidence-coverage';
     section.setAttribute('aria-label', 'Saved evidence coverage');
@@ -38,11 +38,23 @@
       card.append(create('h6', label), create('strong', state), create('p', detail));
       grid.append(card);
     }
-    section.append(grid);
+    const audit = create('details');
+    audit.className = 'saved-evidence-identity';
+    audit.append(create('summary', 'Research identity and saved window'));
+    const fields = create('dl');
+    const observations = history.observations;
+    for (const [label, value] of [
+      ['Chain', identity.chain], ['Token address', identity.token], ['Pool address', identity.pool],
+      ['Distinct saved market observations', String(observations.length)],
+      ['First market observation', observations.at(-1).observed_at_utc],
+      ['Last market observation', observations[0].observed_at_utc]
+    ]) fields.append(create('dt', label), create('dd', value));
+    audit.append(fields, create('p', 'Market observation times are distinct from holder lookup times. This saved window is not a live price, holder-growth, or security guarantee.'));
+    section.append(grid, audit);
     return section;
   }
 
-  function render(panel, history) {
+  function render(panel, history, identity) {
     const holder = history.latest_holder_observation;
     const trend = history.holder_trend;
     const metrics = create('ul');
@@ -78,7 +90,7 @@
     const marketHeading = maxLiquidity > 0
       ? 'Saved market observations · bars show relative liquidity'
       : 'Saved market observations';
-    panel.replaceChildren(metrics, create('h5', marketHeading), rows, coverage(history));
+    panel.replaceChildren(metrics, create('h5', marketHeading), rows, coverage(history, identity));
   }
 
   function renderOnchain(panel, history) {
@@ -282,7 +294,7 @@
           return;
         }
         if (history.status !== 'READY') throw Error('History unavailable');
-        render(panel, history);
+        render(panel, history, { chain, token, pool });
         status.textContent = 'Saved observations loaded.';
       } catch {
         status.textContent = signal.aborted ? 'History request timed out. Try again.'

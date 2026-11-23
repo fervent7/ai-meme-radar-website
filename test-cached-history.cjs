@@ -178,6 +178,15 @@ test('the history panel renders authenticated gateway evidence and supports retr
   assert.equal(evidenceCards[1].children[1].textContent, 'Reported saved value');
   assert.equal(evidenceCards[2].children[1].textContent, 'Unverified');
   assert.equal(evidenceCards[3].children[1].textContent, 'Unavailable');
+  const audit = coverage.children[3];
+  assert.equal(audit.tag, 'details');
+  assert.equal(audit.children[0].textContent, 'Research identity and saved window');
+  assert.deepEqual(audit.children[1].children.map(item => item.textContent), [
+    'Chain',chain,'Token address',address,'Pool address',pool,
+    'Distinct saved market observations','4',
+    'First market observation','2026-11-12T18:10:45.705362+00:00',
+    'Last market observation','2026-11-12T18:41:00.000000+00:00']);
+  assert.match(audit.children[2].textContent, /distinct from holder lookup times/);
   const marketRows = panel.children[2].children.map(item => item.textContent);
   assert.match(marketRows[0], /2026-11-12T18:41:00.*Liquidity .* · 5m volume \$0 · DexScreener/);
   assert.match(marketRows.at(-2), /5m volume Less than \$0\.01/);

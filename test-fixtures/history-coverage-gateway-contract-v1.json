@@ -1,228 +1,234 @@
 {
   "fixture_scope": "SYNTHETIC_CONTRACT_ONLY_NOT_CHAIN_EVIDENCE",
-  "held_response": {
-    "chain": "solana",
-    "contract_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "pools": [
-      {
-        "evidence_coverage": {
-          "coverage": {
-            "reported_metrics": 0,
-            "total_metrics": 7,
-            "unavailable_metrics": 7,
-            "verified_metrics": 0
-          },
-          "current_security_clearance": false,
-          "evaluated_at_utc": "2026-11-11T12:00:00+00:00",
-          "evidence_reason": "CONFLICTING_RECORDS",
-          "identity": {
-            "chain": "solana",
-            "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
-            "token_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          },
-          "input_basis": "SAVED_HISTORY",
-          "max_age_seconds": 120,
-          "metrics": {
-            "buys_5m": {
-              "freshness": "MISSING",
-              "observed_at_utc": null,
-              "reason": "METRIC_MISSING",
-              "source": null,
-              "value": null,
-              "verification": "UNAVAILABLE"
-            },
-            "holder_count": {
-              "freshness": "MISSING",
-              "observed_at_utc": null,
-              "reason": "METRIC_MISSING",
-              "source": null,
-              "value": null,
-              "verification": "UNAVAILABLE"
-            },
-            "holder_growth_pct": {
-              "freshness": "MISSING",
-              "observed_at_utc": null,
-              "reason": "METRIC_MISSING",
-              "source": null,
-              "value": null,
-              "verification": "UNAVAILABLE"
-            },
-            "liquidity_usd": {
-              "freshness": "MISSING",
-              "observed_at_utc": null,
-              "reason": "METRIC_MISSING",
-              "source": null,
-              "value": null,
-              "verification": "UNAVAILABLE"
-            },
-            "sells_5m": {
-              "freshness": "MISSING",
-              "observed_at_utc": null,
-              "reason": "METRIC_MISSING",
-              "source": null,
-              "value": null,
-              "verification": "UNAVAILABLE"
-            },
-            "unique_buyers_5m": {
-              "freshness": "MISSING",
-              "observed_at_utc": null,
-              "reason": "METRIC_MISSING",
-              "source": null,
-              "value": null,
-              "verification": "UNAVAILABLE"
-            },
-            "volume_5m_usd": {
-              "freshness": "MISSING",
-              "observed_at_utc": null,
-              "reason": "METRIC_MISSING",
-              "source": null,
-              "value": null,
-              "verification": "UNAVAILABLE"
-            }
-          },
-          "schema_version": 1,
-          "scope": "RESEARCH_ONLY",
-          "source_assurance": "TRUSTED_PRODUCER_ASSERTIONS",
-          "transaction_authorized": false
-        },
-        "holder_trend": null,
-        "observations": [],
-        "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
-      }
-    ]
-  },
   "valid_response": {
     "chain": "solana",
     "contract_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     "pools": [
       {
-        "evidence_coverage": {
-          "coverage": {
-            "reported_metrics": 2,
-            "total_metrics": 7,
-            "unavailable_metrics": 3,
-            "verified_metrics": 2
-          },
-          "current_security_clearance": false,
-          "evaluated_at_utc": "2026-11-11T12:00:00+00:00",
-          "identity": {
-            "chain": "solana",
-            "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
-            "token_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-          },
-          "input_basis": "SAVED_HISTORY",
-          "max_age_seconds": 120,
-          "metrics": {
-            "buys_5m": {
-              "freshness": "MISSING",
-              "observed_at_utc": null,
-              "reason": "METRIC_MISSING",
-              "source": null,
-              "value": null,
-              "verification": "UNAVAILABLE"
-            },
-            "holder_count": {
-              "freshness": "WITHIN_BOUND",
-              "observed_at_utc": "2026-11-11T11:59:00+00:00",
-              "reason": "EVIDENCE_ACCEPTED",
-              "source": "Helius getTokenAccounts",
-              "value": 75,
-              "verification": "VERIFIED"
-            },
-            "holder_growth_pct": {
-              "freshness": "WITHIN_BOUND",
-              "observed_at_utc": "2026-11-11T11:59:00+00:00",
-              "reason": "EVIDENCE_ACCEPTED",
-              "source": "Helius getTokenAccounts",
-              "value": 0.0,
-              "verification": "VERIFIED",
-              "window": {
-                "end_observed_at_utc": "2026-11-11T11:59:00+00:00",
-                "start_observed_at_utc": "2026-11-11T11:58:00+00:00",
-                "verified_observations": 2
-              }
-            },
-            "liquidity_usd": {
-              "freshness": "WITHIN_BOUND",
-              "observed_at_utc": "2026-11-11T11:59:00+00:00",
-              "reason": "EVIDENCE_ACCEPTED",
-              "source": "DexScreener token-pairs API",
-              "value": 4000,
-              "verification": "REPORTED"
-            },
-            "sells_5m": {
-              "freshness": "MISSING",
-              "observed_at_utc": null,
-              "reason": "METRIC_MISSING",
-              "source": null,
-              "value": null,
-              "verification": "UNAVAILABLE"
-            },
-            "unique_buyers_5m": {
-              "freshness": "MISSING",
-              "observed_at_utc": null,
-              "reason": "METRIC_MISSING",
-              "source": null,
-              "value": null,
-              "verification": "UNAVAILABLE"
-            },
-            "volume_5m_usd": {
-              "freshness": "WITHIN_BOUND",
-              "observed_at_utc": "2026-11-11T11:59:00+00:00",
-              "reason": "EVIDENCE_ACCEPTED",
-              "source": "DexScreener token-pairs API",
-              "value": 700,
-              "verification": "REPORTED"
-            }
-          },
-          "schema_version": 1,
-          "scope": "RESEARCH_ONLY",
-          "source_assurance": "TRUSTED_PRODUCER_ASSERTIONS",
-          "transaction_authorized": false
-        },
-        "holder_trend": {
-          "first_holder_count": 75,
-          "first_observed_at_utc": "2026-11-11T11:58:00+00:00",
-          "growth_count": 0,
-          "growth_pct": 0.0,
-          "holder_source": "Helius getTokenAccounts",
-          "latest_holder_count": 75,
-          "latest_observed_at_utc": "2026-11-11T11:59:00+00:00",
-          "note": "Verified token-account owner addresses, not unique people; research only.",
-          "status": "UNCHANGED",
-          "verified_observations": 2
-        },
+        "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
         "observations": [
           {
-            "address_identity_version": 2,
             "chain": "solana",
             "contract_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "holder_count": 75,
-            "holder_observed_at_utc": "2026-11-11T11:58:00Z",
-            "holder_source": "Helius getTokenAccounts",
-            "holder_status": "VERIFIED",
-            "liquidity_usd": 4000,
-            "observed_at_utc": "2026-11-11T11:58:00Z",
             "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "address_identity_version": 2,
             "source": "DexScreener token-pairs API",
-            "volume_5m_usd": 700
+            "observed_at_utc": "2026-11-11T11:58:00Z",
+            "liquidity_usd": 4000,
+            "volume_5m_usd": 700,
+            "holder_status": "VERIFIED",
+            "holder_count": 75,
+            "holder_source": "Helius getTokenAccounts",
+            "holder_observed_at_utc": "2026-11-11T11:58:00Z"
           },
           {
-            "address_identity_version": 2,
             "chain": "solana",
             "contract_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "holder_count": 75,
-            "holder_observed_at_utc": "2026-11-11T11:59:00Z",
-            "holder_source": "Helius getTokenAccounts",
-            "holder_status": "VERIFIED",
-            "liquidity_usd": 4000,
-            "observed_at_utc": "2026-11-11T11:59:00Z",
             "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "address_identity_version": 2,
             "source": "DexScreener token-pairs API",
-            "volume_5m_usd": 700
+            "observed_at_utc": "2026-11-11T11:59:00Z",
+            "liquidity_usd": 4000,
+            "volume_5m_usd": 700,
+            "holder_status": "VERIFIED",
+            "holder_count": 75,
+            "holder_source": "Helius getTokenAccounts",
+            "holder_observed_at_utc": "2026-11-11T11:59:00Z"
           }
         ],
-        "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+        "holder_trend": {
+          "status": "UNCHANGED",
+          "verified_observations": 2,
+          "holder_source": "Helius getTokenAccounts",
+          "first_holder_count": 75,
+          "latest_holder_count": 75,
+          "growth_count": 0,
+          "growth_pct": 0.0,
+          "first_observed_at_utc": "2026-11-11T11:58:00+00:00",
+          "latest_observed_at_utc": "2026-11-11T11:59:00+00:00",
+          "note": "Verified token-account owner addresses, not unique people; research only."
+        },
+        "evidence_coverage": {
+          "schema_version": 1,
+          "scope": "RESEARCH_ONLY",
+          "identity": {
+            "chain": "solana",
+            "token_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+          },
+          "evaluated_at_utc": "2026-11-11T12:00:00+00:00",
+          "max_age_seconds": 120,
+          "metrics": {
+            "liquidity_usd": {
+              "verification": "REPORTED",
+              "value": 4000,
+              "source": "DexScreener token-pairs API",
+              "observed_at_utc": "2026-11-11T11:59:00+00:00",
+              "reason": "EVIDENCE_ACCEPTED",
+              "freshness": "WITHIN_BOUND"
+            },
+            "volume_5m_usd": {
+              "verification": "REPORTED",
+              "value": 700,
+              "source": "DexScreener token-pairs API",
+              "observed_at_utc": "2026-11-11T11:59:00+00:00",
+              "reason": "EVIDENCE_ACCEPTED",
+              "freshness": "WITHIN_BOUND"
+            },
+            "buys_5m": {
+              "verification": "UNAVAILABLE",
+              "value": null,
+              "source": null,
+              "observed_at_utc": null,
+              "reason": "METRIC_MISSING",
+              "freshness": "MISSING"
+            },
+            "sells_5m": {
+              "verification": "UNAVAILABLE",
+              "value": null,
+              "source": null,
+              "observed_at_utc": null,
+              "reason": "METRIC_MISSING",
+              "freshness": "MISSING"
+            },
+            "holder_count": {
+              "verification": "VERIFIED",
+              "value": 75,
+              "source": "Helius getTokenAccounts",
+              "observed_at_utc": "2026-11-11T11:59:00+00:00",
+              "reason": "EVIDENCE_ACCEPTED",
+              "freshness": "WITHIN_BOUND"
+            },
+            "unique_buyers_5m": {
+              "verification": "UNAVAILABLE",
+              "value": null,
+              "source": null,
+              "observed_at_utc": null,
+              "reason": "METRIC_MISSING",
+              "freshness": "MISSING"
+            },
+            "holder_growth_pct": {
+              "verification": "VERIFIED",
+              "value": 0.0,
+              "source": "Helius getTokenAccounts",
+              "observed_at_utc": "2026-11-11T11:59:00+00:00",
+              "reason": "EVIDENCE_ACCEPTED",
+              "freshness": "WITHIN_BOUND",
+              "window": {
+                "verified_observations": 2,
+                "start_observed_at_utc": "2026-11-11T11:58:00+00:00",
+                "end_observed_at_utc": "2026-11-11T11:59:00+00:00"
+              }
+            }
+          },
+          "source_assurance": "TRUSTED_PRODUCER_ASSERTIONS",
+          "transaction_authorized": false,
+          "input_basis": "SAVED_HISTORY",
+          "current_security_clearance": false,
+          "history_window": {
+            "distinct_observations": 2,
+            "first_observed_at_utc": "2026-11-11T11:58:00+00:00",
+            "last_observed_at_utc": "2026-11-11T11:59:00+00:00",
+            "basis": "SAVED_MARKET_OBSERVATION_TIMES"
+          },
+          "coverage": {
+            "total_metrics": 7,
+            "verified_metrics": 2,
+            "reported_metrics": 2,
+            "unavailable_metrics": 3
+          }
+        }
+      }
+    ]
+  },
+  "held_response": {
+    "chain": "solana",
+    "contract_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "pools": [
+      {
+        "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "observations": [],
+        "holder_trend": null,
+        "evidence_coverage": {
+          "schema_version": 1,
+          "scope": "RESEARCH_ONLY",
+          "identity": {
+            "chain": "solana",
+            "token_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+          },
+          "evaluated_at_utc": "2026-11-11T12:00:00+00:00",
+          "max_age_seconds": 120,
+          "metrics": {
+            "liquidity_usd": {
+              "verification": "UNAVAILABLE",
+              "value": null,
+              "source": null,
+              "observed_at_utc": null,
+              "reason": "METRIC_MISSING",
+              "freshness": "MISSING"
+            },
+            "volume_5m_usd": {
+              "verification": "UNAVAILABLE",
+              "value": null,
+              "source": null,
+              "observed_at_utc": null,
+              "reason": "METRIC_MISSING",
+              "freshness": "MISSING"
+            },
+            "buys_5m": {
+              "verification": "UNAVAILABLE",
+              "value": null,
+              "source": null,
+              "observed_at_utc": null,
+              "reason": "METRIC_MISSING",
+              "freshness": "MISSING"
+            },
+            "sells_5m": {
+              "verification": "UNAVAILABLE",
+              "value": null,
+              "source": null,
+              "observed_at_utc": null,
+              "reason": "METRIC_MISSING",
+              "freshness": "MISSING"
+            },
+            "holder_count": {
+              "verification": "UNAVAILABLE",
+              "value": null,
+              "source": null,
+              "observed_at_utc": null,
+              "reason": "METRIC_MISSING",
+              "freshness": "MISSING"
+            },
+            "unique_buyers_5m": {
+              "verification": "UNAVAILABLE",
+              "value": null,
+              "source": null,
+              "observed_at_utc": null,
+              "reason": "METRIC_MISSING",
+              "freshness": "MISSING"
+            },
+            "holder_growth_pct": {
+              "verification": "UNAVAILABLE",
+              "value": null,
+              "source": null,
+              "observed_at_utc": null,
+              "reason": "METRIC_MISSING",
+              "freshness": "MISSING"
+            }
+          },
+          "source_assurance": "TRUSTED_PRODUCER_ASSERTIONS",
+          "transaction_authorized": false,
+          "input_basis": "SAVED_HISTORY",
+          "current_security_clearance": false,
+          "evidence_reason": "CONFLICTING_RECORDS",
+          "coverage": {
+            "total_metrics": 7,
+            "verified_metrics": 0,
+            "reported_metrics": 0,
+            "unavailable_metrics": 7
+          }
+        }
       }
     ]
   }
