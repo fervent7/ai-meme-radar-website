@@ -225,6 +225,23 @@ test('the history panel renders authenticated gateway evidence and supports retr
   assert.match(status.textContent, /sign in/);
   assert.equal(panel.childElementCount, 0);
 
+  upstream = () => Response.json(fixture);
+  context.fetch = async (url, options) => fetch(origin + url, { ...options, headers: { authorization } });
+  await button.activate();
+  assert.equal(panel.childElementCount, 4);
+  context.fetch = async () => Response.json({ status: 'EVIDENCE_HELD', reason: 'PRIVATE_DETAIL' }, { status: 503 });
+  await button.activate();
+  assert.equal(panel.childElementCount, 0);
+  assert.equal(status.className, 'history-held');
+  assert.match(status.textContent, /withheld.*No verified result/);
+  assert.doesNotMatch(status.textContent, /PRIVATE_DETAIL/);
+  context.fetch = async (url, options) => fetch(origin + url, { ...options, headers: { authorization } });
+  await button.activate();
+  assert.equal(panel.childElementCount, 4);
+  assert.equal(status.className, '');
+  context.fetch = async () => new Response('', { status: 401 });
+  await button.activate();
+
   const [onchainButton, onchainStatus] = card.children[0].children[3].children;
   context.fetch = async () => new Response('', { status: 401 });
   await onchainButton.activate();

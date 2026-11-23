@@ -201,6 +201,14 @@ try:
                 assert evidence_panel.inner_text() == before
                 expect(evidence_panel).to_have_attribute('aria-busy', 'false')
                 evidence_panel.screenshot(path=str(screenshots / f'retained-onchain-{w}.png'),animations='disabled')
+                page.route('**/api/radar/history?*', lambda route: route.fulfill(
+                    status=503, json={'status':'EVIDENCE_HELD','observations':[]}))
+                page.get_by_role('button', name='Load saved research history').click()
+                held = page.get_by_role('alert').filter(has_text='Saved evidence is withheld')
+                held.wait_for()
+                assert 'No verified result is available' in held.inner_text()
+                assert page.get_by_text('Verified holder trend: UNCHANGED · 75 → 75 (0%)',exact=True).count() == 0
+                page.locator('.cached-research').screenshot(path=str(screenshots / f'held-history-{w}.png'),animations='disabled')
             assert not errs,errs
             no_overflow(page)
             if w in (390,1366,1440,1920):

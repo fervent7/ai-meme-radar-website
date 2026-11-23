@@ -49,6 +49,22 @@ function marketNumber(value) {
   return Number.isFinite(value) && value >= 0 ? value : null;
 }
 
+function coverageHold(value, {chain,address,pool}, observationCount) {
+  if (value === undefined) return null; // Legacy backend: own row validation still applies.
+  const id = value?.identity;
+  const valid = value && !Array.isArray(value) && value.schema_version === 1 &&
+    value.scope === 'RESEARCH_ONLY' && value.input_basis === 'SAVED_HISTORY' &&
+    value.transaction_authorized === false && value.current_security_clearance === false &&
+    id?.chain === chain && matches(chain,id.token_address,address) && matches(chain,id.pool_address,pool);
+  if (!valid) return {status:'EVIDENCE_HELD',reason:'COVERAGE_INVALID',observations:[]};
+  const reason = value.evidence_reason;
+  if (value.status !== undefined || (reason !== undefined && reason !== 'NO_CACHED_OBSERVATIONS') ||
+      (reason === 'NO_CACHED_OBSERVATIONS' && observationCount !== 0)) {
+    return {status:'EVIDENCE_HELD',reason:'SAVED_EVIDENCE_NOT_VALIDATED',observations:[]};
+  }
+  return null;
+}
+
 function projectHistory(data, { chain, address, pool }) {
   if (data?.chain !== chain || !matches(chain, data.contract_address, address) ||
       !Array.isArray(data.pools) || data.pools.length > 200) throw Error('Invalid history');
@@ -57,6 +73,8 @@ function projectHistory(data, { chain, address, pool }) {
   if (!matching.length) return { status: 'EMPTY', observations: [], holder_trend: null };
   if (matching.length !== 1 || !Array.isArray(matching[0].observations) ||
       matching[0].observations.length > 24) throw Error('Invalid pool history');
+  const held = coverageHold(matching[0].evidence_coverage,{chain,address,pool},matching[0].observations.length);
+  if (held) return held;
 
   const observations = [];
   const holderCounts = new Map();

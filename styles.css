@@ -263,3 +263,5 @@ footer .community-links { justify-content: flex-end; }
 .evidence-coverage-grid strong{font-size:.85rem;color:#a0f6d7}
 .evidence-coverage-grid p{font-size:.8rem;line-height:1.6;color:#bacdca;margin:8px 0 0;overflow-wrap:anywhere}
 @media(max-width:480px){.evidence-coverage-grid{grid-template-columns:minmax(0,1fr)}}
+
+.cached-research .history-held{padding:12px;border-left:3px solid #f0c272;background:#302b1f;color:#ffe2a8;line-height:1.6}

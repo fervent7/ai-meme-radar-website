@@ -230,6 +230,8 @@
         return;
       }
       button.disabled = true;
+      status.className = '';
+      status.setAttribute('role', 'status');
       status.textContent = 'Loading saved observations…';
       if (panel.childElementCount) status.textContent += ' Showing the last saved observations loaded.';
       const controller = new AbortController();
@@ -257,6 +259,13 @@
         }
         if (response.status === 503) {
           const failure = await response.json().catch(() => null);
+          if (failure?.status === 'EVIDENCE_HELD') {
+            panel.replaceChildren();
+            status.className = 'history-held';
+            status.setAttribute('role', 'alert');
+            status.textContent = 'Saved evidence is withheld because its records conflict or cannot be validated. No verified result is available. Try again later.';
+            return;
+          }
           if (failure?.status === 'BACKEND_AUTH_REQUIRED') {
             panel.replaceChildren();
             status.textContent = 'The test website could not authenticate to the Radar backend.';
