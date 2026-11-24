@@ -29,3 +29,9 @@ physical Android and genuine connected intelligence services are NOT verified.
 Radar's Wallet DNA increment is saved-transfer historical projection only, not
 fresh multichain identity/coordination detection. The independent private bot is
 not a public product milestone. No release, domain change, merge or deployment.
+
+First browser run45425086753 failed at the first-Tab skip-link assertion: the new
+hero actionability/screenshot step ran before keyboard entry and disturbed the
+sequential focus starting point. Corrected setup order preserves the original
+first-Tab/Enter assertion before examining the hero. No accessibility assertion
+removed or weakened. Inspect corrected head browser result, not the failed run.
