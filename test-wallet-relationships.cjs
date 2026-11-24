@@ -1,9 +1,17 @@
 'use strict';
 const {test}=require('node:test');const assert=require('node:assert/strict');
 const {loadHistory}=require('./radar-history.cjs');
+const {projectRelationships}=require('./wallet-relationships.cjs');
 const fixture=require('./test-fixtures/wallet_relationships_gateway_v1.json');
 const target={chain:fixture.chain,address:fixture.token_address,pool:fixture.pool_address};
 const run=data=>loadHistory(target,'fixture-key',async()=>Response.json(data),true);
+test('different transactions sharing one slot cannot claim different block times',async()=>{
+ const out=await run(fixture),first=out.transfers[0],second=structuredClone(first);
+ second.signature='C'.repeat(88);
+ second.block_time_utc=new Date(Date.parse(first.block_time_utc)+1000).toISOString();
+ assert.throws(()=>projectRelationships(fixture.wallet_relationships,[first,second],target),
+  /Invalid wallet relationship evidence/);
+});
 test('gateway validates backend relationships against the same scoped saved transfers',async()=>{
  assert.equal(fixture.fixture_scope,'SYNTHETIC_CONTRACT_ONLY_NOT_CHAIN_OBSERVATION');
  const out=await run(fixture);const graph=out.wallet_relationships;

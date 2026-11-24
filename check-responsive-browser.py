@@ -296,8 +296,18 @@ try:
             wallet.get_by_text('0 of 1 saved links shown.',exact=False).wait_for()
             search.fill('E'*32)
             expect(wallet.locator('.wallet-relationship-edge:visible')).to_have_count(1)
+            direction=wallet.get_by_label('Owner address appears as',exact=True)
+            direction.select_option('recipient')
+            expect(wallet.locator('.wallet-relationship-edge:visible')).to_have_count(0)
+            direction.select_option('sender')
+            expect(wallet.locator('.wallet-relationship-edge:visible')).to_have_count(1)
+            search.fill('F'*32)
+            expect(wallet.locator('.wallet-relationship-edge:visible')).to_have_count(0)
+            direction.select_option('recipient')
+            expect(wallet.locator('.wallet-relationship-edge:visible')).to_have_count(1)
             wallet.get_by_role('button',name='Show all saved links',exact=True).click()
             assert search.input_value() == ''
+            assert direction.input_value() == 'either'
             assert '1 input records · 0 withheld · 1 distinct transactions' in wallet.inner_text()
             summary=wallet.locator('summary')
             summary.click()

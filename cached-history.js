@@ -174,20 +174,29 @@
     const label=create('label','Filter owner address in this saved window');
     const query=create('input');query.type='search';query.value='';query.maxLength=44;
     query.autocomplete='off';query.spellcheck=false;label.append(query);
+    const directionLabel=create('label','Owner address appears as');
+    const direction=create('select');
+    for (const [value,text] of [['either','Sender or recipient'],['sender','Sender'],['recipient','Recipient']]) {
+      const option=create('option',text);option.value=value;direction.append(option);
+    }
+    directionLabel.append(direction);
     const clear=create('button','Show all saved links');clear.type='button';
     const count=create('p');count.setAttribute('role','status');count.setAttribute('aria-live','polite');
     const cards=[];
     function filterLinks() {
       const text=query.value.trim();let visible=0;
       for (const [edge,item] of cards) {
-        item.hidden=!!text&&!edge.source_owner.includes(text)&&!edge.destination_owner.includes(text);
+        const sender=direction.value!=='recipient'&&edge.source_owner.includes(text);
+        const recipient=direction.value!=='sender'&&edge.destination_owner.includes(text);
+        item.hidden=!!text&&!sender&&!recipient;
         if (!item.hidden) visible++;
       }
       count.textContent=visible+' of '+cards.length+' saved links shown. Solana addresses are case-sensitive; coverage remains incomplete.';
     }
     query.addEventListener('input',filterLinks);
-    clear.addEventListener('click',()=>{query.value='';filterLinks();});
-    if (graph.relationships.length) { controls.append(label,clear,count);section.append(controls); }
+    direction.addEventListener('change',filterLinks);
+    clear.addEventListener('click',()=>{query.value='';direction.value='either';filterLinks();});
+    if (graph.relationships.length) { controls.append(label,directionLabel,clear,count);section.append(controls); }
     for (const edge of graph.relationships) {
       const item=create('article');item.className='wallet-relationship-edge';cards.push([edge,item]);const owners=create('dl');
       for (const [label,value] of [['From owner address',edge.source_owner],['To owner address',edge.destination_owner],

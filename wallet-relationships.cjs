@@ -16,12 +16,14 @@ function projectRelationships(graph, transfers, target) {
   if(graph.relationships.length)fail();
   return {...base,status:'UNAVAILABLE',relationships:[]};
  }
- const events=new Map(),points=new Map(),expected=new Map();
+ const events=new Map(),points=new Map(),slotTimes=new Map(),expected=new Map();
  for(const sample of transfers){
   if(sample.verification!=='VERIFIED')continue;
   const point=sample.slot+':'+sample.block_time_utc;
   if(points.has(sample.signature)&&points.get(sample.signature)!==point)fail();
   points.set(sample.signature,point);
+  if(slotTimes.has(sample.slot)&&slotTimes.get(sample.slot)!==sample.block_time_utc)fail();
+  slotTimes.set(sample.slot,sample.block_time_utc);
   for(const move of sample.movements){
    const key=sample.signature+':'+move.outer_index+':'+(move.inner_index??-1);
    const proof={signature:sample.signature,slot:sample.slot,block_time_utc:sample.block_time_utc,
