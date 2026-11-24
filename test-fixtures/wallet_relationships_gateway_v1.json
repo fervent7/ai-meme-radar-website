@@ -1,7 +1,7 @@
 {
   "fixture_scope": "SYNTHETIC_CONTRACT_ONLY_NOT_CHAIN_OBSERVATION",
   "chain": "solana",
-  "token_address": "22oDtUuTerJC5sbiYD8UQngsJaGe9pgiMxX3RA3mjJCh",
+  "token_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
   "pool_address": "DH2nkUP6GA85ydDjo8Rz7smVcUkq841frwmNwfVCRBhC",
   "holder_observations": [],
   "reserves": [],
@@ -15,7 +15,7 @@
     {
       "kind": "token_transfers",
       "chain": "solana",
-      "token_address": "22oDtUuTerJC5sbiYD8UQngsJaGe9pgiMxX3RA3mjJCh",
+      "token_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
       "pool_address": null,
       "verification": "VERIFIED",
       "reference": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
@@ -42,7 +42,7 @@
   "wallet_relationships": {
     "version": "radar-wallet-relationships-v1",
     "chain": "solana",
-    "token_address": "22oDtUuTerJC5sbiYD8UQngsJaGe9pgiMxX3RA3mjJCh",
+    "token_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     "scope": "STORED_MINT_TRANSFERS_NOT_POOL_ATTRIBUTED",
     "status": "HISTORICAL_OBSERVED_RELATIONSHIPS",
     "relationships": [

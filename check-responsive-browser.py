@@ -24,7 +24,7 @@ const walletContract = require('./test-fixtures/wallet_relationships_gateway_v1.
 const onchain = {
  fixture_scope: walletContract.fixture_scope,
  chain, token_address: address, pool_address: pool,
- wallet_relationships: walletContract.wallet_relationships,
+ wallet_relationships: {...walletContract.wallet_relationships, token_address:address},
  token_transfer_coverage:{scope:'STORED_MINT_RECORDS_NOT_POOL_ATTRIBUTED',complete_history:false,record_limit:24},
  token_transfers:[sample('token_transfers',null,'B'.repeat(88),{
   block_time_unix:Math.floor(Date.parse(stamp)/1000),transfers:[{

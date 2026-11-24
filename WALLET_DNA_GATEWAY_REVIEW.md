@@ -36,3 +36,12 @@ at their new positions. No risk/accessibility assertion was removed.
 Hosted exact revision, genuine fresh multichain graph feed, independent entity
 inference, trusted PVI and public launch remain NOT_READY/NOT_RUN. No API keys,
 paid calls, external notifications, deployment/merge or private-bot integration.
+
+Security run45438416283 failed3 generic-api-key detections. Reproduced with pinned
+Gitleaks8.24.3 (verified official release SHA): only shared fixture lines4/18/45,
+all the same public Whale Pad mint under token_address. Confirmed noncredentials.
+Because this fixture is explicitly synthetic, both repos now use a visibly
+synthetic low-entropy identity; browser fixture explicitly rebinds its test graph
+to the existing test response target. API schema/production matching unchanged.
+No scan rule suppression/allowlist or credential rotation. Local full-tree secret
+scan must pass, then new exact-head security/browser CI. First failing run retained.
