@@ -309,6 +309,15 @@ try:
             wallet.get_by_role('button',name='Show all saved links',exact=True).click()
             assert search.input_value() == ''
             assert direction.input_value() == 'either'
+            assert '2 linked owner addresses in saved evidence' in wallet.inner_text()
+            wallet.get_by_role('button',name='Filter this sender',exact=True).click()
+            assert search.input_value() == 'E'*32
+            assert direction.input_value() == 'sender'
+            expect(wallet.locator('.wallet-relationship-edge:visible')).to_have_count(1)
+            wallet.get_by_role('button',name='Filter this recipient',exact=True).click()
+            assert search.input_value() == 'F'*32
+            assert direction.input_value() == 'recipient'
+            wallet.get_by_role('button',name='Show all saved links',exact=True).click()
             assert '1 input records · 0 withheld · 1 distinct transactions' in wallet.inner_text()
             summary=wallet.locator('summary')
             summary.click()

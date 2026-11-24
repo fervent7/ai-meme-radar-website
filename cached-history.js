@@ -162,6 +162,8 @@
       return section;
     }
     if (!graph.relationships.length) section.append(create('strong','No attributable links in the supplied saved records. This does not establish absence of wallet activity.'));
+    if (Number.isSafeInteger(graph.linked_owner_address_count)) section.append(
+      create('p',graph.linked_owner_address_count+' linked owner addresses in saved evidence. Addresses may include contracts; this is not a count of people.'));
     if (graph.coverage) {
       const window=graph.coverage;
       section.append(create('p','Saved window: '+window.input_records+' input records · '+
@@ -210,6 +212,13 @@
           create('code',proof.signature));
       }
       item.append(owners,evidence);section.append(item);
+      const jump=create('div');jump.className='wallet-filter';
+      for (const [name,address,value] of [['Filter this sender',edge.source_owner,'sender'],['Filter this recipient',edge.destination_owner,'recipient']]) {
+        const button=create('button',name);button.type='button';
+        button.addEventListener('click',()=>{query.value=address;direction.value=value;filterLinks();query.focus();});
+        jump.append(button);
+      }
+      item.append(jump);
     }
     filterLinks();
     return section;

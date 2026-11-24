@@ -75,6 +75,7 @@
     "coordination_proven": false,
     "security_clearance": false,
     "transaction_authorized": false,
+    "linked_owner_address_count": 2,
     "coverage": {
       "input_records": 1,
       "available_records": 1,

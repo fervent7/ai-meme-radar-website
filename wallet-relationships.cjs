@@ -4,7 +4,7 @@
 function projectRelationships(graph, transfers, target) {
  const base={scope:'STORED_MINT_TRANSFERS_NOT_POOL_ATTRIBUTED',historical_only:true,
   complete_history:false,fresh_evidence:false,common_owner_inferred:false,
-  coordination_proven:false,security_clearance:false,transaction_authorized:false,coverage:null};
+  coordination_proven:false,security_clearance:false,transaction_authorized:false,linked_owner_address_count:null,coverage:null};
  if(graph===undefined)return {...base,status:'NOT_SUPPLIED',relationships:[]};
  const fail=()=>{throw Error('Invalid wallet relationship evidence');};
  if(!graph||graph.version!=='radar-wallet-relationships-v1'||graph.chain!=='solana'||
@@ -41,6 +41,9 @@ function projectRelationships(graph, transfers, target) {
  }
  if(graph.relationships.length!==expected.size||graph.status!==
   (expected.size?'HISTORICAL_OBSERVED_RELATIONSHIPS':'NO_ATTRIBUTABLE_RELATIONSHIPS'))fail();
+ const ownerCount=new Set([...expected.values()].flatMap(edge=>[edge.source_owner,edge.destination_owner])).size;
+ if(graph.linked_owner_address_count!==undefined&&graph.linked_owner_address_count!==null&&
+    graph.linked_owner_address_count!==ownerCount)fail();
  const usable=transfers.filter(row=>row.verification==='VERIFIED');
  const slots=usable.map(row=>row.slot),times=usable.map(row=>Date.parse(row.block_time_utc)/1000);
  const coverage={input_records:transfers.length,available_records:usable.length,
@@ -73,7 +76,7 @@ function projectRelationships(graph, transfers, target) {
    proofs.add(key);
   }
  }
- return {...base,status:graph.status,coverage:coverage.unavailable?null:coverage,relationships:[...expected.entries()]
+ return {...base,status:graph.status,linked_owner_address_count:graph.linked_owner_address_count==null?null:ownerCount,coverage:coverage.unavailable?null:coverage,relationships:[...expected.entries()]
   .sort(([a],[b])=>a<b?-1:a>b?1:0).map(([,edge])=>({source_owner:edge.source_owner,
    destination_owner:edge.destination_owner,amount_raw:edge.amount.toString(),
    transfer_count:edge.proofs.size,evidence:[...edge.proofs.values()]}))};
