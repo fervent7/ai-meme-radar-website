@@ -175,6 +175,23 @@ try:
                     assert passport.locator('#passport-scenario').bounding_box()['height']>=48
                     no_overflow(page)
                     if w in (390,1440): passport.screenshot(path=str(screenshots/f'passport-preview-{w}.png'),animations='disabled')
+                    if w==390:
+                        import json
+                        bad=json.loads(Path('passport-preview-fixture.json').read_text())
+                        bad['cases']['current']['checks'][0]['state']='REVOKED'
+                        page.route('**/passport-preview-fixture.json',lambda route:route.fulfill(json=bad))
+                        page.goto(origin+'/intelligence.html')
+                        passport=page.locator('#passport-preview')
+                        passport.locator('#passport-scenario').select_option('current')
+                        passport.get_by_text('Example unavailable. Retry loading the preview.',exact=True).wait_for()
+                        assert passport.locator('.passport-check').count()==0
+                        assert passport.get_by_text('Recorded checks current (example)',exact=True).count()==0
+                        page.unroute('**/passport-preview-fixture.json')
+                        passport.get_by_role('button',name='Retry passport preview',exact=True).click()
+                        passport.get_by_text('Recorded checks current (example)',exact=True).wait_for()
+                        assert passport.locator('.passport-check').count()==3
+                        no_overflow(page)
+
 
                 assert page.locator('#nav a[aria-current="page"]').get_attribute('href')==name
                 no_overflow(page)

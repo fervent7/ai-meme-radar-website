@@ -24,3 +24,10 @@ test('passport cards translate backend codes and timestamps into readable explan
  assert.doesNotMatch(explain({state:'UNKNOWN',reason:'PRIVATE_INTERNAL_VALUE'}).reason,/PRIVATE_INTERNAL_VALUE/);
  assert.equal(displayTime(null),'Unavailable');assert.match(displayTime('2026-11-24T10:00:00Z'),/24 Nov 2026.*10:00:00 UTC/);
 });
+test('a current label cannot hide revoked/unknown checks or duplicated required categories',()=>{
+ for(const change of [f=>f.cases.current.checks[0].state='REVOKED',
+  f=>f.cases.current.checks[2].state='UNKNOWN',
+  f=>f.cases.current.checks[1].kind='holder_distribution']){
+  const f=structuredClone(fixture);change(f);assert.throws(()=>viewModel(f,'current'));
+ }
+});

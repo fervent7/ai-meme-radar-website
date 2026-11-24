@@ -25,6 +25,13 @@
   if(!row||row.schema_version!=='radar-research-passport-preview-v1'||!states.has(row.state)
     ||row.signed_attestation!==false||row.security_clearance!==false||row.transaction_authorized!==false
     ||!Array.isArray(row.checks)||row.checks.length!==3)throw Error('Invalid example');
+  const kinds=['holder_distribution','pool_reserves','token_security'];
+  const childStates=new Set(['CURRENT_RECORDED_CHECK','EXPIRED','REVOKED','UNKNOWN']);
+  if(new Set(row.checks.map(check=>check?.kind)).size!==3
+    ||row.checks.some(check=>!kinds.includes(check?.kind)||!childStates.has(check?.state)))throw Error('Invalid example');
+  const statusSet=new Set(row.checks.map(check=>check.state));
+  const derived=statusSet.has('REVOKED')?'REVOKED':statusSet.has('UNKNOWN')?'UNKNOWN':statusSet.has('EXPIRED')?'EXPIRED':'CURRENT_RECORDED_CHECKS';
+  if(row.state!==derived)throw Error('Inconsistent example');
   return {label:labels[row.state],row};
  }
  async function mount(){
