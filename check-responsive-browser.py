@@ -363,6 +363,19 @@ try:
                 page.unroute('**/api/radar/onchain-history?*',legacy_window)
                 page.get_by_role('button',name='Load finalized on-chain evidence').click()
                 wallet.get_by_text('Saved pair window: 2026-11-14T22:31:28.000Z',exact=False).wait_for()
+                def withheld_graph(route):
+                    response=route.fetch()
+                    value=response.json()
+                    value['wallet_relationships'].update(status='UNAVAILABLE',relationships=[],
+                        withholding_reason='SLOT_BLOCK_TIME_CONFLICT')
+                    route.fulfill(response=response,json=value)
+                page.route('**/api/radar/onchain-history?*',withheld_graph)
+                page.get_by_role('button',name='Load finalized on-chain evidence').click()
+                wallet.get_by_text('Saved records disagree on the block time for one slot.',exact=True).wait_for()
+                wallet.screenshot(path=str(screenshots/f'withheld-wallet-dna-{w}.png'),animations='disabled')
+                page.unroute('**/api/radar/onchain-history?*',withheld_graph)
+                page.get_by_role('button',name='Load finalized on-chain evidence').click()
+                wallet.get_by_text('Saved pair window: 2026-11-14T22:31:28.000Z',exact=False).wait_for()
             if w in (390,1440):
                 heading = page.get_by_role('heading', name='Holder distribution', exact=True)
                 evidence_panel = heading.locator('..')

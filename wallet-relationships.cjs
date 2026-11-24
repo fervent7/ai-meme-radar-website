@@ -4,7 +4,7 @@
 function projectRelationships(graph, transfers, target) {
  const base={scope:'STORED_MINT_TRANSFERS_NOT_POOL_ATTRIBUTED',historical_only:true,
   complete_history:false,fresh_evidence:false,common_owner_inferred:false,
-  coordination_proven:false,security_clearance:false,transaction_authorized:false,linked_owner_address_count:null,coverage:null};
+  coordination_proven:false,security_clearance:false,transaction_authorized:false,linked_owner_address_count:null,withholding_reason:null,coverage:null};
  if(graph===undefined)return {...base,status:'NOT_SUPPLIED',relationships:[]};
  const fail=()=>{throw Error('Invalid wallet relationship evidence');};
  if(!graph||graph.version!=='radar-wallet-relationships-v1'||graph.chain!=='solana'||
@@ -14,7 +14,11 @@ function projectRelationships(graph, transfers, target) {
   !Array.isArray(graph.relationships)||graph.relationships.length>1000)fail();
  if(graph.status==='UNAVAILABLE'){
   if(graph.relationships.length)fail();
-  return {...base,status:'UNAVAILABLE',relationships:[]};
+  const allowed=new Set(['OBSERVATION_PRECEDES_BLOCK_TIME','TRANSACTION_CHAIN_POINT_CONFLICT',
+   'SLOT_BLOCK_TIME_CONFLICT','CONFLICTING_TRANSFER_INSTRUCTION','TRANSFER_MOVEMENT_BUDGET','WRONG_TRANSFER_SCOPE']);
+  const reason=Array.isArray(graph.reasons)&&graph.reasons.length===1&&allowed.has(graph.reasons[0])?
+   graph.reasons[0]:'TRANSFER_RELATIONSHIPS_INVALID_OR_CONFLICTING';
+  return {...base,status:'UNAVAILABLE',withholding_reason:reason,relationships:[]};
  }
  const events=new Map(),points=new Map(),slotTimes=new Map(),expected=new Map();
  for(const sample of transfers){

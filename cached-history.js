@@ -157,8 +157,14 @@
     section.append(create('h5','Wallet DNA · saved transfer relationships'),
       create('p','Historical mint-scoped transfer links, not people or proof of common ownership, coordination or fraud. Incomplete coverage; loading this view does not refresh the evidence.'));
     if (!graph || !['HISTORICAL_OBSERVED_RELATIONSHIPS','NO_ATTRIBUTABLE_RELATIONSHIPS'].includes(graph.status)) {
+      const reasons={OBSERVATION_PRECEDES_BLOCK_TIME:'The original recording time conflicts with the claimed chain time.',
+        TRANSACTION_CHAIN_POINT_CONFLICT:'A saved transaction has conflicting chain locations.',
+        SLOT_BLOCK_TIME_CONFLICT:'Saved records disagree on the block time for one slot.',
+        CONFLICTING_TRANSFER_INSTRUCTION:'Saved records disagree on a transfer instruction.',
+        TRANSFER_MOVEMENT_BUDGET:'The saved transfer set exceeds the supported evidence limit.',
+        WRONG_TRANSFER_SCOPE:'Saved transfer records do not match the selected research scope.'};
       section.append(create('strong','Relationship evidence unavailable'),
-        create('p','The backend has not supplied a validated relationship projection for this saved window.'));
+        create('p',reasons[graph?.withholding_reason]||'The backend has not supplied a validated relationship projection for this saved window.'));
       return section;
     }
     if (!graph.relationships.length) section.append(create('strong','No attributable links in the supplied saved records. This does not establish absence of wallet activity.'));

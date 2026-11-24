@@ -73,3 +73,15 @@ test('original recording time cannot claim chain data more than five minutes ahe
  row.observed_at_utc=new Date((stamp-301)*1000).toISOString();
  await assert.rejects(()=>run(d),/Invalid on-chain provenance/);
 });
+
+test('withheld graph preserves only allowlisted diagnostic enums',async()=>{
+ for(const [reason,expected] of [['SLOT_BLOCK_TIME_CONFLICT','SLOT_BLOCK_TIME_CONFLICT'],
+  ['<script>private-secret</script>','TRANSFER_RELATIONSHIPS_INVALID_OR_CONFLICTING']]){
+  const d=structuredClone(fixture);
+  d.wallet_relationships={...fixture.wallet_relationships,status:'UNAVAILABLE',relationships:[],reasons:[reason]};
+  const graph=(await run(d)).wallet_relationships;
+  assert.equal(graph.withholding_reason,expected);assert.deepEqual(graph.relationships,[]);
+  assert.equal(graph.transaction_authorized,false);assert.equal(graph.coverage,null);
+  assert.equal(JSON.stringify(graph).includes('private-secret'),false);
+ }
+});
