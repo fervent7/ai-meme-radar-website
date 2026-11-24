@@ -8,8 +8,18 @@ const run=data=>loadHistory(target,'fixture-key',async()=>Response.json(data),tr
 test('different transactions sharing one slot cannot claim different block times',async()=>{
  const out=await run(fixture),first=out.transfers[0],second=structuredClone(first);
  second.signature='C'.repeat(88);
- second.block_time_utc=new Date(Date.parse(first.block_time_utc)+1000).toISOString();
- assert.throws(()=>projectRelationships(fixture.wallet_relationships,[first,second],target),
+ const graph=structuredClone(fixture.wallet_relationships);
+ const edge=graph.relationships[0],proof=structuredClone(edge.evidence[0]);
+ proof.reference=second.signature;edge.evidence.push(proof);
+ edge.transfer_count=2;edge.amount_raw=(2n*BigInt(edge.amount_raw)).toString();
+ Object.assign(graph.coverage,{input_records:2,available_records:2,unique_transactions:2});
+ assert.equal(projectRelationships(graph,[first,second],target).relationships[0].transfer_count,2);
+ // Make every signature/proof/count/window agree with the claimed conflicting
+ // time. Only the shared-slot invariant should reject this internally matched graph.
+ proof.block_time_unix++;
+ second.block_time_utc=new Date(proof.block_time_unix*1000).toISOString();
+ graph.coverage.last_block_time_unix=proof.block_time_unix;
+ assert.throws(()=>projectRelationships(graph,[first,second],target),
   /Invalid wallet relationship evidence/);
 });
 test('gateway validates backend relationships against the same scoped saved transfers',async()=>{
