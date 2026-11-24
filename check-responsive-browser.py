@@ -156,6 +156,20 @@ try:
                     assert example.locator('pre').is_visible()
                     assert example.locator('pre').get_attribute('tabindex') == '0'
                     assert 'not a token observation' in example.inner_text()
+                    passport=page.locator('#passport-preview')
+                    passport.get_by_text('Evidence missing or unavailable (example)',exact=True).wait_for()
+                    passport.locator('#passport-scenario').select_option('expired')
+                    passport.get_by_text('Expired evidence (example)',exact=True).wait_for()
+                    passport.locator('#passport-scenario').select_option('revoked')
+                    passport.get_by_text('Revoked reference (example)',exact=True).wait_for()
+                    passport.locator('#passport-scenario').select_option('current')
+                    passport.get_by_text('Recorded checks current (example)',exact=True).wait_for()
+                    assert passport.locator('.passport-check').count()==3
+                    assert 'No attestation is issued' in passport.inner_text()
+                    assert passport.locator('#passport-scenario').bounding_box()['height']>=48
+                    no_overflow(page)
+                    if w in (390,1440): passport.screenshot(path=str(screenshots/f'passport-preview-{w}.png'),animations='disabled')
+
                 assert page.locator('#nav a[aria-current="page"]').get_attribute('href')==name
                 no_overflow(page)
                 verify_community_links(page.locator('footer'))

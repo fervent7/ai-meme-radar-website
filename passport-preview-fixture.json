@@ -1,0 +1,258 @@
+{
+  "cases": {
+    "current": {
+      "checks": [
+        {
+          "block_time_utc": "2026-11-24T10:00:00+00:00",
+          "chain_point": {
+            "block": 17,
+            "block_hash": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "expires_at_utc": "2026-11-24T10:01:30+00:00",
+          "kind": "holder_distribution",
+          "observed_at_utc": "2026-11-24T10:00:00+00:00",
+          "reason": "PRODUCER_ASSERTION_NOT_INDEPENDENT_ATTESTATION",
+          "reference": "synthetic-holder_distribution",
+          "scope": "TOKEN_NOT_POOL",
+          "source": "https://fixture.example.invalid",
+          "state": "CURRENT_RECORDED_CHECK"
+        },
+        {
+          "block_time_utc": "2026-11-24T10:00:00+00:00",
+          "chain_point": {
+            "block": 17,
+            "block_hash": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "expires_at_utc": "2026-11-24T10:01:30+00:00",
+          "kind": "pool_reserves",
+          "observed_at_utc": "2026-11-24T10:00:00+00:00",
+          "reason": "PRODUCER_ASSERTION_NOT_INDEPENDENT_ATTESTATION",
+          "reference": "synthetic-pool_reserves",
+          "scope": "POOL",
+          "source": "https://fixture.example.invalid",
+          "state": "CURRENT_RECORDED_CHECK"
+        },
+        {
+          "block_time_utc": "2026-11-24T10:00:00+00:00",
+          "chain_point": {
+            "block": 17,
+            "block_hash": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "expires_at_utc": "2026-11-24T10:01:30+00:00",
+          "kind": "token_security",
+          "observed_at_utc": "2026-11-24T10:00:00+00:00",
+          "reason": "PRODUCER_ASSERTION_NOT_INDEPENDENT_ATTESTATION",
+          "reference": "synthetic-token_security",
+          "scope": "TOKEN_NOT_POOL",
+          "source": "https://fixture.example.invalid",
+          "state": "CURRENT_RECORDED_CHECK"
+        }
+      ],
+      "complete_token_history": false,
+      "evaluated_at_utc": "2026-11-24T10:00:30+00:00",
+      "identity": {
+        "chain": "bsc",
+        "pool_address": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "token_address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "independent_validation": "NOT_PERFORMED_BY_PREVIEW",
+      "max_age_seconds": 90,
+      "product_state": "IN_DEVELOPMENT",
+      "schema_version": "radar-research-passport-preview-v1",
+      "security_clearance": false,
+      "signed_attestation": false,
+      "state": "CURRENT_RECORDED_CHECKS",
+      "transaction_authorized": false
+    },
+    "expired": {
+      "checks": [
+        {
+          "block_time_utc": "2026-11-24T10:00:00+00:00",
+          "chain_point": {
+            "block": 17,
+            "block_hash": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "expires_at_utc": "2026-11-24T10:01:30+00:00",
+          "kind": "holder_distribution",
+          "observed_at_utc": "2026-11-24T10:00:00+00:00",
+          "reason": "EVIDENCE_EXPIRED",
+          "reference": "synthetic-holder_distribution",
+          "scope": "TOKEN_NOT_POOL",
+          "source": "https://fixture.example.invalid",
+          "state": "EXPIRED"
+        },
+        {
+          "block_time_utc": "2026-11-24T10:00:00+00:00",
+          "chain_point": {
+            "block": 17,
+            "block_hash": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "expires_at_utc": "2026-11-24T10:01:30+00:00",
+          "kind": "pool_reserves",
+          "observed_at_utc": "2026-11-24T10:00:00+00:00",
+          "reason": "EVIDENCE_EXPIRED",
+          "reference": "synthetic-pool_reserves",
+          "scope": "POOL",
+          "source": "https://fixture.example.invalid",
+          "state": "EXPIRED"
+        },
+        {
+          "block_time_utc": "2026-11-24T10:00:00+00:00",
+          "chain_point": {
+            "block": 17,
+            "block_hash": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "expires_at_utc": "2026-11-24T10:01:30+00:00",
+          "kind": "token_security",
+          "observed_at_utc": "2026-11-24T10:00:00+00:00",
+          "reason": "EVIDENCE_EXPIRED",
+          "reference": "synthetic-token_security",
+          "scope": "TOKEN_NOT_POOL",
+          "source": "https://fixture.example.invalid",
+          "state": "EXPIRED"
+        }
+      ],
+      "complete_token_history": false,
+      "evaluated_at_utc": "2026-11-24T10:01:30+00:00",
+      "identity": {
+        "chain": "bsc",
+        "pool_address": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "token_address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "independent_validation": "NOT_PERFORMED_BY_PREVIEW",
+      "max_age_seconds": 90,
+      "product_state": "IN_DEVELOPMENT",
+      "schema_version": "radar-research-passport-preview-v1",
+      "security_clearance": false,
+      "signed_attestation": false,
+      "state": "EXPIRED",
+      "transaction_authorized": false
+    },
+    "revoked": {
+      "checks": [
+        {
+          "block_time_utc": "2026-11-24T10:00:00+00:00",
+          "chain_point": {
+            "block": 17,
+            "block_hash": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "expires_at_utc": "2026-11-24T10:01:30+00:00",
+          "kind": "holder_distribution",
+          "observed_at_utc": "2026-11-24T10:00:00+00:00",
+          "reason": "PRODUCER_ASSERTION_NOT_INDEPENDENT_ATTESTATION",
+          "reference": "synthetic-holder_distribution",
+          "scope": "TOKEN_NOT_POOL",
+          "source": "https://fixture.example.invalid",
+          "state": "CURRENT_RECORDED_CHECK"
+        },
+        {
+          "block_time_utc": "2026-11-24T10:00:00+00:00",
+          "chain_point": {
+            "block": 17,
+            "block_hash": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "expires_at_utc": "2026-11-24T10:01:30+00:00",
+          "kind": "pool_reserves",
+          "observed_at_utc": "2026-11-24T10:00:00+00:00",
+          "reason": "PRODUCER_ASSERTION_NOT_INDEPENDENT_ATTESTATION",
+          "reference": "synthetic-pool_reserves",
+          "scope": "POOL",
+          "source": "https://fixture.example.invalid",
+          "state": "CURRENT_RECORDED_CHECK"
+        },
+        {
+          "block_time_utc": "2026-11-24T10:00:00+00:00",
+          "chain_point": {
+            "block": 17,
+            "block_hash": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "expires_at_utc": "2026-11-24T10:01:30+00:00",
+          "kind": "token_security",
+          "observed_at_utc": "2026-11-24T10:00:00+00:00",
+          "reason": "RECORDED_REFERENCE_REVOKED",
+          "reference": "synthetic-token_security",
+          "scope": "TOKEN_NOT_POOL",
+          "source": "https://fixture.example.invalid",
+          "state": "REVOKED"
+        }
+      ],
+      "complete_token_history": false,
+      "evaluated_at_utc": "2026-11-24T10:00:30+00:00",
+      "identity": {
+        "chain": "bsc",
+        "pool_address": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "token_address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "independent_validation": "NOT_PERFORMED_BY_PREVIEW",
+      "max_age_seconds": 90,
+      "product_state": "IN_DEVELOPMENT",
+      "schema_version": "radar-research-passport-preview-v1",
+      "security_clearance": false,
+      "signed_attestation": false,
+      "state": "REVOKED",
+      "transaction_authorized": false
+    },
+    "unknown": {
+      "checks": [
+        {
+          "block_time_utc": "2026-11-24T10:00:00+00:00",
+          "chain_point": {
+            "block": 17,
+            "block_hash": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "expires_at_utc": "2026-11-24T10:01:30+00:00",
+          "kind": "holder_distribution",
+          "observed_at_utc": "2026-11-24T10:00:00+00:00",
+          "reason": "PRODUCER_ASSERTION_NOT_INDEPENDENT_ATTESTATION",
+          "reference": "synthetic-holder_distribution",
+          "scope": "TOKEN_NOT_POOL",
+          "source": "https://fixture.example.invalid",
+          "state": "CURRENT_RECORDED_CHECK"
+        },
+        {
+          "block_time_utc": "2026-11-24T10:00:00+00:00",
+          "chain_point": {
+            "block": 17,
+            "block_hash": "0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+          },
+          "expires_at_utc": "2026-11-24T10:01:30+00:00",
+          "kind": "pool_reserves",
+          "observed_at_utc": "2026-11-24T10:00:00+00:00",
+          "reason": "PRODUCER_ASSERTION_NOT_INDEPENDENT_ATTESTATION",
+          "reference": "synthetic-pool_reserves",
+          "scope": "POOL",
+          "source": "https://fixture.example.invalid",
+          "state": "CURRENT_RECORDED_CHECK"
+        },
+        {
+          "block_time_utc": null,
+          "chain_point": null,
+          "expires_at_utc": null,
+          "kind": "token_security",
+          "observed_at_utc": null,
+          "reason": "EVIDENCE_MISSING",
+          "reference": null,
+          "source": null,
+          "state": "UNKNOWN"
+        }
+      ],
+      "complete_token_history": false,
+      "evaluated_at_utc": "2026-11-24T10:00:30+00:00",
+      "identity": {
+        "chain": "bsc",
+        "pool_address": "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "token_address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "independent_validation": "NOT_PERFORMED_BY_PREVIEW",
+      "max_age_seconds": 90,
+      "product_state": "IN_DEVELOPMENT",
+      "schema_version": "radar-research-passport-preview-v1",
+      "security_clearance": false,
+      "signed_attestation": false,
+      "state": "UNKNOWN",
+      "transaction_authorized": false
+    }
+  },
+  "data_classification": "SYNTHETIC_TEST_DATA_NOT_LIVE",
+  "independent_validation": "NOT_PERFORMED_BY_PREVIEW"
+}

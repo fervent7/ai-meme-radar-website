@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Meme Radar research passport PREVIEW v1 (no attestation issuance)",
+  "type": "object",
+  "required": ["schema_version", "product_state", "state", "identity", "checks", "evaluated_at_utc", "max_age_seconds", "signed_attestation", "security_clearance", "transaction_authorized", "independent_validation", "complete_token_history"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "radar-research-passport-preview-v1"},
+    "product_state": {"const": "IN_DEVELOPMENT"},
+    "state": {"enum": ["CURRENT_RECORDED_CHECKS", "UNKNOWN", "EXPIRED", "REVOKED"]},
+    "identity": {"type": "object", "required": ["chain", "token_address", "pool_address"], "additionalProperties": false,
+      "properties": {"chain": {"enum": ["solana", "bsc", "base", "ethereum"]}, "token_address": {"type": "string"}, "pool_address": {"type": "string"}}},
+    "checks": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "object", "required": ["kind", "state", "reason", "source", "reference", "observed_at_utc", "block_time_utc", "expires_at_utc", "chain_point"]}},
+    "evaluated_at_utc": {"type": "string", "format": "date-time"},
+    "max_age_seconds": {"type": "integer", "minimum": 1, "maximum": 300},
+    "independent_validation": {"const": "NOT_PERFORMED_BY_PREVIEW"},
+    "signed_attestation": {"const": false}, "security_clearance": {"const": false},
+    "transaction_authorized": {"const": false}, "complete_token_history": {"const": false}
+  }
+}

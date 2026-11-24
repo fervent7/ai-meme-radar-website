@@ -12,14 +12,14 @@ const ASSETS = new Map([
   ['/community.html','community.html'], ['/site.js','site.js'],
   ['/','index.html'], ['/index.html','index.html'], ['/styles.css','styles.css'],
   ['/ecosystem.js','ecosystem.js'], ['/app.js','app.js'], ['/market-identity.js','market-identity.js'],
-  ['/research-copy.js','research-copy.js'], ['/cached-history.js','cached-history.js'], ['/config.js','config.js'],
+  ['/passport-preview.js','passport-preview.js'], ['/passport-preview-fixture.json','passport-preview-fixture.json'], ['/research-copy.js','research-copy.js'], ['/cached-history.js','cached-history.js'], ['/config.js','config.js'],
   ['/site.webmanifest','site.webmanifest'], ['/brand-wordmark.webp','brand-wordmark.webp'],
   ['/brand-icon-64.png','brand-icon-64.png'], ['/brand-icon-192.png','brand-icon-192.png'],
   ['/brand-icon-512.png','brand-icon-512.png']
 ]);
 const TYPES = {
   html: 'text/html; charset=utf-8', css: 'text/css; charset=utf-8',
-  js: 'application/javascript; charset=utf-8', webmanifest: 'application/manifest+json',
+  json: 'application/json; charset=utf-8', js: 'application/javascript; charset=utf-8', webmanifest: 'application/manifest+json',
   webp: 'image/webp', png: 'image/png'
 };
 const digest = value => createHash('sha256').update(value).digest();

@@ -11,6 +11,7 @@
   <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="styles.css">
   <script src="site.js" defer></script>
+  <script src="passport-preview.js" defer></script>
 
 </head>
 <body>
@@ -67,6 +68,24 @@
   </details>
   <p>For developers: trace inputs through your own application. For businesses and researchers: audit why a metric was accepted or rejected. Backend assertions still require trusted producers; a label alone is not independent on-chain verification.</p>
   <a class="text-link" href="research.html">Inspect the research evidence interface →</a>
+</section>
+<section id="passport-preview" class="panel passport-preview" aria-labelledby="passport-heading">
+  <p class="eyebrow">SHARED EVIDENCE FOUNDATION · IN DEVELOPMENT</p>
+  <h2 id="passport-heading">Living Token Passport preview</h2>
+  <p>For researchers, projects and developers: inspect which source records exist, when they expire and why a reference can be withheld. Wallet DNA relationship research and PVI attestations are planned extensions.</p>
+  <p class="research-warning"><strong>Synthetic test data · controlled example clock.</strong> No attestation is issued. A current recorded check is not independent verification, a security clearance or a trading authorization.</p>
+  <label for="passport-scenario">Explore an evidence state</label>
+  <select id="passport-scenario" disabled>
+    <option value="unknown" selected>Missing evidence</option>
+    <option value="current">Recorded checks current</option>
+    <option value="expired">Expired evidence</option>
+    <option value="revoked">Revoked reference</option>
+  </select>
+  <p id="passport-status" role="status" aria-live="polite">Interactive preview requires JavaScript. All examples are synthetic; no live passport is available.</p>
+  <button id="passport-retry" class="outline" type="button" hidden>Retry passport preview</button>
+  <div id="passport-content" class="passport-content"></div>
+  <p>Planned PVI checks must expire or be revocable, keep their original provenance and disclose unknowns. Payment must never buy a favourable rating. Wallet relationships are hypotheses, not proof of common ownership or fraud.</p>
+  <p>Future institutional APIs, webhooks and curated workflows are planned. Strategy vaults, OTC execution and treasury distributions require separate safety, authorization and legal review; they are not available.</p>
 </section>
   </main>
   <footer class="wrap">

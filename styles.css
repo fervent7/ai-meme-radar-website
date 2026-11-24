@@ -312,3 +312,11 @@ footer .community-links { justify-content: flex-end; }
 .research-identity-actions{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:1rem}
 .research-identity-actions button{min-height:48px;min-width:48px;white-space:normal}
 .research-identity-actions button:disabled{opacity:.65;cursor:wait}
+
+.passport-preview{margin-top:2rem;background:linear-gradient(135deg,#101e22,#101820);border:1px solid #267061;border-radius:18px;padding:clamp(1rem,3vw,2rem)}
+.passport-preview select{min-height:48px;width:100%;max-width:30rem;margin:.5rem 0 1rem}
+.passport-content{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:1rem}
+.passport-content>p{grid-column:1/-1;overflow-wrap:anywhere}
+.passport-check{padding:1rem;border:1px solid #35525c;border-radius:12px;background:#111e28;overflow-wrap:anywhere}
+.passport-check h4{text-transform:capitalize;color:#66e8c2}
+#passport-retry{min-height:48px}
