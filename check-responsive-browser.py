@@ -181,7 +181,7 @@ try:
                     assert passport.locator('#passport-scenario').bounding_box()['height']>=48
                     no_overflow(page)
                     if w in (390,1440): passport.screenshot(path=str(screenshots/f'passport-preview-{w}.png'),animations='disabled')
-                    if w==390:
+                    if w in (390,1440):
                         import json
                         bad=json.loads(Path('passport-preview-fixture.json').read_text())
                         bad['cases']['current']['checks'][0]['state']='REVOKED'
@@ -192,6 +192,21 @@ try:
                         passport.get_by_text('Example unavailable. Retry loading the preview.',exact=True).wait_for()
                         assert passport.locator('.passport-check').count()==0
                         assert passport.get_by_text('Recorded checks current (example)',exact=True).count()==0
+                        page.unroute('**/passport-preview-fixture.json')
+                        passport.get_by_role('button',name='Retry passport preview',exact=True).click()
+                        passport.get_by_text('Recorded checks current (example)',exact=True).wait_for()
+                        assert passport.locator('.passport-check').count()==3
+                        no_overflow(page)
+                        bad=json.loads(Path('passport-preview-fixture.json').read_text())
+                        bad['cases']['current']['checks'][1]['block_time_utc']='2026-11-24T09:59:59Z'
+                        bad['cases']['current']['checks'][1]['expires_at_utc']='2026-11-24T10:01:29Z'
+                        page.route('**/passport-preview-fixture.json',lambda route:route.fulfill(json=bad))
+                        page.goto(origin+'/intelligence.html')
+                        passport=page.locator('#passport-preview')
+                        passport.locator('#passport-scenario').select_option('current')
+                        passport.get_by_text('Example unavailable. Retry loading the preview.',exact=True).wait_for()
+                        assert passport.locator('.passport-check').count()==0
+                        passport.screenshot(path=str(screenshots/f'passport-time-conflict-{w}.png'),animations='disabled')
                         page.unroute('**/passport-preview-fixture.json')
                         passport.get_by_role('button',name='Retry passport preview',exact=True).click()
                         passport.get_by_text('Recorded checks current (example)',exact=True).wait_for()

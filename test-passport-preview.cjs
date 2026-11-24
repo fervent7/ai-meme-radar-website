@@ -31,3 +31,16 @@ test('a current label cannot hide revoked/unknown checks or duplicated required 
   const f=structuredClone(fixture);change(f);assert.throws(()=>viewModel(f,'current'));
  }
 });
+test('current preview requires coherent chain time and finite source-based expiry',()=>{
+ for(const change of [
+  r=>{r.checks[1].block_time_utc='2026-11-24T09:59:59Z';r.checks[1].expires_at_utc='2026-11-24T10:01:29Z';},
+  r=>r.checks[0].chain_point.block_hash='0x'+'0'.repeat(64),
+  r=>r.checks[0].chain_point.block++,
+  r=>r.checks[0].expires_at_utc='2026-11-24T10:00:30Z',
+  r=>r.checks[0].observed_at_utc='2026-11-24T10:00:31Z',
+  r=>r.checks[0].observed_at_utc='2026-11-24T10:00:00',
+  r=>r.max_age_seconds=true]){
+  const f=structuredClone(fixture);change(f.cases.current);
+  assert.throws(()=>viewModel(f,'current'));
+ }
+});

@@ -10,7 +10,8 @@
   EVIDENCE_EXPIRED:'This source record is older than the example freshness limit.',
   PRODUCER_ASSERTION_NOT_INDEPENDENT_ATTESTATION:'The preview has not independently verified this provider assertion.',
   EVIDENCE_INVALID_OR_UNAVAILABLE:'The record could not be validated for this token, pool and time.',
-  CHAIN_POINT_MISMATCH:'The checks refer to different blocks or slots.'
+  CHAIN_POINT_MISMATCH:'The checks refer to different blocks or slots.',
+  CHAIN_POINT_TIME_MISMATCH:'The checks disagree on the time of the same block or slot.'
  };
  function explain(check){return {state:checkLabels[check?.state]||'Unavailable',
   reason:reasons[check?.reason]||'The reason for this unavailable check is not recognised.'};}
@@ -32,6 +33,23 @@
   const statusSet=new Set(row.checks.map(check=>check.state));
   const derived=statusSet.has('REVOKED')?'REVOKED':statusSet.has('UNKNOWN')?'UNKNOWN':statusSet.has('EXPIRED')?'EXPIRED':'CURRENT_RECORDED_CHECKS';
   if(row.state!==derived)throw Error('Inconsistent example');
+  if(row.state==='CURRENT_RECORDED_CHECKS'){
+   const stamp=value=>typeof value==='string'&&/(?:Z|[+-]\d{2}:\d{2})$/.test(value)?Date.parse(value):NaN;
+   const evaluated=stamp(row.evaluated_at_utc),ttl=row.max_age_seconds;
+   if(!Number.isFinite(evaluated)||!Number.isInteger(ttl)||ttl<1||ttl>300)throw Error('Invalid example clock');
+   let pointKey=null,chainTime=null;
+   for(const check of row.checks){
+    const point=check.chain_point,kind=row.identity?.chain==='solana'?'slot':'block';
+    if(!point||!Number.isSafeInteger(point[kind])||point[kind]<0
+      ||(kind==='block'&&(!/^0x[0-9a-fA-F]{64}$/.test(point.block_hash)||BigInt(point.block_hash)===0n)))throw Error('Invalid example point');
+    const key=kind+':'+point[kind]+':'+(point.block_hash||'').toLowerCase();
+    const block=stamp(check.block_time_utc),observed=stamp(check.observed_at_utc),expires=stamp(check.expires_at_utc);
+    if(!Number.isFinite(block)||!Number.isFinite(observed)||!Number.isFinite(expires)
+      ||block>observed||observed>evaluated||evaluated>=expires||expires!==block+ttl*1000
+      ||(pointKey!==null&&(key!==pointKey||block!==chainTime)))throw Error('Inconsistent example evidence');
+    pointKey=key;chainTime=block;
+   }
+  }
   return {label:labels[row.state],row};
  }
  async function mount(){
