@@ -306,3 +306,9 @@ footer .community-links { justify-content: flex-end; }
 
 #network{width:100%;min-height:48px;border:1px solid #528c80;border-radius:8px;padding:10px 12px;background:#102923;color:#e2fff2;margin:8px 0}
 #network:focus-visible{outline:2px solid #8de9ed;outline-offset:3px}
+
+/* Full research identities remain selectable; touch controls do not truncate them. */
+.research-pool code{overflow-wrap:anywhere;user-select:text}
+.research-identity-actions{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:1rem}
+.research-identity-actions button{min-height:48px;min-width:48px;white-space:normal}
+.research-identity-actions button:disabled{opacity:.65;cursor:wait}

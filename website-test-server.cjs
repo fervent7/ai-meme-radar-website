@@ -12,7 +12,7 @@ const ASSETS = new Map([
   ['/community.html','community.html'], ['/site.js','site.js'],
   ['/','index.html'], ['/index.html','index.html'], ['/styles.css','styles.css'],
   ['/ecosystem.js','ecosystem.js'], ['/app.js','app.js'], ['/market-identity.js','market-identity.js'],
-  ['/cached-history.js','cached-history.js'], ['/config.js','config.js'],
+  ['/research-copy.js','research-copy.js'], ['/cached-history.js','cached-history.js'], ['/config.js','config.js'],
   ['/site.webmanifest','site.webmanifest'], ['/brand-wordmark.webp','brand-wordmark.webp'],
   ['/brand-icon-64.png','brand-icon-64.png'], ['/brand-icon-192.png','brand-icon-192.png'],
   ['/brand-icon-512.png','brand-icon-512.png']

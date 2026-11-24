@@ -184,6 +184,27 @@ try:
             handoff = page.get_by_role('link', name='Open Radar test research (sign-in required)', exact=True)
             handoff.wait_for()
             assert page.locator('#address').get_attribute('aria-invalid') == 'false'
+            if w == 390:
+                page.evaluate("""() => {window.copiedIdentity=null;
+                  Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
+                    writeText:value=>{window.copiedIdentity=value;return Promise.resolve()}}});} """)
+                token_copy=page.get_by_role('button',name='Copy token address',exact=True)
+                pool_copy=page.get_by_role('button',name='Copy pool address',exact=True)
+                assert token_copy.bounding_box()['height'] >= 48
+                assert pool_copy.bounding_box()['height'] >= 48
+                token_copy.click()
+                page.get_by_text('Token address copied.',exact=True).wait_for()
+                assert page.evaluate('window.copiedIdentity') == mint
+                pool_copy.click()
+                page.get_by_text('Pool address copied.',exact=True).wait_for()
+                assert page.evaluate('window.copiedIdentity') == pool
+                page.evaluate("Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:()=>Promise.reject(new Error('denied'))}})")
+                token_copy.click()
+                page.get_by_text('Copy unavailable. Select the full token address shown above.',exact=True).wait_for()
+                assert token_copy.is_enabled()
+                assert page.locator('.research-primary code').filter(has_text=mint).is_visible()
+                no_overflow(page)
+
             assert handoff.locator('..').text_content() == 'Open Radar test research (sign-in required)'
             page.get_by_role('button',name='Load saved research history').click()
             page.get_by_text('Verified holder trend: UNCHANGED · 75 → 75 (0%)',exact=True).wait_for()
