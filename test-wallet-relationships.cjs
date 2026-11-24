@@ -68,3 +68,8 @@ test('legacy pair time window remains unavailable instead of a fresh activity cl
  const d=structuredClone(fixture);delete d.wallet_relationships.relationships[0].observed_window;
  assert.equal((await run(d)).wallet_relationships.relationships[0].observed_window,null);
 });
+test('original recording time cannot claim chain data more than five minutes ahead',async()=>{
+ const d=structuredClone(fixture),row=d.token_transfers[0],stamp=row.payload.block_time_unix;
+ row.observed_at_utc=new Date((stamp-301)*1000).toISOString();
+ await assert.rejects(()=>run(d),/Invalid on-chain provenance/);
+});

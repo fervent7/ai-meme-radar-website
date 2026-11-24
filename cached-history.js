@@ -217,7 +217,7 @@
         item.append(create('p','Saved pair window: '+new Date(window.first_block_time_unix*1000).toISOString()+
           ' → '+new Date(window.last_block_time_unix*1000).toISOString()+' · '+window.distinct_transactions+
           ' distinct transactions. This does not refresh the evidence.'));
-      }
+      } else item.append(create('p','Saved pair window unavailable for these legacy records. Inspect the original evidence below.'));
       item.append(evidence);section.append(item);
       const jump=create('div');jump.className='wallet-filter';
       for (const [name,address,value] of [['Filter this sender',edge.source_owner,'sender'],['Filter this recipient',edge.destination_owner,'recipient']]) {

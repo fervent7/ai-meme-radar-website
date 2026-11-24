@@ -197,7 +197,10 @@ function projectOnchain(data, target) {
       const chainTime = blockTime(row.payload);
       if (source.protocol !== 'https:' || source.username || source.password ||
           !Number.isSafeInteger(row.payload?.slot) || row.payload.slot < 1 ||
-          !chainTime) throw Error('Invalid on-chain provenance');
+          !chainTime || Date.parse(chainTime)-Date.parse(row.observed_at_utc)>300000) {
+        // Original clock consistency only; never refresh or authenticate evidence.
+        throw Error('Invalid on-chain provenance');
+      }
       return { ...observed, source: source.origin, slot: row.payload.slot,
         block_time_utc: chainTime, ...project(row.payload, row.reference) };
     });

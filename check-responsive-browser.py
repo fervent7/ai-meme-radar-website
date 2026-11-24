@@ -351,6 +351,18 @@ try:
             assert page.get_by_text('Stored records for this mint only;',exact=False).is_visible()
             if w in (390,1440):
                 transfer_detail.screenshot(path=str(screenshots/f'stored-transfers-{w}.png'),animations='disabled')
+                def legacy_window(route):
+                    response=route.fetch()
+                    value=response.json()
+                    value['wallet_relationships']['relationships'][0]['observed_window']=None
+                    route.fulfill(response=response,json=value)
+                page.route('**/api/radar/onchain-history?*',legacy_window)
+                page.get_by_role('button',name='Load finalized on-chain evidence').click()
+                wallet.get_by_text('Saved pair window unavailable for these legacy records. Inspect the original evidence below.',exact=True).wait_for()
+                wallet.screenshot(path=str(screenshots/f'legacy-pair-window-{w}.png'),animations='disabled')
+                page.unroute('**/api/radar/onchain-history?*',legacy_window)
+                page.get_by_role('button',name='Load finalized on-chain evidence').click()
+                wallet.get_by_text('Saved pair window: 2026-11-14T22:31:28.000Z',exact=False).wait_for()
             if w in (390,1440):
                 heading = page.get_by_role('heading', name='Holder distribution', exact=True)
                 evidence_panel = heading.locator('..')
