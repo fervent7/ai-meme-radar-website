@@ -187,6 +187,11 @@ test('the history panel renders authenticated gateway evidence and supports retr
     'First market observation','2026-11-12T18:10:45.705362+00:00',
     'Last market observation','2026-11-12T18:41:00.000000+00:00']);
   assert.match(audit.children[2].textContent, /distinct from holder lookup times/);
+  const movement = coverage.children[4];
+  assert.equal(movement.className,'saved-liquidity-movement');
+  assert.equal(movement.children[0].textContent,'Saved liquidity movement');
+  assert.match(movement.children[1].textContent,/Reported unchanged.*0%/);
+  assert.match(movement.children.at(-1).textContent,/does not establish current reserves/);
   const marketRows = panel.children[2].children.map(item => item.textContent);
   assert.match(marketRows[0], /2026-11-12T18:41:00.*Liquidity .* · 5m volume \$0 · DexScreener/);
   assert.match(marketRows.at(-2), /5m volume Less than \$0\.01/);

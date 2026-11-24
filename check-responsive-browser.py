@@ -12,7 +12,7 @@ const observations = ['18:10:46.104810', '18:37:48.240216'].map((time, index) =>
  chain, contract_address: address, pool_address: pool, observed_at_utc: '2026-11-12T'+time+'+00:00',
  holder_observed_at_utc: '2026-11-12T'+time+'+00:00', address_identity_version: 2,
  holder_count: 75, holder_status: 'VERIFIED', holder_source: 'Helius getTokenAccounts',
- source: 'DexScreener token-pairs API', liquidity_usd: 3164.21, volume_5m_usd: 0
+ source: 'DexScreener token-pairs API', liquidity_usd: index ? 1582.105 : 3164.21, volume_5m_usd: 0
 }));
 const stamp = '2026-11-14T22:31:28.964826+00:00';
 const sample = (kind, pool_address, reference, payload) => ({
@@ -182,12 +182,16 @@ try:
             if w in (390,1440):
                 audit.screenshot(path=str(screenshots / f'saved-identity-{w}.png'),animations='disabled')
             audit.get_by_text('Research identity and saved window',exact=True).click()
+            movement = coverage.locator('.saved-liquidity-movement')
+            assert movement.get_by_text('Reported decreased · -50%',exact=True).is_visible()
+            assert 'does not establish current reserves' in movement.inner_text()
             no_overflow(page)
             if w in (390,1440):
+                movement.screenshot(path=str(screenshots / f'saved-liquidity-{w}.png'),animations='disabled')
                 coverage.screenshot(path=str(screenshots / f'evidence-coverage-{w}.png'), animations='disabled')
             assert page.get_by_text('2026-11-12T18:10:46.104810',exact=False).count()
             assert page.locator('meter').count()==2
-            assert page.locator('meter').first.evaluate("(e) => e.getBoundingClientRect().width > 100 && Number(e.value) === 3164.21")
+            assert page.locator('meter').first.evaluate("(e) => e.getBoundingClientRect().width > 100 && Number(e.value) === 1582.105")
             page.get_by_role('button', name='Load finalized on-chain evidence').click()
             page.get_by_text('Saved on-chain evidence loaded.', exact=True).wait_for()
             for heading in ('Holder distribution', 'Classified swaps', 'Pool reserve history'):

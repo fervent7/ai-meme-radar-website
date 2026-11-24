@@ -125,6 +125,24 @@
           "transaction_authorized": false,
           "input_basis": "SAVED_HISTORY",
           "current_security_clearance": false,
+          "reported_liquidity_window": {
+            "verification": "REPORTED",
+            "historical_only": true,
+            "source": "DexScreener token-pairs API",
+            "observations": 2,
+            "first": {
+              "liquidity_usd": 4000,
+              "observed_at_utc": "2026-11-11T11:58:00+00:00"
+            },
+            "latest": {
+              "liquidity_usd": 4000,
+              "observed_at_utc": "2026-11-11T11:59:00+00:00"
+            },
+            "change_usd": 0,
+            "change_pct": 0.0,
+            "direction": "UNCHANGED",
+            "security_inference": "NOT_ESTABLISHED"
+          },
           "history_window": {
             "distinct_observations": 2,
             "first_observed_at_utc": "2026-11-11T11:58:00+00:00",
@@ -221,6 +239,7 @@
           "transaction_authorized": false,
           "input_basis": "SAVED_HISTORY",
           "current_security_clearance": false,
+          "reported_liquidity_window": null,
           "evidence_reason": "CONFLICTING_RECORDS",
           "coverage": {
             "total_metrics": 7,

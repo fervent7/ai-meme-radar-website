@@ -47,3 +47,32 @@ test('unknown reason is never reflected and legacy row validation stays compatib
   delete data.pools[0].evidence_coverage;
   assert.equal((await run(data)).status,'READY');
 });
+
+
+test('saved liquidity decline uses validated rows rather than a promoted backend claim',async()=>{
+  const data=structuredClone(valid);
+  data.pools[0].observations[1].liquidity_usd=2000;
+  data.pools[0].evidence_coverage.reported_liquidity_window={direction:'SAFE',change_pct:999};
+  const out=await run(data), w=out.reported_liquidity_window;
+  assert.equal(w.direction,'DECREASED');
+  assert.equal(w.change_pct,-50);
+  assert.equal(w.change_usd,-2000);
+  assert.equal(w.verification,'REPORTED');
+  assert.equal(w.security_inference,'NOT_ESTABLISHED');
+  assert.equal(w.historical_only,true);
+});
+
+test('liquidity gaps, conflicting history and zero or tiny baselines do not create certainty',async()=>{
+  for (const change of [{liquidity_usd:null},{liquidity_usd:true},{liquidity_usd:-1},{source:'Other provider'}]) {
+    const data=structuredClone(valid);
+    data.pools[0].observations[0]={...data.pools[0].observations[0],...change};
+    assert.equal((await run(data)).reported_liquidity_window,null);
+  }
+  for (const baseline of [0,1e-320]) {
+    const data=structuredClone(valid);
+    data.pools[0].observations[0].liquidity_usd=baseline;
+    const w=(await run(data)).reported_liquidity_window;
+    assert.equal(w.change_pct,null);
+    assert.equal(w.direction,'INCREASED');
+  }
+});

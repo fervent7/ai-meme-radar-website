@@ -50,7 +50,24 @@
       ['Last market observation', observations[0].observed_at_utc]
     ]) fields.append(create('dt', label), create('dd', value));
     audit.append(fields, create('p', 'Market observation times are distinct from holder lookup times. This saved window is not a live price, holder-growth, or security guarantee.'));
-    section.append(grid, audit);
+    const movement = create('aside');
+    movement.className = 'saved-liquidity-movement';
+    movement.append(create('h6','Saved liquidity movement'));
+    const comparison = history.reported_liquidity_window;
+    if (comparison) {
+      movement.setAttribute('data-direction', comparison.direction);
+      const percent = comparison.change_pct === null ? 'Percentage unavailable' :
+        Number(comparison.change_pct.toFixed(2)) + '%';
+      movement.append(create('strong', 'Reported ' + comparison.direction.toLowerCase() + ' · ' + percent),
+        create('p', formatUsd(comparison.first.liquidity_usd) + ' → ' + formatUsd(comparison.latest.liquidity_usd) +
+          ' · ' + comparison.observations + ' saved market observations'),
+        create('p', comparison.first.observed_at_utc + ' → ' + comparison.latest.observed_at_utc + ' · ' + comparison.source));
+    } else {
+      movement.append(create('strong','Comparison unavailable'),
+        create('p','At least two consecutive same-source liquidity observations are required. Missing values and source changes break the comparison.'));
+    }
+    movement.append(create('p','Historical reported values only. A change does not establish current reserves, a liquidity drain, coordinated selling or sellability.'));
+    section.append(grid, audit, movement);
     return section;
   }
 

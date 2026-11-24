@@ -65,6 +65,25 @@ function coverageHold(value, {chain,address,pool}, observationCount) {
   return null;
 }
 
+function reportedLiquidityWindow(observations) {
+  const samples = [];
+  for (const row of observations) { // Most recent first; stop at any evidence gap.
+    if (row.market_source !== 'DexScreener token-pairs API' ||
+        !Number.isFinite(row.liquidity_usd) || row.liquidity_usd < 0 || row.liquidity_usd > 1e18) break;
+    samples.push(row);
+  }
+  if (samples.length < 2) return null;
+  const first = samples.at(-1), latest = samples[0];
+  const change = latest.liquidity_usd - first.liquidity_usd;
+  const percent = first.liquidity_usd > 0 ? 100 * (change / first.liquidity_usd) : null;
+  const sample = row => ({liquidity_usd:row.liquidity_usd, observed_at_utc:row.observed_at_utc});
+  return {verification:'REPORTED', historical_only:true, source:'DexScreener token-pairs API',
+    observations:samples.length, first:sample(first), latest:sample(latest), change_usd:change,
+    change_pct:Number.isFinite(percent) ? percent : null,
+    direction:change < 0 ? 'DECREASED' : change > 0 ? 'INCREASED' : 'UNCHANGED',
+    security_inference:'NOT_ESTABLISHED'};
+}
+
 function projectHistory(data, { chain, address, pool }) {
   if (data?.chain !== chain || !matches(chain, data.contract_address, address) ||
       !Array.isArray(data.pools) || data.pools.length > 200) throw Error('Invalid history');
@@ -130,7 +149,8 @@ function projectHistory(data, { chain, address, pool }) {
   observations.sort((left, right) => compareInstants(right.observed_at_utc, left.observed_at_utc));
   return {
     status: observations.length ? 'READY' : 'EMPTY',
-    observations, holder_trend: holderTrend, latest_holder_observation: latest ?? null
+    observations, reported_liquidity_window: reportedLiquidityWindow(observations),
+    holder_trend: holderTrend, latest_holder_observation: latest ?? null
   };
 }
 
