@@ -9,6 +9,7 @@ const LIVE_RATE_LIMIT_COOLDOWN_MS=60000;
 let liveTimer=null;
 let liveRun=null;
 let liveRetryAt=0;
+let livePaused=false;
 function stopLive(){
  if(liveTimer){clearInterval(liveTimer);liveTimer=null}
  const previous=liveRun;
@@ -18,7 +19,7 @@ function stopLive(){
 const liveStatus=()=>document.getElementById('liveResearchStatus');
 function liveMessage(message){const el=liveStatus();if(el)el.textContent=message}
 async function refreshLive(){
- if(liveRun||document.hidden||Date.now()<liveRetryAt)return;
+ if(livePaused||liveRun||document.hidden||Date.now()<liveRetryAt)return;
  const cards=[...results.querySelectorAll('.research-primary[data-pool][data-chain]')];
  if(!cards.length){stopLive();return}
  const run={controller:null};
@@ -61,7 +62,36 @@ async function refreshLive(){
  }finally{if(liveRun===run)liveRun=null}
 }
 let renderLivePair=()=>{throw Error('Research card renderer not ready')};
-function startLive(){stopLive();liveMessage('● Live updates enabled · refresh every 30s');liveTimer=setInterval(refreshLive,LIVE_INTERVAL_MS)}
+function syncLiveControl(){
+ const control=document.getElementById('liveRefreshToggle');
+ if(!control)return;
+ control.textContent=livePaused?'Resume automatic refresh':'Pause automatic refresh';
+ control.setAttribute?.('aria-pressed',String(livePaused));
+}
+function pausedLiveMessage(){
+ liveMessage('Automatic market refresh paused · showing last available snapshots. Token searches and saved history remain available.');
+}
+function startLive(){
+ stopLive();syncLiveControl();
+ if(livePaused){pausedLiveMessage();return}
+ liveMessage('● Live updates enabled · refresh every 30s');
+ liveTimer=setInterval(refreshLive,LIVE_INTERVAL_MS);
+}
+function setLivePaused(paused){
+ if(livePaused===paused)return;
+ livePaused=paused;stopLive();syncLiveControl();
+ if(livePaused){
+  for(const card of results.querySelectorAll('.research-primary[data-pool][data-chain]'))card.dataset.stale='true';
+  pausedLiveMessage();return;
+ }
+ startLive();
+ return refreshLive(); // User-requested refresh still respects the shared429 cooldown.
+}
+const liveToggle=document.getElementById('liveRefreshToggle');
+if(liveToggle?.addEventListener){
+ liveToggle.addEventListener('click',()=>setLivePaused(!livePaused));
+ syncLiveControl();
+}
 
 function radarPreviewLink(chain,address){
  const supported=['solana','base','ethereum','bsc','robinhood','arbitrum','polygon','avalanche','optimism','linea','zksync_era','fantom','mantle','cronos'];

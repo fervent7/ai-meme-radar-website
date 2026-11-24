@@ -54,6 +54,10 @@
         <button class="primary search-btn" id="searchBtn" type="button">Research token</button>
       </div>
       <p class="search-help" id="searchHelp" role="status">Search Solana, BNB Smart Chain, Base, Ethereum and other indexed networks.</p>
+      <div class="live-market-controls">
+        <button id="liveRefreshToggle" class="outline" type="button" aria-pressed="false" aria-controls="researchResults" aria-describedby="liveRefreshHelp">Pause automatic refresh</button>
+        <p id="liveRefreshHelp" class="search-help">Pause market requests while reviewing saved evidence. This control applies only to this page.</p>
+      </div>
       <p id="liveResearchStatus" class="search-help" role="status">Live prices start after a token search · 30-second refresh</p>
     </div>
     <div id="researchResults" class="research-results" aria-live="polite"></div>
@@ -83,3 +87,4 @@
   </footer>
 </body>
 </html>
+

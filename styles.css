@@ -281,3 +281,9 @@ footer .community-links { justify-content: flex-end; }
 .saved-liquidity-movement[data-direction="DECREASED"]{border-left:3px solid #e7b86d}
 .saved-liquidity-movement[data-direction="DECREASED"] strong{color:#f4cf96}
 .saved-liquidity-movement p{font-size:.8rem;line-height:1.6;overflow-wrap:anywhere;color:#bacdca}
+
+.live-market-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+.live-market-controls button{min-height:48px;flex-shrink:0}
+.live-market-controls button[aria-pressed="true"]{border-color:#80d9df;color:#b3f0f3;background:#10292d}
+.live-market-controls .search-help{flex:1 1 240px;margin:0;min-width:0}
+@media(max-width:480px){.live-market-controls{align-items:stretch}.live-market-controls button{width:100%}}

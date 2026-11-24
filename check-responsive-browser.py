@@ -222,6 +222,19 @@ try:
                 assert 'No verified result is available' in held.inner_text()
                 assert page.get_by_text('Verified holder trend: UNCHANGED · 75 → 75 (0%)',exact=True).count() == 0
                 page.locator('.cached-research').screenshot(path=str(screenshots / f'held-history-{w}.png'),animations='disabled')
+            pause = page.get_by_role('button',name='Pause automatic refresh',exact=True)
+            pause.click()
+            resume = page.get_by_role('button',name='Resume automatic refresh',exact=True)
+            expect(resume).to_have_attribute('aria-pressed','true')
+            assert 'Automatic market refresh paused' in page.locator('#liveResearchStatus').inner_text()
+            assert page.get_by_role('heading',name='Holder distribution',exact=True).is_visible()
+            no_overflow(page)
+            if w in (390,1440):
+                page.locator('.live-market-controls').screenshot(path=str(screenshots/f'paused-market-{w}.png'),animations='disabled')
+            resume.click()
+            expect(page.get_by_role('button',name='Pause automatic refresh',exact=True)).to_have_attribute('aria-pressed','false')
+            page.locator('#liveResearchStatus').filter(has_text='Live market snapshots').wait_for()
+            assert page.get_by_role('heading',name='Holder distribution',exact=True).is_visible()
             assert not errs,errs
             no_overflow(page)
             if w in (390,1366,1440,1920):

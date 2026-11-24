@@ -139,3 +139,61 @@ test('foreground timeout, retry, rate limit and private errors produce safe rese
   await research();
   assert.equal(note.textContent, 'Indexed trading pools could not be retrieved. Try again later.');
 });
+
+
+
+function pauseHarness(request){
+  const source=readFileSync(join(__dirname,'app.js'),'utf8');
+  const start=source.indexOf('const LIVE_INTERVAL_MS'),end=source.indexOf('function radarPreviewLink',start);
+  const timers=new Set(),status={textContent:''},attrs={},control={
+    setAttribute(k,v){attrs[k]=v;},addEventListener(_event,fn){this.click=fn;}};
+  let timer=0,now=0,replacements=0;
+  const cards=[{dataset:{chain:'solana',pool:'pool',token:'mint'},replaceWith(){replacements++;}}];
+  const context={AbortController,setTimeout,clearTimeout,
+    setInterval(){timers.add(++timer);return timer;},clearInterval(id){timers.delete(id);},
+    Date:class extends Date{static now(){return now;}},
+    document:{hidden:false,getElementById:id=>id==='liveRefreshToggle'?control:status},
+    results:{querySelectorAll:()=>cards},window:{RadarIdentity:require('./market-identity.js')},fetch:request};
+  const api=vm.runInNewContext(source.slice(start,end)+
+    '\nrenderLivePair=pair=>pair;({startLive,refreshLive,setLivePaused})',context);
+  return {api,timers,status,attrs,control,cards,get replacements(){return replacements;},set now(value){now=value;}};
+}
+
+test('pause suppresses automatic requests, survives a new search timer and resumes once',async()=>{
+  let calls=0;
+  const h=pauseHarness(async()=>{calls++;return {ok:true,json:async()=>({pairs:[
+    {chainId:'solana',pairAddress:'pool',baseToken:{address:'mint'}}]})};});
+  h.api.startLive();assert.equal(h.timers.size,1);
+  h.control.click();assert.equal(h.attrs['aria-pressed'],'true');
+  assert.equal(h.control.textContent,'Resume automatic refresh');
+  assert.equal(h.timers.size,0);
+  await h.api.refreshLive();h.api.startLive();await h.api.refreshLive();
+  assert.equal(calls,0);assert.equal(h.timers.size,0);
+  assert.match(h.status.textContent,/paused.*saved history remain available/);
+  await h.control.click();assert.equal(calls,1);assert.equal(h.replacements,1);
+  assert.equal(h.timers.size,1);assert.equal(h.attrs['aria-pressed'],'false');
+  await h.api.setLivePaused(false);assert.equal(calls,1);assert.equal(h.timers.size,1);
+  h.api.setLivePaused(true);
+});
+
+test('pause aborts a pending refresh and a late reply cannot replace saved evidence',async()=>{
+  let pending,signal;
+  const h=pauseHarness((_url,options)=>{signal=options.signal;return new Promise(resolve=>{pending=resolve;});});
+  h.api.startLive();const refresh=h.api.refreshLive();
+  h.control.click();assert.equal(signal.aborted,true);
+  const message=h.status.textContent;
+  pending({ok:true,json:async()=>({pairs:[{chainId:'solana',pairAddress:'pool',baseToken:{address:'mint'}}]})});
+  await refresh;
+  assert.equal(h.replacements,0);assert.equal(h.status.textContent,message);
+  assert.equal(h.cards[0].dataset.stale,'true');assert.equal(h.timers.size,0);
+});
+
+test('pause and resume cannot bypass the existing rate-limit cooldown',async()=>{
+  let calls=0;
+  const h=pauseHarness(async()=>{calls++;return {ok:false,status:429};});
+  await h.api.refreshLive();assert.equal(calls,1);
+  h.api.setLivePaused(true);h.now=30000;await h.api.setLivePaused(false);
+  assert.equal(calls,1);
+  h.now=60000;await h.api.refreshLive();assert.equal(calls,2);
+  h.api.setLivePaused(true);
+});
