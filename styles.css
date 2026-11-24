@@ -303,3 +303,6 @@ footer .community-links { justify-content: flex-end; }
 .stored-transfer>button{min-height:48px;margin-top:12px;border:1px solid #528c80;border-radius:8px;padding:10px 14px;background:#153a32;color:#b8ffdf;cursor:pointer}
 .stored-transfer>button:focus-visible{outline:2px solid #8de9ed;outline-offset:3px}
 .stored-transfer>button:disabled{opacity:.65;cursor:wait}
+
+#network{width:100%;min-height:48px;border:1px solid #528c80;border-radius:8px;padding:10px 12px;background:#102923;color:#e2fff2;margin:8px 0}
+#network:focus-visible{outline:2px solid #8de9ed;outline-offset:3px}

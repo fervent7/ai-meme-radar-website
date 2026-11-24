@@ -1,0 +1,5 @@
+# Explicit research network filter — 24 November 2026
+
+Parent51261becbdfc00997236cb6fd3349f298839c1e9. Native labelled48px network select lets researchers choose all indexed networks or a specific chain, including Solana/BNB/Base/Ethereum. Button and Enter submit exact selected scope through existing research handler. URL research links synchronize the selection; unknown syntactically valid chain links retain an explicitly labelled linked-network option. Selected network only filters market results; no contract existence/security/holder/trading capability claim. No new API/provider/scheduler added.
+
+65Node tests passed; new gateway regression keeps valid transfer history visible beside backend UNAVAILABLE/missing-time row without fabricated block time. Responsive CI adds a BNB-filter miss for a controlled Solana-only response, then a Solana-filter success across existing10viewports/sixroutes. Local Chromium unavailable; browser PASS only after exact-head CI. Existing community/clipboard/history/error/pause controls retained. No deployed/Android hardware proof. No merge/deploy or bot integration.

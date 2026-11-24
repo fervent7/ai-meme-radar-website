@@ -166,6 +166,12 @@ try:
                 search_button = page.locator('#searchBtn').bounding_box()
                 assert search_input['x'] + search_input['width'] <= search_button['x']
                 assert abs(search_input['y'] - search_button['y']) < 2
+            # Native network filter is a UI scope, never a contract/security claim.
+            page.locator('#network').select_option('bsc')
+            page.locator('#address').fill(mint)
+            page.get_by_role('button',name='Research token',exact=True).click()
+            page.get_by_text('No indexed pool matched this exact address.',exact=False).wait_for()
+            page.locator('#network').select_option('solana')
             page.locator('#address').fill(mint)
             page.locator('#searchBtn').click()
             handoff = page.get_by_role('link', name='Open Radar test research (sign-in required)', exact=True)

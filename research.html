@@ -49,6 +49,18 @@
   <div class="wrap terminal-workspace">
     <div class="search-card terminal-search">
       <label for="address">Token address</label>
+      <label for="network">Network</label>
+      <select id="network" aria-describedby="networkHelp">
+        <option value="">All indexed networks</option>
+        <option value="solana">Solana</option><option value="bsc">BNB Smart Chain</option>
+        <option value="base">Base</option><option value="ethereum">Ethereum</option>
+        <option value="arbitrum">Arbitrum</option><option value="polygon">Polygon</option>
+        <option value="avalanche">Avalanche</option><option value="optimism">Optimism</option>
+        <option value="linea">Linea</option><option value="zksync">ZKsync</option>
+        <option value="fantom">Fantom</option><option value="mantle">Mantle</option>
+        <option value="cronos">Cronos</option><option value="robinhood">Robinhood Chain</option>
+      </select>
+      <p id="networkHelp" class="search-help">Filters indexed market results only. Network selection does not verify a contract or enable trading.</p>
       <div class="search-controls">
         <input id="address" placeholder="0x… or Solana mint" maxlength="128" autocomplete="off" spellcheck="false" aria-describedby="searchHelp">
         <button class="primary search-btn" id="searchBtn" type="button">Research token</button>

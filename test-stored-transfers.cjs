@@ -56,3 +56,15 @@ test('authenticated server withholds a malformed transfer response as503 without
   const withheld=await fetch(url,{headers});assert.equal(withheld.status,503);
   assert.deepEqual(await withheld.json(),{status:'UNAVAILABLE'});
 });
+
+
+test('missing-time backend projection stays one unavailable row without hiding valid history',async()=>{
+  const d=fixture();
+  d.token_transfers.push({...d.token_transfers[0],verification:'UNAVAILABLE',reason:'BLOCK_TIME_UNAVAILABLE',payload:null});
+  const out=await run(d);
+  assert.equal(out.status,'READY');
+  assert.equal(out.transfers[0].verification,'VERIFIED');
+  assert.equal(out.transfers[1].verification,'UNAVAILABLE');
+  assert.equal(out.transfers[1].movements,undefined);
+  assert.equal(out.transfers[1].block_time_utc,undefined);
+});

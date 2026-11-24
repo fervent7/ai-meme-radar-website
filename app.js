@@ -171,8 +171,8 @@ renderLivePair=(pair)=>pairCard(pair,true);for(const [chain,pairs] of groups){pa
  clearTimeout(deadline);
  if (researchController === controller) $('searchBtn').disabled = false;
 }}
-$('searchBtn').addEventListener('click',()=>research());
-$('address').addEventListener('keydown',e=>{if(e.key==='Enter')research()});
+$('searchBtn').addEventListener('click',()=>research({chain:$('network')?.value || undefined}));
+$('address').addEventListener('keydown',e=>{if(e.key==='Enter')research({chain:$('network')?.value || undefined})});
 if (typeof window.location?.search === 'string') {
  const params = new URLSearchParams(window.location.search);
  const address = params.get('address');
@@ -180,6 +180,13 @@ if (typeof window.location?.search === 'string') {
  if (address && valid(address)) {
   $('address').value = address;
   if (chain && /^[a-z0-9_-]{1,32}$/.test(chain)) {
+   const network=$('network');
+   if(network){
+    if(![...network.options].some(option=>option.value===chain)){
+     const option=node('option',chain + ' (from research link)');option.value=chain;network.append(option);
+    }
+    network.value=chain;
+   }
    research({chain});
   } else {
    research();
