@@ -1,0 +1,80 @@
+{
+  "fixture_scope": "SYNTHETIC_CONTRACT_ONLY_NOT_CHAIN_OBSERVATION",
+  "chain": "solana",
+  "token_address": "22oDtUuTerJC5sbiYD8UQngsJaGe9pgiMxX3RA3mjJCh",
+  "pool_address": "DH2nkUP6GA85ydDjo8Rz7smVcUkq841frwmNwfVCRBhC",
+  "holder_observations": [],
+  "reserves": [],
+  "swaps": [],
+  "token_transfer_coverage": {
+    "scope": "STORED_MINT_RECORDS_NOT_POOL_ATTRIBUTED",
+    "complete_history": false,
+    "record_limit": 24
+  },
+  "token_transfers": [
+    {
+      "kind": "token_transfers",
+      "chain": "solana",
+      "token_address": "22oDtUuTerJC5sbiYD8UQngsJaGe9pgiMxX3RA3mjJCh",
+      "pool_address": null,
+      "verification": "VERIFIED",
+      "reference": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+      "source": "https://api.mainnet-beta.solana.com",
+      "observed_at_utc": "2026-11-14T22:31:28.964826+00:00",
+      "payload": {
+        "slot": 469496016,
+        "block_time_unix": 1794695488,
+        "transfers": [
+          {
+            "outer_index": 0,
+            "inner_index": null,
+            "source_account": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+            "destination_account": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+            "source_owner": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+            "destination_owner": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+            "amount_raw": "492719579834"
+          }
+        ]
+      },
+      "reason": null
+    }
+  ],
+  "wallet_relationships": {
+    "version": "radar-wallet-relationships-v1",
+    "chain": "solana",
+    "token_address": "22oDtUuTerJC5sbiYD8UQngsJaGe9pgiMxX3RA3mjJCh",
+    "scope": "STORED_MINT_TRANSFERS_NOT_POOL_ATTRIBUTED",
+    "status": "HISTORICAL_OBSERVED_RELATIONSHIPS",
+    "relationships": [
+      {
+        "source_owner": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+        "destination_owner": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+        "amount_raw": "492719579834",
+        "transfer_count": 1,
+        "evidence": [
+          {
+            "reference": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "slot": 469496016,
+            "block_time_unix": 1794695488,
+            "observed_at_utc": "2026-11-14T22:31:28.964826+00:00",
+            "source": "https://api.mainnet-beta.solana.com",
+            "outer_index": 0,
+            "inner_index": null,
+            "source_account": "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+            "destination_account": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+            "source_owner": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",
+            "destination_owner": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+            "amount_raw": "492719579834"
+          }
+        ]
+      }
+    ],
+    "complete_history": false,
+    "fresh_evidence": false,
+    "common_owner_inferred": false,
+    "coordination_proven": false,
+    "security_clearance": false,
+    "transaction_authorized": false,
+    "reasons": []
+  }
+}

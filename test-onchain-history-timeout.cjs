@@ -158,8 +158,8 @@ test('successful refresh atomically replaces rather than appends prior evidence'
   h.panel.append(original);
   await h.button.activate();
   assert.ok(!h.panel.children.includes(original));
-  assert.equal(h.panel.childElementCount,9);
+  assert.equal(h.panel.childElementCount,10);
   await h.button.activate();
-  assert.equal(h.panel.childElementCount,9);
+  assert.equal(h.panel.childElementCount,10);
   assert.equal(h.panel.attributes['aria-busy'],'false');
 });

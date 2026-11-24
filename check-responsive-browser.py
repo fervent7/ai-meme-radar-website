@@ -20,8 +20,11 @@ const sample = (kind, pool_address, reference, payload) => ({
  verification: 'VERIFIED', source: 'https://api.mainnet-beta.solana.com',
  payload: {slot: 469496016, block_time_utc: stamp, ...payload}
 });
+const walletContract = require('./test-fixtures/wallet_relationships_gateway_v1.json');
 const onchain = {
+ fixture_scope: walletContract.fixture_scope,
  chain, token_address: address, pool_address: pool,
+ wallet_relationships: walletContract.wallet_relationships,
  token_transfer_coverage:{scope:'STORED_MINT_RECORDS_NOT_POOL_ATTRIBUTED',complete_history:false,record_limit:24},
  token_transfers:[sample('token_transfers',null,'B'.repeat(88),{
   block_time_unix:Math.floor(Date.parse(stamp)/1000),transfers:[{
@@ -281,7 +284,21 @@ try:
             assert page.get_by_text('Legacy method v1; infrastructure owners are not excluded', exact=False).is_visible()
             assert page.get_by_text('SELL · Organic activity unverified', exact=False).is_visible()
             assert page.get_by_text('18.520422483', exact=False).is_visible()
-            assert page.get_by_text('Slot 469496016', exact=False).count() == 4
+            assert page.get_by_text('Slot 469496016', exact=False).count() == 5  # Four saved rows plus same-transfer relationship proof
+            wallet=page.locator('.wallet-relationships')
+            assert wallet.get_by_role('heading',name='Wallet DNA · saved transfer relationships',exact=True).is_visible()
+            assert wallet.get_by_text('Synthetic contract test data · not a chain observation',exact=True).is_visible()
+            assert wallet.get_by_text('E'*32,exact=True).is_visible()
+            assert wallet.get_by_text('F'*32,exact=True).is_visible()
+            summary=wallet.locator('summary')
+            summary.click()
+            assert summary.bounding_box()['height'] >= 44
+            assert wallet.locator('code').inner_text() == 'B'*88
+            assert 'not people or proof of common ownership' in wallet.inner_text()
+            no_overflow(page)
+            if w in (390,1440):
+                wallet.screenshot(path=str(screenshots/f'wallet-dna-{w}.png'),animations='disabled')
+            summary.click()
             transfer_heading=page.get_by_role('heading',name='Recorded token transfers (mint scope)',exact=True)
             assert transfer_heading.is_visible()
             transfer_detail=page.locator('.stored-transfer').first
@@ -342,7 +359,7 @@ try:
             no_overflow(page)
             if w in (390,1366,1440,1920):
                 page.screenshot(path=str(screenshots / f'whale-pad-{w}.png'),animations='disabled',full_page=True)
-            print(f'{w}x{h}: six routes, community links, responsive controls, table and Whale Pad saved history passed',flush=True)
+            print(f'{w}x{h}: seven routes, community links, responsive controls, table and Whale Pad saved history passed',flush=True)
             ctx.close()
 finally:
     server.terminate()

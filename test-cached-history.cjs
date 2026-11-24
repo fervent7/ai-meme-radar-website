@@ -280,7 +280,7 @@ test('the history panel renders authenticated gateway evidence and supports retr
   });
   await onchainButton.activate();
   const onchainPanel = card.children[0].children[3].children[2];
-  const holderLabel = onchainPanel.children[1].children[0].textContent;
+  const holderLabel = onchainPanel.children[2].children[0].textContent;
   assert.match(holderLabel, /Top 10 share of total mint supply 98\.64%/);
   assert.match(holderLabel, /Legacy method v1; infrastructure owners are not excluded/);
   assert.match(holderLabel, /Slot 10.*Block.*Recorded/);
@@ -289,8 +289,8 @@ test('the history panel renders authenticated gateway evidence and supports retr
     source:'https://rpc.example.invalid',movements:[{outer_index:0,inner_index:1,amount_raw:'492719579834',source_owner:'C'.repeat(32),
       destination_owner:'D'.repeat(32),source_account:'E'.repeat(32),destination_account:'F'.repeat(32)}]}]});
   await onchainButton.activate();
-  assert.equal(onchainPanel.children[6].textContent,'Recorded token transfers (mint scope)');
-  const transferDetail = onchainPanel.children[7].children[0].children[0];
+  assert.equal(onchainPanel.children[7].textContent,'Recorded token transfers (mint scope)');
+  const transferDetail = onchainPanel.children[8].children[0].children[0];
   assert.equal(transferDetail.tag,'details');
   assert.equal(transferDetail.children[0].textContent,'Saved transaction · 1 decoded transfer');
   assert.match(transferDetail.children[1].textContent,/Slot 17.*Block.*Recorded/);
@@ -314,7 +314,7 @@ test('the history panel renders authenticated gateway evidence and supports retr
     'Source owner','C'.repeat(32),'Destination owner','D'.repeat(32),
     'Source token account','E'.repeat(32),'Destination token account','F'.repeat(32),
     'Instruction index','0 / 1']);
-  assert.match(onchainPanel.children[8].textContent,/not attributed to the selected pool.*coverage is incomplete/);
+  assert.match(onchainPanel.children[9].textContent,/not attributed to the selected pool.*coverage is incomplete/);
   const unavailable = { verification: 'ERROR', observed_at_utc: latest };
   context.fetch = async () => Response.json({
     status: 'READY', holders: [unavailable], swaps: [], reserves: []
@@ -323,8 +323,8 @@ test('the history panel renders authenticated gateway evidence and supports retr
   assert.match(onchainStatus.textContent, /could not be verified/);
   assert.ok(card.children[0].children[3].children[2].childElementCount > 0);
   assert.match(onchainStatus.textContent, /include errors/);
-  assert.match(onchainPanel.children[1].children[0].textContent, /^Error · Observation could not be verified · /);
-  assert.ok(onchainPanel.children[1].children[0].textContent.endsWith(latest));
+  assert.match(onchainPanel.children[2].children[0].textContent, /^Error · Observation could not be verified · /);
+  assert.ok(onchainPanel.children[2].children[0].textContent.endsWith(latest));
   const verifiedHolder = { verification: 'VERIFIED', holder_count: 73,
     concentration_pct: 98.64, method_version: 'top-10-positive-owner-balances-v1',
     supply_basis: 'total_mint_supply', slot: 10, block_time_utc: first,
@@ -334,7 +334,7 @@ test('the history panel renders authenticated gateway evidence and supports retr
     swaps: [], reserves: [] });
   await onchainButton.activate();
   assert.match(onchainStatus.textContent, /partially loaded/);
-  const partialRows = onchainPanel.children[1].children;
+  const partialRows = onchainPanel.children[2].children;
   assert.match(partialRows[0].textContent, /73 positive-balance owner addresses/);
   assert.match(partialRows[1].textContent, /^Error ·/);
   assert.equal(partialRows[2].textContent, 'Unavailable · ' + first);

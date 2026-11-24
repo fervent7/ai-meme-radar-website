@@ -150,7 +150,36 @@
     return details;
   }
 
+  function walletRelationships(graph) {
+    const section=create('section');section.className='wallet-relationships';
+    section.setAttribute('aria-label','Wallet DNA saved transfer relationships');
+    if (graph?.synthetic_example === true) section.append(create('strong','Synthetic contract test data · not a chain observation'));
+    section.append(create('h5','Wallet DNA · saved transfer relationships'),
+      create('p','Historical mint-scoped transfer links, not people or proof of common ownership, coordination or fraud. Incomplete coverage; loading this view does not refresh the evidence.'));
+    if (!graph || !['HISTORICAL_OBSERVED_RELATIONSHIPS','NO_ATTRIBUTABLE_RELATIONSHIPS'].includes(graph.status)) {
+      section.append(create('strong','Relationship evidence unavailable'),
+        create('p','The backend has not supplied a validated relationship projection for this saved window.'));
+      return section;
+    }
+    if (!graph.relationships.length) section.append(create('strong','No attributable links in the supplied saved records. This does not establish absence of wallet activity.'));
+    for (const edge of graph.relationships) {
+      const item=create('article');const owners=create('dl');
+      for (const [label,value] of [['From owner address',edge.source_owner],['To owner address',edge.destination_owner],
+        ['Transferred base units (decimals unavailable)',edge.amount_raw],['Distinct saved instructions',String(edge.transfer_count)]]) {
+        owners.append(create('dt',label),create('dd',value));
+      }
+      const evidence=create('details');evidence.append(create('summary','Inspect original transaction evidence'));
+      for (const proof of edge.evidence) {
+        evidence.append(create('p','Slot '+proof.slot+' · Block '+proof.block_time_utc+' · Recorded '+proof.observed_at_utc+' · '+proof.source),
+          create('code',proof.signature));
+      }
+      item.append(owners,evidence);section.append(item);
+    }
+    return section;
+  }
+
   function renderOnchain(panel, history) {
+    panel.append(walletRelationships(history.wallet_relationships));
     const evidenceSections = [
       ['Holder distribution', history.holders, sample => sample.holder_count +
         ' positive-balance owner addresses · Top 10 share of total mint supply ' + sample.concentration_pct +

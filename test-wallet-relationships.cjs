@@ -1,0 +1,33 @@
+'use strict';
+const {test}=require('node:test');const assert=require('node:assert/strict');
+const {loadHistory}=require('./radar-history.cjs');
+const fixture=require('./test-fixtures/wallet_relationships_gateway_v1.json');
+const target={chain:fixture.chain,address:fixture.token_address,pool:fixture.pool_address};
+const run=data=>loadHistory(target,'fixture-key',async()=>Response.json(data),true);
+test('gateway validates backend relationships against the same scoped saved transfers',async()=>{
+ assert.equal(fixture.fixture_scope,'SYNTHETIC_CONTRACT_ONLY_NOT_CHAIN_OBSERVATION');
+ const out=await run(fixture);const graph=out.wallet_relationships;
+ assert.equal(graph.status,'HISTORICAL_OBSERVED_RELATIONSHIPS');
+ assert.equal(graph.relationships[0].amount_raw,'492719579834');
+ assert.equal(graph.relationships[0].evidence[0].signature,'B'.repeat(88));
+ assert.equal(graph.relationships[0].evidence[0].slot,469496016);
+ assert.equal(graph.synthetic_example,true);
+ assert.equal(graph.coordination_proven,false);assert.equal(graph.fresh_evidence,false);
+});
+test('wrong scope, invented relationship, changed evidence and authorization claims fail closed',async()=>{
+ for(const change of [d=>d.wallet_relationships.token_address='G'.repeat(32),
+  d=>d.wallet_relationships.complete_history=true,d=>d.wallet_relationships.coordination_proven=true,
+  d=>d.wallet_relationships.relationships[0].amount_raw='1',
+  d=>d.wallet_relationships.relationships[0].evidence[0].slot++,
+  d=>d.wallet_relationships.relationships[0].evidence[0].reference='C'.repeat(88),
+  d=>d.wallet_relationships.relationships[0].evidence[0].source='https://wrong.example',
+  d=>d.wallet_relationships.relationships.push(d.wallet_relationships.relationships[0])]){
+   const d=structuredClone(fixture);change(d);await assert.rejects(()=>run(d));
+ }
+});
+test('legacy or withheld backend graph does not manufacture relationships from transfer rows',async()=>{
+ const d=structuredClone(fixture);delete d.wallet_relationships;
+ assert.equal((await run(d)).wallet_relationships.status,'NOT_SUPPLIED');
+ d.wallet_relationships={...fixture.wallet_relationships,status:'UNAVAILABLE',relationships:[]};
+ assert.equal((await run(d)).wallet_relationships.relationships.length,0);
+});

@@ -1,5 +1,7 @@
 'use strict';
 
+const {projectRelationships} = require('./wallet-relationships.cjs');
+
 const HISTORY_URL = 'https://ai-meme-radar-verify-test.onrender.com/api/research/risk-history';
 const ONCHAIN_URL = new URL('/api/research/onchain-history', HISTORY_URL);
 const CHAINS = new Set(['solana', 'bsc', 'base', 'ethereum']);
@@ -266,7 +268,9 @@ function projectOnchain(data, target) {
       value.block_time_unix < 253402300800 ? new Date(value.block_time_unix * 1000).toISOString() : null);
   }
   return { status: holders.length || swaps.length || reserves.length || transfers.length ? 'READY' : 'EMPTY',
-    holders, swaps, reserves, transfers };
+    holders, swaps, reserves, transfers,
+    wallet_relationships: {...projectRelationships(data.wallet_relationships,transfers,target),
+      synthetic_example:data.fixture_scope==='SYNTHETIC_CONTRACT_ONLY_NOT_CHAIN_OBSERVATION'} };
 }
 
 async function loadHistory(target, key, request = fetch, onchain = false) {
