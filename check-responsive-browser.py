@@ -297,6 +297,7 @@ try:
             search.fill('E'*32)
             expect(wallet.locator('.wallet-relationship-edge:visible')).to_have_count(1)
             direction=wallet.get_by_label('Owner address appears as',exact=True)
+            assert direction.bounding_box()['height'] >= 48
             direction.select_option('recipient')
             expect(wallet.locator('.wallet-relationship-edge:visible')).to_have_count(0)
             direction.select_option('sender')
