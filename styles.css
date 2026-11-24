@@ -318,5 +318,9 @@ footer .community-links { justify-content: flex-end; }
 .passport-content{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:1rem}
 .passport-content>p{grid-column:1/-1;overflow-wrap:anywhere}
 .passport-check{padding:1rem;border:1px solid #35525c;border-radius:12px;background:#111e28;overflow-wrap:anywhere}
-.passport-check h4{text-transform:capitalize;color:#66e8c2}
+.passport-check h3{text-transform:capitalize;color:#66e8c2}
 #passport-retry{min-height:48px}
+
+.passport-preview select{background:#102b24;color:#ecfff7;border:1px solid #378f78;border-radius:8px;padding:.7rem;font:inherit}
+.passport-check summary{min-height:44px;cursor:pointer;color:#7fe8d0;padding:.6rem 0}
+.passport-check code{overflow-wrap:anywhere;user-select:text}

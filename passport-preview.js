@@ -2,6 +2,23 @@
  'use strict';
  const states=new Set(['CURRENT_RECORDED_CHECKS','EXPIRED','REVOKED','UNKNOWN']);
  const labels={CURRENT_RECORDED_CHECKS:'Recorded checks current (example)',EXPIRED:'Expired evidence (example)',REVOKED:'Revoked reference (example)',UNKNOWN:'Evidence missing or unavailable (example)'};
+ const checkLabels={CURRENT_RECORDED_CHECK:'Current source record',EXPIRED:'Expired',REVOKED:'Revoked',UNKNOWN:'Unavailable'};
+ const reasons={
+  EVIDENCE_MISSING:'This required check has no source record.',
+  AMBIGUOUS_EVIDENCE_RECORDS:'Conflicting or duplicated records need review.',
+  RECORDED_REFERENCE_REVOKED:'This source reference was revoked in the example.',
+  EVIDENCE_EXPIRED:'This source record is older than the example freshness limit.',
+  PRODUCER_ASSERTION_NOT_INDEPENDENT_ATTESTATION:'The preview has not independently verified this provider assertion.',
+  EVIDENCE_INVALID_OR_UNAVAILABLE:'The record could not be validated for this token, pool and time.',
+  CHAIN_POINT_MISMATCH:'The checks refer to different blocks or slots.'
+ };
+ function explain(check){return {state:checkLabels[check?.state]||'Unavailable',
+  reason:reasons[check?.reason]||'The reason for this unavailable check is not recognised.'};}
+ function displayTime(value){
+  const date=new Date(value);if(!value||!Number.isFinite(date.getTime()))return 'Unavailable';
+  return new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeStyle:'medium',timeZone:'UTC'}).format(date)+' UTC';
+ }
+
  function viewModel(document,key){
   if(document?.data_classification!=='SYNTHETIC_TEST_DATA_NOT_LIVE')throw Error('Invalid example');
   const row=document.cases?.[key];
@@ -20,13 +37,21 @@
    try{
     const model=viewModel(document,select.value);status.textContent=model.label;
     content.replaceChildren();
-    content.append(element('p','Controlled example clock: '+model.row.evaluated_at_utc),
+    content.append(element('p','Controlled example clock: '+displayTime(model.row.evaluated_at_utc)),
      element('p','Network: '+model.row.identity.chain+' · Token: '+model.row.identity.token_address));
     for(const check of model.row.checks){
      const card=element('article','');card.className='passport-check';
-     card.append(element('h4',check.kind.replaceAll('_',' ')),element('p',check.state),
-      element('p','Source: '+(check.source||'Unavailable')),element('p','Recorded: '+(check.observed_at_utc||'Unavailable')),
-      element('p','Expires: '+(check.expires_at_utc||'Unavailable')),element('p','Reason: '+check.reason));
+     const human=explain(check);
+     card.append(element('h3',check.kind.replaceAll('_',' ')),element('p',human.state),
+      element('p','Source: '+(check.source||'Unavailable')),element('p','Recorded: '+displayTime(check.observed_at_utc)),
+      element('p','Expires: '+displayTime(check.expires_at_utc)),element('p',human.reason));
+     if(check.chain_point){
+      const details=element('details','');details.append(element('summary','View chain reference'));
+      const point=check.chain_point;
+      details.append(element('p',point.slot!==undefined?'Solana slot '+point.slot:'Block '+point.block),
+       element('code',point.block_hash||'Block hash unavailable in this source record'));
+      card.append(details);
+     }
      content.append(card);
     }
    }catch{content.replaceChildren();status.textContent='Example unavailable. Retry loading the preview.';retry.hidden=false;}
@@ -44,7 +69,7 @@
   }
   select.addEventListener('change',render);retry.addEventListener('click',load);await load();
  }
- const api={viewModel,mount};
+ const api={viewModel,mount,explain,displayTime};
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  else {root.RadarPassportPreview=api;mount();}
 })(typeof window!=='undefined'?window:globalThis);

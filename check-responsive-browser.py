@@ -165,6 +165,12 @@ try:
                     passport.locator('#passport-scenario').select_option('current')
                     passport.get_by_text('Recorded checks current (example)',exact=True).wait_for()
                     assert passport.locator('.passport-check').count()==3
+                    assert 'PRODUCER_ASSERTION_NOT_INDEPENDENT_ATTESTATION' not in passport.inner_text()
+                    assert passport.get_by_text('Current source record',exact=True).count()==3
+                    first_check=passport.locator('.passport-check').first
+                    first_check.get_by_text('View chain reference',exact=True).click()
+                    assert first_check.get_by_text('Block 17',exact=True).is_visible()
+                    assert 'UTC' in first_check.inner_text()
                     assert 'No attestation is issued' in passport.inner_text()
                     assert passport.locator('#passport-scenario').bounding_box()['height']>=48
                     no_overflow(page)
