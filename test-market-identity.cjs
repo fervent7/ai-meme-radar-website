@@ -24,3 +24,19 @@ test('indexed-pool DEX labels preserve recognizable names and retain full addres
   assert.deepEqual(identity.dexDisplay({dexId: fullId}), {label: '0x123456…56abcd', fullId});
   assert.deepEqual(identity.dexDisplay({}), {label: 'Unknown DEX', fullId: null});
 });
+
+
+test('network address format rejects mismatched known networks without claiming contract existence',()=>{
+ const evm='0x'+'a'.repeat(40),solana='A'.repeat(32);
+ for(const chain of ['bsc','base','ethereum','robinhood','arbitrum']){
+  assert.equal(identity.addressMatchesNetwork(chain,evm),true);
+  assert.equal(identity.addressMatchesNetwork(chain,solana),false);
+ }
+ assert.equal(identity.addressMatchesNetwork('solana',evm),false);
+ assert.equal(identity.addressMatchesNetwork('solana',solana),true);
+ for(const chain of ['', 'another-indexed-chain']){
+  assert.equal(identity.addressMatchesNetwork(chain,evm),true);
+  assert.equal(identity.addressMatchesNetwork(chain,solana),true);
+ }
+ assert.equal(identity.addressMatchesNetwork('bsc',null),false);
+});

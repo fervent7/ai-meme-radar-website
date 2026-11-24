@@ -167,15 +167,23 @@ try:
                 assert search_input['x'] + search_input['width'] <= search_button['x']
                 assert abs(search_input['y'] - search_button['y']) < 2
             # Native network filter is a UI scope, never a contract/security claim.
+            invalid_requests=[]
+            def track_invalid(request):
+                if request.url.startswith('https://api.dexscreener.com/latest/dex/search'): invalid_requests.append(request.url)
+            page.on('request',track_invalid)
             page.locator('#network').select_option('bsc')
             page.locator('#address').fill(mint)
             page.get_by_role('button',name='Research token',exact=True).click()
-            page.get_by_text('No indexed pool matched this exact address.',exact=False).wait_for()
+            page.get_by_text('Address format does not match the selected network.',exact=False).wait_for()
+            assert page.locator('#address').get_attribute('aria-invalid') == 'true'
+            assert invalid_requests == []
+            page.remove_listener('request',track_invalid)
             page.locator('#network').select_option('solana')
             page.locator('#address').fill(mint)
             page.locator('#searchBtn').click()
             handoff = page.get_by_role('link', name='Open Radar test research (sign-in required)', exact=True)
             handoff.wait_for()
+            assert page.locator('#address').get_attribute('aria-invalid') == 'false'
             assert handoff.locator('..').text_content() == 'Open Radar test research (sign-in required)'
             page.get_by_role('button',name='Load saved research history').click()
             page.get_by_text('Verified holder trend: UNCHANGED · 75 → 75 (0%)',exact=True).wait_for()

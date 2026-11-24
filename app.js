@@ -109,6 +109,12 @@ function radarPreviewLink(chain,address){
 }
 
 async function research({chain: selectedChain} = {}){const address=$('address').value.trim();if(!valid(address)){set('searchHelp','Paste a valid 0x EVM address (42 characters) or Solana-style base58 mint (32–44 characters).');return}
+if(selectedChain && !window.RadarIdentity.addressMatchesNetwork(selectedChain,address)){
+ $('address').setAttribute?.('aria-invalid','true');
+ set('searchHelp','Address format does not match the selected network. Choose a matching network or All indexed networks.');
+ return;
+}
+$('address').setAttribute?.('aria-invalid','false');
 stopLive();
 researchController?.abort();
 const controller = new AbortController();
