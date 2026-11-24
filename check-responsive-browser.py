@@ -45,7 +45,7 @@ const server = testServer({password:'browser-fixture', radarKey:'backend-fixture
   {chain, contract_address: address, pools: [{pool_address: pool, observations}]})});
 server.listen(0, '127.0.0.1', () => console.log(server.address().port));
 """, mint, pool], stdout=subprocess.PIPE, text=True)
-routes = ['index.html','research.html','intelligence.html','liquidity.html','roadmap.html','community.html']
+routes = ['index.html','research.html','intelligence.html','liquidity.html','roadmap.html','community.html','products.html']
 community_urls = {'X': 'https://x.com/aimemeradar', 'Telegram': 'https://t.me/AIMemeRadarCommunity'}
 origin = 'http://127.0.0.1:' + server.stdout.readline().strip()
 pair = {'chainId':'solana','dexId':'raydium','pairAddress':pool,
@@ -97,6 +97,8 @@ try:
             errs=[]
             page.on('pageerror',lambda error: errs.append(str(error)))
             page.goto(origin+'/index.html')
+            page.locator('.launch-actions a[href="research.html"]').click(trial=True)
+            page.locator('.launch-hero').screenshot(path=str(screenshots / f'homepage-hero-{w}.png'), animations='disabled')
             page.keyboard.press('Tab')
             assert page.evaluate("document.activeElement.classList.contains('skip-link')")
             page.keyboard.press('Enter')
@@ -118,7 +120,8 @@ try:
                 assert market['width'] > monitor['width']
                 assert market['x'] + market['width'] <= monitor['x']
                 assert abs(market['y'] - monitor['y']) < 2
-                assert market['y'] < h / 2, 'Market table should be in the upper half of the workspace'
+                assert page.locator('#showcase-title').is_visible()
+                page.locator('.launch-actions a[href="research.html"]').click(trial=True)
                 if w in (1366, 1440, 1920):
                     page.screenshot(path=str(screenshots / f'dashboard-{w}.png'), animations='disabled')
             verify_community_links(page.locator('.community-panel'))

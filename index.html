@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080f1f">
   <meta name="description" content="AI Meme Radar provides multichain token research with source-attributed market and holder evidence.">
-  <title>Research dashboard | AI Meme Radar</title>
+  <title>Evidence-first multichain intelligence | AI Meme Radar</title>
   <link rel="icon" type="image/png" sizes="64x64" href="brand-icon-64.png">
   <link rel="apple-touch-icon" href="brand-icon-192.png">
   <link rel="manifest" href="site.webmanifest">
@@ -24,6 +24,7 @@
     <button class="menu" id="menu" type="button" aria-controls="nav" aria-expanded="false">Menu</button>
     <nav id="nav" aria-label="Main navigation">
         <a href="index.html" aria-current="page">Dashboard</a>
+        <a href="products.html">Products</a>
         <a href="research.html">Research Terminal</a>
         <a href="intelligence.html">Intelligence Studio</a>
         <a href="liquidity.html">Liquidity &amp; OTC Research</a>
@@ -40,14 +41,34 @@
     </nav>
   </header>
   <main id="main" tabindex="-1">
-<section class="wrap page-intro dashboard-intro">
-  <div>
-    <p class="brand-tagline">Research Before Risk</p>
-    <h1>Research dashboard</h1>
-    <p>Discover indexed pools and compare market activity with verified on-chain evidence.</p>
+<section class="wrap launch-hero" aria-labelledby="showcase-title">
+  <div class="launch-copy">
+    <p class="brand-tagline">Research Before Risk · Review build</p>
+    <h1 id="showcase-title">See the evidence.<br><em>Understand the unknowns.</em></h1>
+    <p class="launch-lead">Multichain intelligence for people who need more than a token chart. Investigate holders, wallet movements, liquidity and security—with a source, time and clear limit for every finding.</p>
+    <div class="launch-actions"><a class="primary" href="research.html">Research a token <span aria-hidden="true">↗</span></a><a class="outline" href="products.html">Explore the product system</a></div>
+    <p class="launch-boundary">In development. This review build is not a public service launch. Live coverage depends on verified backend evidence.</p>
   </div>
-  <a class="primary" href="research.html">Open Research Terminal →</a>
+  <aside class="signal-map" aria-labelledby="signal-map-title">
+    <p class="kicker">The evidence model · Illustrated workflow</p>
+    <h2 id="signal-map-title">A finding is only as useful as its proof.</h2>
+    <ol class="signal-path">
+      <li><span class="signal-dot" aria-hidden="true"></span><div><strong>Observe</strong><p>Chain, token, pool and original block reference</p></div></li>
+      <li><span class="signal-dot" aria-hidden="true"></span><div><strong>Check</strong><p>Holder, liquidity, wallet and security provenance</p></div></li>
+      <li><span class="signal-dot unknown" aria-hidden="true"></span><div><strong>Keep uncertainty visible</strong><p>Missing, stale or revoked evidence stays unavailable</p></div></li>
+    </ol>
+    <p class="signal-caption">Concept illustration—not live token data, a safety rating or trading permission.</p>
+  </aside>
 </section>
+<section class="wrap launch-proof" aria-labelledby="launch-proof-title">
+  <div><p class="kicker">Built, tested, still being verified</p><h2 id="launch-proof-title">Progress you can inspect.</h2><p>Review-only milestones checked 24 November 2026. Passing tests do not establish deployed or live service coverage.</p></div>
+  <div class="launch-proof-grid">
+    <article><span class="feature-state review">Tested · Review only</span><h3>Research evidence journal</h3><p>Saved evidence, scoped history and revocation handling have automated regression coverage. Hosted multichain acceptance remains pending.</p><a href="https://github.com/fervent7/ai-meme-radar/actions/runs/45403472994">Inspect Radar CI evidence ↗</a></article>
+    <article><span class="feature-state review">Tested · Review only</span><h3>Mobile research interface</h3><p>Authenticated history, unavailable states and retry behavior have browser coverage. This redesign still needs its own hosted verification.</p><a href="https://github.com/fervent7/ai-meme-radar-website/pull/3">Inspect website review ↗</a></article>
+    <article><span class="feature-state planned">Launch gate · Not passed</span><h3>Functional intelligence first</h3><p>Genuine provider evidence, per-chain freshness, wallet relationships, rules and connected mobile API checks must pass before launch approval.</p><a href="products.html#launch-gate">See the service acceptance gate ↗</a></article>
+  </div>
+</section>
+<section class="wrap workspace-heading"><p class="kicker">Research workspace</p><h2>Start with what the service can actually show.</h2><p>Unavailable data stays empty. No sample observation is presented as live evidence.</p></section>
 <section class="metrics wrap dashboard-workspace" id="radar" aria-label="Live Radar overview">
   <div class="metric-grid" aria-label="Scan metrics">
     <article><small>Fresh pools</small><strong id="fresh">—</strong><span>Latest discovery scan</span></article>

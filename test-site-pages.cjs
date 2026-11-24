@@ -5,7 +5,7 @@ const { once } = require('node:events');
 const { test } = require('node:test');
 const { testServer } = require('./website-test-server.cjs');
 
-const routes = ['index.html', 'research.html', 'intelligence.html', 'liquidity.html', 'roadmap.html', 'community.html'];
+const routes = ['index.html', 'research.html', 'intelligence.html', 'liquidity.html', 'roadmap.html', 'community.html', 'products.html'];
 
 test('review pages and shared navigation are served behind the existing sign-in', async t => {
   const server = testServer({ password: 'website-fixture', radarKey: 'radar-fixture',
