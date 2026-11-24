@@ -213,6 +213,16 @@ try:
             assert transfer_detail.get_attribute('open') is None
             transfer_detail.get_by_text('Saved transaction · 1 decoded transfer',exact=True).click()
             expect(transfer_detail).to_have_attribute('open','')
+            # Controlled clipboard outcomes; no system clipboard or external service.
+            page.evaluate("Object.defineProperty(navigator, 'clipboard', {configurable:true, value:{writeText:async value => { window.__copiedSignature=value; }}})")
+            copy=transfer_detail.get_by_role('button',name='Copy transaction signature',exact=True)
+            copy.click()
+            transfer_detail.get_by_text('Transaction signature copied.',exact=True).wait_for()
+            assert page.evaluate('window.__copiedSignature') == transfer_detail.locator('code').inner_text()
+            page.evaluate("Object.defineProperty(navigator, 'clipboard', {configurable:true, value:{writeText:async () => {throw Error('denied')}}})")
+            copy.click()
+            transfer_detail.get_by_text('Copy unavailable. Select and copy the full signature above.',exact=True).wait_for()
+            assert copy.is_enabled()
             assert transfer_detail.get_by_text('492719579834',exact=True).is_visible()
             assert transfer_detail.get_by_text('Raw amount (base units; decimals unavailable)',exact=True).is_visible()
             assert transfer_detail.locator('dt').count() == 6

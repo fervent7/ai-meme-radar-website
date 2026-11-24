@@ -299,3 +299,7 @@ footer .community-links { justify-content: flex-end; }
 .stored-transfer dt{color:#a2b9b4}
 .stored-transfer dd{margin:0;color:#edf6f3;overflow-wrap:anywhere}
 @media(max-width:480px){.stored-transfer dl{grid-template-columns:minmax(0,1fr);gap:4px}.stored-transfer dd{margin-bottom:10px}}
+
+.stored-transfer>button{min-height:48px;margin-top:12px;border:1px solid #528c80;border-radius:8px;padding:10px 14px;background:#153a32;color:#b8ffdf;cursor:pointer}
+.stored-transfer>button:focus-visible{outline:2px solid #8de9ed;outline-offset:3px}
+.stored-transfer>button:disabled{opacity:.65;cursor:wait}

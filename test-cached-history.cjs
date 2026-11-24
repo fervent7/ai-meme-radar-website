@@ -295,7 +295,20 @@ test('the history panel renders authenticated gateway evidence and supports retr
   assert.equal(transferDetail.children[0].textContent,'Saved transaction · 1 decoded transfer');
   assert.match(transferDetail.children[1].textContent,/Slot 17.*Block.*Recorded/);
   assert.equal(transferDetail.children[3].textContent,'B'.repeat(88));
-  const movementFields = transferDetail.children[4].children[1].children.map(node=>node.textContent);
+  const copy = transferDetail.children.find(node=>node.tag==='button');
+  const copyStatus = transferDetail.children[5];
+  await copy.activate();
+  assert.match(copyStatus.textContent,/Copy unavailable/);
+  let copied;
+  window.navigator = {clipboard:{writeText:async value=>{copied=value;}}};
+  await copy.activate();
+  assert.equal(copied,'B'.repeat(88));
+  assert.equal(copyStatus.textContent,'Transaction signature copied.');
+  window.navigator.clipboard.writeText=async()=>{throw Error('denied')};
+  await copy.activate();
+  assert.match(copyStatus.textContent,/Copy unavailable/);
+  assert.equal(copy.disabled,false);
+  const movementFields = transferDetail.children.find(node=>node.tag==='article').children[1].children.map(node=>node.textContent);
   assert.deepEqual(movementFields,[
     'Raw amount (base units; decimals unavailable)','492719579834',
     'Source owner','C'.repeat(32),'Destination owner','D'.repeat(32),

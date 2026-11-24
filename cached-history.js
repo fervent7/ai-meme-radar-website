@@ -118,6 +118,22 @@
       create('p','Slot ' + sample.slot + ' · Block ' + sample.block_time_utc +
         ' · Recorded ' + sample.observed_at_utc + ' · ' + sample.source),
       create('p','Transaction signature'),create('code',sample.signature));
+    const copy = create('button','Copy transaction signature');
+    copy.type = 'button';
+    const copyStatus = create('p','');
+    copyStatus.setAttribute('role','status');
+    copyStatus.setAttribute('aria-live','polite');
+    copy.addEventListener('click', async () => {
+      copy.disabled = true;
+      try {
+        if (!window.navigator?.clipboard?.writeText) throw Error('Clipboard unavailable');
+        await window.navigator.clipboard.writeText(sample.signature);
+        copyStatus.textContent = 'Transaction signature copied.';
+      } catch {
+        copyStatus.textContent = 'Copy unavailable. Select and copy the full signature above.';
+      } finally { copy.disabled = false; }
+    });
+    details.append(copy,copyStatus);
     if (!count) details.append(create('p','No target-token transfers decoded in this saved transaction. This does not establish mint-wide absence of activity.'));
     for (const [index,move] of sample.movements.entries()) {
       const item = create('article');
