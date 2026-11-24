@@ -209,10 +209,16 @@ try:
             assert page.get_by_text('Slot 469496016', exact=False).count() == 4
             transfer_heading=page.get_by_role('heading',name='Recorded token transfers (mint scope)',exact=True)
             assert transfer_heading.is_visible()
-            assert page.get_by_text('Raw amount 492719579834',exact=False).is_visible()
+            transfer_detail=page.locator('.stored-transfer').first
+            assert transfer_detail.get_attribute('open') is None
+            transfer_detail.get_by_text('Saved transaction · 1 decoded transfer',exact=True).click()
+            expect(transfer_detail).to_have_attribute('open','')
+            assert transfer_detail.get_by_text('492719579834',exact=True).is_visible()
+            assert transfer_detail.get_by_text('Raw amount (base units; decimals unavailable)',exact=True).is_visible()
+            assert transfer_detail.locator('dt').count() == 6
             assert page.get_by_text('Stored records for this mint only;',exact=False).is_visible()
             if w in (390,1440):
-                transfer_heading.locator('..').screenshot(path=str(screenshots/f'stored-transfers-{w}.png'),animations='disabled')
+                transfer_detail.screenshot(path=str(screenshots/f'stored-transfers-{w}.png'),animations='disabled')
             if w in (390,1440):
                 heading = page.get_by_role('heading', name='Holder distribution', exact=True)
                 evidence_panel = heading.locator('..')

@@ -110,6 +110,30 @@
     panel.replaceChildren(metrics, create('h5', marketHeading), rows, coverage(history, identity));
   }
 
+  function storedTransfer(sample) {
+    const details = create('details');
+    details.className = 'stored-transfer';
+    const count = sample.movements.length;
+    details.append(create('summary','Saved transaction · ' + count + ' decoded transfer' + (count === 1 ? '' : 's')),
+      create('p','Slot ' + sample.slot + ' · Block ' + sample.block_time_utc +
+        ' · Recorded ' + sample.observed_at_utc + ' · ' + sample.source),
+      create('p','Transaction signature'),create('code',sample.signature));
+    if (!count) details.append(create('p','No target-token transfers decoded in this saved transaction. This does not establish mint-wide absence of activity.'));
+    for (const [index,move] of sample.movements.entries()) {
+      const item = create('article');
+      item.append(create('h6','Transfer ' + (index + 1)));
+      const fields = create('dl');
+      for (const [label,value] of [
+        ['Raw amount (base units; decimals unavailable)',move.amount_raw],
+        ['Source owner',move.source_owner],['Destination owner',move.destination_owner],
+        ['Source token account',move.source_account],['Destination token account',move.destination_account],
+        ['Instruction index',String(move.outer_index) + (move.inner_index === null ? ' (outer)' : ' / ' + move.inner_index)]
+      ]) fields.append(create('dt',label),create('dd',value));
+      item.append(fields);details.append(item);
+    }
+    return details;
+  }
+
   function renderOnchain(panel, history) {
     const evidenceSections = [
       ['Holder distribution', history.holders, sample => sample.holder_count +
@@ -122,16 +146,15 @@
         const amount = vault.decimals ? digits.slice(0, -vault.decimals) + '.' + digits.slice(-vault.decimals) : digits;
         return amount + ' · Mint ' + vault.mint;
       }).join(' | ')],
-      ['Recorded token transfers (mint scope)', history.transfers ?? [], sample =>
-        'Transaction ' + sample.signature + ' · ' + (sample.movements.length ? sample.movements.map(move =>
-          'Raw amount ' + move.amount_raw + ' (base units; decimals unavailable) · Owner ' + move.source_owner +
-          ' → ' + move.destination_owner + ' · Accounts ' + move.source_account + ' → ' + move.destination_account
-        ).join(' | ') : 'No target-token transfers decoded in this saved transaction')]
+      ['Recorded token transfers (mint scope)', history.transfers ?? [], null]
     ];
     for (const [label, rows, describe] of evidenceSections) {
       const list = create('ul');
       list.className = 'saved-market-rows';
       for (const sample of rows) {
+        if (label === 'Recorded token transfers (mint scope)' && sample.verification === 'VERIFIED') {
+          const row = create('li');row.append(storedTransfer(sample));list.append(row);continue;
+        }
         list.append(create('li', sample.verification === 'VERIFIED'
           ? describe(sample) + ' · Slot ' + sample.slot + ' · Block ' + sample.block_time_utc +
             ' · Recorded ' + sample.observed_at_utc + ' · ' + sample.source

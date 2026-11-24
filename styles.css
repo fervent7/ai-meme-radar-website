@@ -287,3 +287,15 @@ footer .community-links { justify-content: flex-end; }
 .live-market-controls button[aria-pressed="true"]{border-color:#80d9df;color:#b3f0f3;background:#10292d}
 .live-market-controls .search-help{flex:1 1 240px;margin:0;min-width:0}
 @media(max-width:480px){.live-market-controls{align-items:stretch}.live-market-controls button{width:100%}}
+
+.stored-transfer{margin-block:10px;padding:0 14px 14px;border:1px solid #345653;border-radius:10px;background:#0e2024;list-style-position:inside}
+.stored-transfer summary{min-height:48px;align-content:center;cursor:pointer;color:#a0f6d7;font-weight:650;padding-block:10px}
+.stored-transfer summary:focus-visible{outline:2px solid #8de9ed;outline-offset:3px}
+.stored-transfer>p{font-size:.8rem;color:#bacdca;line-height:1.6;margin-block:10px}
+.stored-transfer code{display:block;font-size:.8rem;color:#dbeae6;overflow-wrap:anywhere}
+.stored-transfer article{border-top:1px solid #304d4c;margin-top:14px;padding-top:12px}
+.stored-transfer h6{margin:0 0 10px;font-size:.9rem}
+.stored-transfer dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:8px 14px;font-size:.82rem;margin:0}
+.stored-transfer dt{color:#a2b9b4}
+.stored-transfer dd{margin:0;color:#edf6f3;overflow-wrap:anywhere}
+@media(max-width:480px){.stored-transfer dl{grid-template-columns:minmax(0,1fr);gap:4px}.stored-transfer dd{margin-bottom:10px}}

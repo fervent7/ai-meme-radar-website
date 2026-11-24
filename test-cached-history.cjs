@@ -286,11 +286,21 @@ test('the history panel renders authenticated gateway evidence and supports retr
   assert.match(holderLabel, /Slot 10.*Block.*Recorded/);
   context.fetch = async () => Response.json({status:'READY',holders:[],swaps:[],reserves:[],transfers:[{
     verification:'VERIFIED',signature:'B'.repeat(88),slot:17,block_time_utc:first,observed_at_utc:latest,
-    source:'https://rpc.example.invalid',movements:[{amount_raw:'492719579834',source_owner:'C'.repeat(32),
+    source:'https://rpc.example.invalid',movements:[{outer_index:0,inner_index:1,amount_raw:'492719579834',source_owner:'C'.repeat(32),
       destination_owner:'D'.repeat(32),source_account:'E'.repeat(32),destination_account:'F'.repeat(32)}]}]});
   await onchainButton.activate();
   assert.equal(onchainPanel.children[6].textContent,'Recorded token transfers (mint scope)');
-  assert.match(onchainPanel.children[7].children[0].textContent,/Raw amount 492719579834.*base units; decimals unavailable/);
+  const transferDetail = onchainPanel.children[7].children[0].children[0];
+  assert.equal(transferDetail.tag,'details');
+  assert.equal(transferDetail.children[0].textContent,'Saved transaction · 1 decoded transfer');
+  assert.match(transferDetail.children[1].textContent,/Slot 17.*Block.*Recorded/);
+  assert.equal(transferDetail.children[3].textContent,'B'.repeat(88));
+  const movementFields = transferDetail.children[4].children[1].children.map(node=>node.textContent);
+  assert.deepEqual(movementFields,[
+    'Raw amount (base units; decimals unavailable)','492719579834',
+    'Source owner','C'.repeat(32),'Destination owner','D'.repeat(32),
+    'Source token account','E'.repeat(32),'Destination token account','F'.repeat(32),
+    'Instruction index','0 / 1']);
   assert.match(onchainPanel.children[8].textContent,/not attributed to the selected pool.*coverage is incomplete/);
   const unavailable = { verification: 'ERROR', observed_at_utc: latest };
   context.fetch = async () => Response.json({
