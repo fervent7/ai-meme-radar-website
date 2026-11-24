@@ -162,8 +162,34 @@
       return section;
     }
     if (!graph.relationships.length) section.append(create('strong','No attributable links in the supplied saved records. This does not establish absence of wallet activity.'));
+    if (graph.coverage) {
+      const window=graph.coverage;
+      section.append(create('p','Saved window: '+window.input_records+' input records · '+
+        window.withheld_records+' withheld · '+window.unique_transactions+' distinct transactions.'),
+        create('p',window.first_block_time_unix===null?'Original chain-time window unavailable.':
+          'Original block times: '+new Date(window.first_block_time_unix*1000).toISOString()+
+          ' → '+new Date(window.last_block_time_unix*1000).toISOString()));
+    }
+    const controls=create('div');controls.className='wallet-filter';
+    const label=create('label','Filter owner address in this saved window');
+    const query=create('input');query.type='search';query.value='';query.maxLength=44;
+    query.autocomplete='off';query.spellcheck=false;label.append(query);
+    const clear=create('button','Show all saved links');clear.type='button';
+    const count=create('p');count.setAttribute('role','status');count.setAttribute('aria-live','polite');
+    const cards=[];
+    function filterLinks() {
+      const text=query.value.trim();let visible=0;
+      for (const [edge,item] of cards) {
+        item.hidden=!!text&&!edge.source_owner.includes(text)&&!edge.destination_owner.includes(text);
+        if (!item.hidden) visible++;
+      }
+      count.textContent=visible+' of '+cards.length+' saved links shown. Solana addresses are case-sensitive; coverage remains incomplete.';
+    }
+    query.addEventListener('input',filterLinks);
+    clear.addEventListener('click',()=>{query.value='';filterLinks();});
+    if (graph.relationships.length) { controls.append(label,clear,count);section.append(controls); }
     for (const edge of graph.relationships) {
-      const item=create('article');const owners=create('dl');
+      const item=create('article');item.className='wallet-relationship-edge';cards.push([edge,item]);const owners=create('dl');
       for (const [label,value] of [['From owner address',edge.source_owner],['To owner address',edge.destination_owner],
         ['Transferred base units (decimals unavailable)',edge.amount_raw],['Distinct saved instructions',String(edge.transfer_count)]]) {
         owners.append(create('dt',label),create('dd',value));
@@ -175,6 +201,7 @@
       }
       item.append(owners,evidence);section.append(item);
     }
+    filterLinks();
     return section;
   }
 

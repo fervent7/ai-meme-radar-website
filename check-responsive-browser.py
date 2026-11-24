@@ -290,6 +290,15 @@ try:
             assert wallet.get_by_text('Synthetic contract test data · not a chain observation',exact=True).is_visible()
             assert wallet.get_by_text('E'*32,exact=True).is_visible()
             assert wallet.get_by_text('F'*32,exact=True).is_visible()
+            search=wallet.get_by_label('Filter owner address in this saved window',exact=True)
+            search.fill('e'*32)
+            expect(wallet.locator('.wallet-relationship-edge:visible')).to_have_count(0)
+            wallet.get_by_text('0 of 1 saved links shown.',exact=False).wait_for()
+            search.fill('E'*32)
+            expect(wallet.locator('.wallet-relationship-edge:visible')).to_have_count(1)
+            wallet.get_by_role('button',name='Show all saved links',exact=True).click()
+            assert search.input_value() == ''
+            assert '1 input records · 0 withheld · 1 distinct transactions' in wallet.inner_text()
             summary=wallet.locator('summary')
             summary.click()
             assert summary.bounding_box()['height'] >= 44

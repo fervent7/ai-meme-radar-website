@@ -11,12 +11,16 @@ test('gateway validates backend relationships against the same scoped saved tran
  assert.equal(graph.relationships[0].amount_raw,'492719579834');
  assert.equal(graph.relationships[0].evidence[0].signature,'B'.repeat(88));
  assert.equal(graph.relationships[0].evidence[0].slot,469496016);
+ assert.equal(graph.coverage.input_records,1);
+ assert.equal(graph.coverage.withheld_records,0);
+ assert.equal(graph.coverage.first_block_time_unix,1794695488);
  assert.equal(graph.synthetic_example,true);
  assert.equal(graph.coordination_proven,false);assert.equal(graph.fresh_evidence,false);
 });
 test('wrong scope, invented relationship, changed evidence and authorization claims fail closed',async()=>{
  for(const change of [d=>d.wallet_relationships.token_address='G'.repeat(32),
-  d=>d.wallet_relationships.complete_history=true,d=>d.wallet_relationships.coordination_proven=true,
+  d=>d.wallet_relationships.complete_history=true,d=>d.wallet_relationships.coverage.last_block_time_unix++,
+  d=>d.wallet_relationships.coverage.withheld_records++,d=>d.wallet_relationships.coordination_proven=true,
   d=>d.wallet_relationships.relationships[0].amount_raw='1',
   d=>d.wallet_relationships.relationships[0].evidence[0].slot++,
   d=>d.wallet_relationships.relationships[0].evidence[0].reference='C'.repeat(88),
