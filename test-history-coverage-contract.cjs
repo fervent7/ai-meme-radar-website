@@ -76,3 +76,10 @@ test('liquidity gaps, conflicting history and zero or tiny baselines do not crea
     assert.equal(w.direction,'INCREASED');
   }
 });
+
+
+test('future-dated market history cannot provide a historical liquidity comparison',async()=>{
+  const data=structuredClone(valid);
+  data.pools[0].observations[1].observed_at_utc='2099-01-01T00:00:00Z';
+  assert.equal((await run(data)).reported_liquidity_window,null);
+});

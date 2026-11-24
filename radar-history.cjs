@@ -68,7 +68,8 @@ function coverageHold(value, {chain,address,pool}, observationCount) {
 function reportedLiquidityWindow(observations) {
   const samples = [];
   for (const row of observations) { // Most recent first; stop at any evidence gap.
-    if (row.market_source !== 'DexScreener token-pairs API' ||
+    if (Date.parse(row.observed_at_utc) > Date.now() ||
+        row.market_source !== 'DexScreener token-pairs API' ||
         !Number.isFinite(row.liquidity_usd) || row.liquidity_usd < 0 || row.liquidity_usd > 1e18) break;
     samples.push(row);
   }
