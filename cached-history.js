@@ -176,6 +176,7 @@
     query.autocomplete='off';query.spellcheck=false;label.append(query);
     const directionLabel=create('label','Owner address appears as');
     const direction=create('select');
+    direction.setAttribute('aria-label','Owner address appears as');
     for (const [value,text] of [['either','Sender or recipient'],['sender','Sender'],['recipient','Recipient']]) {
       const option=create('option',text);option.value=value;direction.append(option);
     }

@@ -13,3 +13,10 @@ case sensitivity and reset at all existing viewports; hosted CI pending.
 No deployment/production change. Fresh provider-backed service, exact-revision
 hosted/mobile integration, physical Android and public launch remain NOT_RUN.
 Advanced financial services remain planned and separately gated.
+
+First browser CI45460237604 failed at exact accessible-name lookup for the new
+selector. A wrapped label included option text in the computed accessible name.
+Explicit aria-label fixes the real control name; retain the exact-name browser
+check, sender/recipient/reset cases and48px minimum target. No gate weakened.
+Local browser execution was unavailable (Chromium binary absent); hosted CI is
+the browser acceptance source. No installation/user action needed.
