@@ -121,7 +121,12 @@
         const digits = vault.reserve_raw.padStart(vault.decimals + 1, '0');
         const amount = vault.decimals ? digits.slice(0, -vault.decimals) + '.' + digits.slice(-vault.decimals) : digits;
         return amount + ' · Mint ' + vault.mint;
-      }).join(' | ')]
+      }).join(' | ')],
+      ['Recorded token transfers (mint scope)', history.transfers ?? [], sample =>
+        'Transaction ' + sample.signature + ' · ' + (sample.movements.length ? sample.movements.map(move =>
+          'Raw amount ' + move.amount_raw + ' (base units; decimals unavailable) · Owner ' + move.source_owner +
+          ' → ' + move.destination_owner + ' · Accounts ' + move.source_account + ' → ' + move.destination_account
+        ).join(' | ') : 'No target-token transfers decoded in this saved transaction')]
     ];
     for (const [label, rows, describe] of evidenceSections) {
       const list = create('ul');
@@ -133,6 +138,11 @@
           : (sample.verification === 'ERROR' ? 'Error · Observation could not be verified · ' : 'Unavailable · ') + sample.observed_at_utc));
       }
       panel.append(create('h5', label), rows.length ? list : create('p', 'Unavailable'));
+      if (label === 'Recorded token transfers (mint scope)') {
+        const note = create('p','Stored records for this mint only; not attributed to the selected pool. History coverage is incomplete. Owner addresses are not people; common ownership and coordinated activity are not established.');
+        note.className = 'research-warning';
+        panel.append(note);
+      }
     }
   }
 
@@ -224,7 +234,7 @@
           const nextPanel = create('div');
           renderOnchain(nextPanel, data);
           onchainPanel.replaceChildren(...nextPanel.children);
-          const observations = [].concat(data.holders, data.swaps, data.reserves);
+          const observations = [].concat(data.holders, data.swaps, data.reserves, data.transfers ?? []);
           const hasVerified = observations.some(row => row.verification === 'VERIFIED');
           const hasErrors = observations.some(row => row.verification === 'ERROR');
           const hasUnavailable = observations.some(row => row.verification === 'UNAVAILABLE');

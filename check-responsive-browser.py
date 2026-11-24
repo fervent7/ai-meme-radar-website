@@ -22,6 +22,12 @@ const sample = (kind, pool_address, reference, payload) => ({
 });
 const onchain = {
  chain, token_address: address, pool_address: pool,
+ token_transfer_coverage:{scope:'STORED_MINT_RECORDS_NOT_POOL_ATTRIBUTED',complete_history:false,record_limit:24},
+ token_transfers:[sample('token_transfers',null,'B'.repeat(88),{
+  block_time_unix:Math.floor(Date.parse(stamp)/1000),transfers:[{
+   outer_index:0,inner_index:null,source_account:'C'.repeat(32),destination_account:'D'.repeat(32),
+   source_owner:'E'.repeat(32),destination_owner:'F'.repeat(32),amount_raw:'492719579834'}]
+ })],
  holder_observations: [sample('holder_distribution', null, '469496016', {
   method_version: 'top-10-positive-owner-balances-v1', holder_count: 73,
   total_supply_raw: '995586144003707', top_10_balance_raw: '982029418470268'
@@ -200,7 +206,13 @@ try:
             assert page.get_by_text('Legacy method v1; infrastructure owners are not excluded', exact=False).is_visible()
             assert page.get_by_text('SELL · Organic activity unverified', exact=False).is_visible()
             assert page.get_by_text('18.520422483', exact=False).is_visible()
-            assert page.get_by_text('Slot 469496016', exact=False).count() == 3
+            assert page.get_by_text('Slot 469496016', exact=False).count() == 4
+            transfer_heading=page.get_by_role('heading',name='Recorded token transfers (mint scope)',exact=True)
+            assert transfer_heading.is_visible()
+            assert page.get_by_text('Raw amount 492719579834',exact=False).is_visible()
+            assert page.get_by_text('Stored records for this mint only;',exact=False).is_visible()
+            if w in (390,1440):
+                transfer_heading.locator('..').screenshot(path=str(screenshots/f'stored-transfers-{w}.png'),animations='disabled')
             if w in (390,1440):
                 heading = page.get_by_role('heading', name='Holder distribution', exact=True)
                 evidence_panel = heading.locator('..')

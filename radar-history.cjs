@@ -181,7 +181,7 @@ function projectOnchain(data, target) {
   if (data?.chain !== 'solana' || data.token_address !== target.address ||
       data.pool_address !== target.pool) throw Error('Invalid on-chain history identity');
 
-  function projectRows(rows, kind, pool, project) {
+  function projectRows(rows, kind, pool, project, blockTime = value => timestamp(value?.block_time_utc)) {
     if (!Array.isArray(rows) || rows.length > 24) throw Error('Invalid on-chain history');
     return rows.map(row => {
       if (row?.kind !== kind || row.chain !== 'solana' || row.token_address !== target.address ||
@@ -192,11 +192,12 @@ function projectOnchain(data, target) {
       const observed = { observed_at_utc: row.observed_at_utc, verification: row.verification };
       if (row.verification !== 'VERIFIED') return observed;
       const source = new URL(row.source);
+      const chainTime = blockTime(row.payload);
       if (source.protocol !== 'https:' || source.username || source.password ||
           !Number.isSafeInteger(row.payload?.slot) || row.payload.slot < 1 ||
-          !timestamp(row.payload.block_time_utc)) throw Error('Invalid on-chain provenance');
+          !chainTime) throw Error('Invalid on-chain provenance');
       return { ...observed, source: source.origin, slot: row.payload.slot,
-        block_time_utc: row.payload.block_time_utc, ...project(row.payload, row.reference) };
+        block_time_utc: chainTime, ...project(row.payload, row.reference) };
     });
   }
 
@@ -233,8 +234,39 @@ function projectOnchain(data, target) {
       return { mint: vault.mint, reserve_raw: raw(vault.reserve_raw), decimals: vault.decimals };
     }) };
   });
-  return { status: holders.length || swaps.length || reserves.length ? 'READY' : 'EMPTY',
-    holders, swaps, reserves };
+  const scope = 'STORED_MINT_RECORDS_NOT_POOL_ATTRIBUTED';
+  let transfers = [];
+  if (data.token_transfers !== undefined) {
+    const coverage = data.token_transfer_coverage;
+    if (coverage?.scope !== scope || coverage.complete_history !== false ||
+        !Number.isSafeInteger(coverage.record_limit) || coverage.record_limit < 1 || coverage.record_limit > 256 ||
+        !Array.isArray(data.token_transfers) || data.token_transfers.length > coverage.record_limit) {
+      throw Error('Invalid stored transfer coverage');
+    }
+    transfers = projectRows(data.token_transfers, 'token_transfers', null, (value, ref) => {
+      if (typeof ref !== 'string' || !/^[1-9A-HJ-NP-Za-km-z]{64,88}$/.test(ref) ||
+          !Array.isArray(value.transfers) || value.transfers.length > 128) throw Error('Invalid transfer evidence');
+      const seen = new Set();
+      const movements = value.transfers.map(item => {
+        if (!Number.isSafeInteger(item.outer_index) || item.outer_index < 0 ||
+            !(item.inner_index === null || Number.isSafeInteger(item.inner_index) && item.inner_index >= 0) ||
+            !['source_account','destination_account','source_owner','destination_owner'].every(k=>validAddress('solana',item[k]))) {
+          throw Error('Invalid transfer movement');
+        }
+        const key = item.outer_index + ':' + (item.inner_index ?? -1);
+        if (seen.has(key)) throw Error('Duplicate transfer movement');
+        seen.add(key);
+        return {outer_index:item.outer_index,inner_index:item.inner_index,
+          source_account:item.source_account,destination_account:item.destination_account,
+          source_owner:item.source_owner,destination_owner:item.destination_owner,
+          amount_raw:raw(item.amount_raw)};
+      });
+      return {signature:ref,movements,scope,complete_history:false};
+    }, value => Number.isSafeInteger(value?.block_time_unix) && value.block_time_unix > 0 &&
+      value.block_time_unix < 253402300800 ? new Date(value.block_time_unix * 1000).toISOString() : null);
+  }
+  return { status: holders.length || swaps.length || reserves.length || transfers.length ? 'READY' : 'EMPTY',
+    holders, swaps, reserves, transfers };
 }
 
 async function loadHistory(target, key, request = fetch, onchain = false) {

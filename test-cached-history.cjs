@@ -284,6 +284,14 @@ test('the history panel renders authenticated gateway evidence and supports retr
   assert.match(holderLabel, /Top 10 share of total mint supply 98\.64%/);
   assert.match(holderLabel, /Legacy method v1; infrastructure owners are not excluded/);
   assert.match(holderLabel, /Slot 10.*Block.*Recorded/);
+  context.fetch = async () => Response.json({status:'READY',holders:[],swaps:[],reserves:[],transfers:[{
+    verification:'VERIFIED',signature:'B'.repeat(88),slot:17,block_time_utc:first,observed_at_utc:latest,
+    source:'https://rpc.example.invalid',movements:[{amount_raw:'492719579834',source_owner:'C'.repeat(32),
+      destination_owner:'D'.repeat(32),source_account:'E'.repeat(32),destination_account:'F'.repeat(32)}]}]});
+  await onchainButton.activate();
+  assert.equal(onchainPanel.children[6].textContent,'Recorded token transfers (mint scope)');
+  assert.match(onchainPanel.children[7].children[0].textContent,/Raw amount 492719579834.*base units; decimals unavailable/);
+  assert.match(onchainPanel.children[8].textContent,/not attributed to the selected pool.*coverage is incomplete/);
   const unavailable = { verification: 'ERROR', observed_at_utc: latest };
   context.fetch = async () => Response.json({
     status: 'READY', holders: [unavailable], swaps: [], reserves: []
