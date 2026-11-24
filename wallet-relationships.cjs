@@ -61,6 +61,17 @@ function projectRelationships(graph, transfers, target) {
    edge.transfer_count!==known.proofs.size||!Array.isArray(edge.evidence)||
    edge.evidence.length!==known.proofs.size)fail();
   seen.add(pair);const proofs=new Set();
+  const savedProofs=[...known.proofs.values()];
+  const window={first_slot:Math.min(...savedProofs.map(p=>p.slot)),
+   last_slot:Math.max(...savedProofs.map(p=>p.slot)),
+   first_block_time_unix:Math.min(...savedProofs.map(p=>Date.parse(p.block_time_utc)/1000)),
+   last_block_time_unix:Math.max(...savedProofs.map(p=>Date.parse(p.block_time_utc)/1000)),
+   distinct_transactions:new Set(savedProofs.map(p=>p.signature)).size};
+  if(edge.observed_window!==undefined&&edge.observed_window!==null){
+   if(typeof edge.observed_window!=='object'||Array.isArray(edge.observed_window)||
+      Object.keys(window).some(key=>edge.observed_window[key]!==window[key]))fail();
+   known.observed_window=window;
+  }else known.observed_window=null;
   for(const proof of edge.evidence){
    const key=proof?.reference+':'+proof?.outer_index+':'+(proof?.inner_index??-1);
    const saved=known.proofs.get(key);
@@ -79,6 +90,6 @@ function projectRelationships(graph, transfers, target) {
  return {...base,status:graph.status,linked_owner_address_count:graph.linked_owner_address_count==null?null:ownerCount,coverage:coverage.unavailable?null:coverage,relationships:[...expected.entries()]
   .sort(([a],[b])=>a<b?-1:a>b?1:0).map(([,edge])=>({source_owner:edge.source_owner,
    destination_owner:edge.destination_owner,amount_raw:edge.amount.toString(),
-   transfer_count:edge.proofs.size,evidence:[...edge.proofs.values()]}))};
+   transfer_count:edge.proofs.size,observed_window:edge.observed_window,evidence:[...edge.proofs.values()]}))};
 }
 module.exports={projectRelationships};

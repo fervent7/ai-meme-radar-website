@@ -13,12 +13,14 @@ test('different transactions sharing one slot cannot claim different block times
  proof.reference=second.signature;edge.evidence.push(proof);
  edge.transfer_count=2;edge.amount_raw=(2n*BigInt(edge.amount_raw)).toString();
  Object.assign(graph.coverage,{input_records:2,available_records:2,unique_transactions:2});
+ graph.relationships[0].observed_window.distinct_transactions=2;
  assert.equal(projectRelationships(graph,[first,second],target).relationships[0].transfer_count,2);
  // Make every signature/proof/count/window agree with the claimed conflicting
  // time. Only the shared-slot invariant should reject this internally matched graph.
  proof.block_time_unix++;
  second.block_time_utc=new Date(proof.block_time_unix*1000).toISOString();
  graph.coverage.last_block_time_unix=proof.block_time_unix;
+ graph.relationships[0].observed_window.last_block_time_unix=proof.block_time_unix;
  assert.throws(()=>projectRelationships(graph,[first,second],target),
   /Invalid wallet relationship evidence/);
 });
@@ -31,6 +33,8 @@ test('gateway validates backend relationships against the same scoped saved tran
  assert.equal(graph.relationships[0].evidence[0].slot,469496016);
  assert.equal(graph.coverage.input_records,1);
  assert.equal(graph.linked_owner_address_count,2);
+ assert.equal(graph.relationships[0].observed_window.distinct_transactions,1);
+ assert.equal(graph.relationships[0].observed_window.first_block_time_unix,1794695488);
  assert.equal(graph.coverage.withheld_records,0);
  assert.equal(graph.coverage.first_block_time_unix,1794695488);
  assert.equal(graph.synthetic_example,true);
@@ -39,6 +43,7 @@ test('gateway validates backend relationships against the same scoped saved tran
 test('wrong scope, invented relationship, changed evidence and authorization claims fail closed',async()=>{
  for(const change of [d=>d.wallet_relationships.token_address='G'.repeat(32),
   d=>d.wallet_relationships.linked_owner_address_count=3,
+  d=>d.wallet_relationships.relationships[0].observed_window.last_block_time_unix++,
   d=>d.wallet_relationships.complete_history=true,d=>d.wallet_relationships.coverage.last_block_time_unix++,
   d=>d.wallet_relationships.coverage.withheld_records++,d=>d.wallet_relationships.coordination_proven=true,
   d=>d.wallet_relationships.relationships[0].amount_raw='1',
@@ -58,4 +63,8 @@ test('legacy or withheld backend graph does not manufacture relationships from t
 test('legacy relationship count remains unavailable rather than a people estimate',async()=>{
  const d=structuredClone(fixture);delete d.wallet_relationships.linked_owner_address_count;
  assert.equal((await run(d)).wallet_relationships.linked_owner_address_count,null);
+});
+test('legacy pair time window remains unavailable instead of a fresh activity claim',async()=>{
+ const d=structuredClone(fixture);delete d.wallet_relationships.relationships[0].observed_window;
+ assert.equal((await run(d)).wallet_relationships.relationships[0].observed_window,null);
 });

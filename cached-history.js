@@ -211,7 +211,14 @@
         evidence.append(create('p','Slot '+proof.slot+' · Block '+proof.block_time_utc+' · Recorded '+proof.observed_at_utc+' · '+proof.source),
           create('code',proof.signature));
       }
-      item.append(owners,evidence);section.append(item);
+      item.append(owners);
+      if(edge.observed_window){
+        const window=edge.observed_window;
+        item.append(create('p','Saved pair window: '+new Date(window.first_block_time_unix*1000).toISOString()+
+          ' → '+new Date(window.last_block_time_unix*1000).toISOString()+' · '+window.distinct_transactions+
+          ' distinct transactions. This does not refresh the evidence.'));
+      }
+      item.append(evidence);section.append(item);
       const jump=create('div');jump.className='wallet-filter';
       for (const [name,address,value] of [['Filter this sender',edge.source_owner,'sender'],['Filter this recipient',edge.destination_owner,'recipient']]) {
         const button=create('button',name);button.type='button';

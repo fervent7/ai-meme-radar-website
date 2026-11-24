@@ -310,6 +310,7 @@ try:
             assert search.input_value() == ''
             assert direction.input_value() == 'either'
             assert '2 linked owner addresses in saved evidence' in wallet.inner_text()
+            assert 'Saved pair window: 2026-11-14T22:31:28.000Z' in wallet.inner_text()
             wallet.get_by_role('button',name='Filter this sender',exact=True).click()
             assert search.input_value() == 'E'*32
             assert direction.input_value() == 'sender'
