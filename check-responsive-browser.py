@@ -335,6 +335,20 @@ try:
             assert direction.input_value() == 'recipient'
             wallet.get_by_role('button',name='Show all saved links',exact=True).click()
             assert '1 input records · 0 withheld · 1 distinct transactions' in wallet.inner_text()
+            diagram=wallet.locator('.wallet-network')
+            expect(diagram.locator('svg')).to_have_count(1)
+            assert 'Synthetic contract test graph · not chain evidence' in diagram.inner_text()
+            owner=diagram.get_by_role('button',name='Filter graph by owner '+'E'*32,exact=True)
+            assert owner.bounding_box()['height']>=44
+            owner.click()
+            assert search.input_value()=='E'*32
+            wallet.get_by_role('button',name='Show all saved links',exact=True).click()
+            diagram.get_by_role('button',name='Inspect link 1 · owner 1 → 2',exact=True).click()
+            expect(wallet.locator('.wallet-relationship-edge details')).to_have_attribute('open','')
+            expect(diagram.locator('line.selected')).to_have_count(1)
+            if w in (390,1440):
+                diagram.screenshot(path=str(screenshots/f'wallet-network-{w}.png'),animations='disabled')
+            wallet.locator('summary').click()
             summary=wallet.locator('summary')
             summary.click()
             assert summary.bounding_box()['height'] >= 44

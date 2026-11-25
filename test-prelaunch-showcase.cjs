@@ -14,7 +14,7 @@ test('prelaunch showcase links into research and labels concepts and delivery st
   'capital-protection','intelligent-otc','commercial-model','launch-gate','early-access'])
   assert.ok(products.includes('id="'+id+'"'));
  assert.match(products,/No pay-for-rating/);
- assert.match(products,/No live OTC desk or execution/);
+ assert.match(products,/No live trading or settlement service/);
  assert.match(products,/No email form or personal-data collection/);
  assert.equal(/<form[ >]|type="email"/.test(products),false);
  assert.match(products,/Current unit\/browser tests and synthetic examples do not satisfy/);

@@ -191,7 +191,7 @@
     directionLabel.append(direction);
     const clear=create('button','Show all saved links');clear.type='button';
     const count=create('p');count.setAttribute('role','status');count.setAttribute('aria-live','polite');
-    const cards=[];
+    const cards=[];let network=null;
     function filterLinks() {
       const text=query.value.trim();let visible=0;
       for (const [edge,item] of cards) {
@@ -201,6 +201,7 @@
         if (!item.hidden) visible++;
       }
       count.textContent=visible+' of '+cards.length+' saved links shown. Solana addresses are case-sensitive; coverage remains incomplete.';
+      if(network)network.update(cards.map(([edge,item],index)=>({edge,item,index})).filter(row=>!row.item.hidden));
     }
     query.addEventListener('input',filterLinks);
     direction.addEventListener('change',filterLinks);
@@ -232,6 +233,14 @@
         jump.append(button);
       }
       item.append(jump);
+    }
+    if(graph.relationships.length&&window.RadarWalletNetwork){
+      const host=create('div');controls.after(host);
+      network=window.RadarWalletNetwork.mount(host,cards.map(([edge],index)=>({edge,index})),{
+        synthetic:graph.synthetic_example===true,
+        onOwner(address){query.value=address;direction.value='either';filterLinks();query.focus();},
+        onEvidence(index){const item=cards[index][1];item.querySelector('details').open=true;item.tabIndex=-1;item.focus();item.scrollIntoView({block:'nearest'});}
+      });
     }
     filterLinks();
     return section;
