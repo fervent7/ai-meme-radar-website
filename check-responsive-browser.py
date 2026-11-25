@@ -412,6 +412,15 @@ try:
                 assert 'No verified result is available' in held.inner_text()
                 assert page.get_by_text('Verified holder trend: UNCHANGED · 75 → 75 (0%)',exact=True).count() == 0
                 page.locator('.cached-research').screenshot(path=str(screenshots / f'held-history-{w}.png'),animations='disabled')
+                page.unroute('**/api/radar/history?*')
+                page.route('**/api/radar/history?*',lambda route:route.fulfill(status=503,json={
+                    'status':'EVIDENCE_HELD','reason':'HOLDER_TIME_AFTER_RECORD_TOLERANCE','observations':[]}))
+                page.get_by_role('button',name='Load saved research history').click()
+                clock_held=page.get_by_role('alert').filter(has_text='Saved holder evidence is withheld')
+                clock_held.wait_for()
+                assert 'lookup time is inconsistent with the original saved record' in clock_held.inner_text()
+                assert page.get_by_text('Verified holder trend: UNCHANGED · 75 → 75 (0%)',exact=True).count()==0
+                page.locator('.cached-research').screenshot(path=str(screenshots/f'held-holder-clock-{w}.png'),animations='disabled')
             pause = page.get_by_role('button',name='Pause automatic refresh',exact=True)
             pause.click()
             resume = page.get_by_role('button',name='Resume automatic refresh',exact=True)

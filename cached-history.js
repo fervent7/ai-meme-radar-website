@@ -429,7 +429,9 @@
             panel.replaceChildren();
             status.className = 'history-held';
             status.setAttribute('role', 'alert');
-            status.textContent = 'Saved evidence is withheld because its records conflict or cannot be validated. No verified result is available. Try again later.';
+            status.textContent = failure.reason === 'HOLDER_TIME_AFTER_RECORD_TOLERANCE'
+              ? 'Saved holder evidence is withheld because its lookup time is inconsistent with the original saved record. No verified result is available. Try again later.'
+              : 'Saved evidence is withheld because its records conflict or cannot be validated. No verified result is available. Try again later.';
             return;
           }
           if (failure?.status === 'BACKEND_AUTH_REQUIRED') {

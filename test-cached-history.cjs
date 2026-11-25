@@ -39,6 +39,17 @@ async function start(t, request, revision) {
   return 'http://127.0.0.1:' + server.address().port;
 }
 
+test('holder clocks beyond record tolerance are held at microsecond precision',async()=>{
+ const {loadHistory}=require('./radar-history.cjs');
+ const data=historyFixture();data.pools[0].observations=data.pools[0].observations.slice(0,1);
+ const row=data.pools[0].observations[0];row.holder_observed_at_utc='2026-11-12T18:15:45.705362Z';
+ const run=()=>loadHistory({chain,address,pool},'fixture-key',async()=>Response.json(data));
+ assert.equal((await run()).status,'READY');
+ row.holder_observed_at_utc='2026-11-12T18:15:45.705363Z';
+ const held=await run();assert.equal(held.status,'EVIDENCE_HELD');
+ assert.equal(held.reason,'HOLDER_TIME_AFTER_RECORD_TOLERANCE');assert.deepEqual(held.observations,[]);
+});
+
 test('the test server authenticates and retrieves only exact saved pool evidence', async t => {
   const calls = [];
   const origin = await start(t, async (url, options) => {
@@ -249,6 +260,10 @@ test('the history panel renders authenticated gateway evidence and supports retr
   assert.equal(status.className, 'history-held');
   assert.match(status.textContent, /withheld.*No verified result/);
   assert.doesNotMatch(status.textContent, /PRIVATE_DETAIL/);
+  context.fetch = async () => Response.json({ status: 'EVIDENCE_HELD', reason: 'HOLDER_TIME_AFTER_RECORD_TOLERANCE' }, { status: 503 });
+  await button.activate();
+  assert.equal(panel.childElementCount,0);
+  assert.match(status.textContent,/lookup time is inconsistent with the original saved record/);
   context.fetch = async (url, options) => fetch(origin + url, { ...options, headers: { authorization } });
   await button.activate();
   assert.equal(panel.childElementCount, 4);

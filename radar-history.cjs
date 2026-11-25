@@ -111,6 +111,11 @@ function projectHistory(data, { chain, address, pool }) {
     const verified = chain === 'solana' && row.address_identity_version === 2 &&
       row.holder_status === 'VERIFIED' && row.holder_source === 'Helius getTokenAccounts' &&
       holderTime && Number.isSafeInteger(row.holder_count) && row.holder_count >= 0;
+    if(verified){
+      const micros=value=>{const [ms,sub]=instantKey(value).split(':');return BigInt(ms)*1000n+BigInt(sub);};
+      if(micros(holderTime)-micros(observed)>300000000n)
+        return {status:'EVIDENCE_HELD',reason:'HOLDER_TIME_AFTER_RECORD_TOLERANCE',observations:[]};
+    }
     const count = verified ? row.holder_count : null;
     if (verified) {
       const key = instantKey(holderTime);
