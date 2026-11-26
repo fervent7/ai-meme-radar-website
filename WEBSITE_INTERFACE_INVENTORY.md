@@ -7,7 +7,7 @@ Strict denominator: 14 requested product/navigation surfaces, matching the owner
 | 1 | Home | index.html, research entry and service chooser; review implementation | Yes |
 | 2 | Research Terminal | research.html, multichain indexed lookup and authenticated saved evidence; provider freshness/launch acceptance incomplete | Yes |
 | 3 | Wallet DNA | Dedicated Wallet DNA Research tab with saved-link graph, filters, paging and proof inspection; Solana saved evidence only, live/multichain acceptance missing | Yes — review implementation |
-| 4 | Holder Intelligence | Saved verified count/trend text; dedicated growth/distribution chart workspace missing | No — partial |
+| 4 | Holder Intelligence | Interactive saved endpoint comparison with original lookup times; continuous growth/distribution chart workspace still missing | No — partial |
 | 5 | Living Token Passport | Synthetic current/expired/revoked preview in intelligence.html; requested evidence timeline missing | No — partial/demo |
 | 6 | Liquidity Intelligence | liquidity.html research guidance and saved reported movement; depth/flows/impact charts missing | No — partial |
 | 7 | Risk Intelligence | Existing evidence states; dedicated inspectable findings workspace incomplete | No — partial |

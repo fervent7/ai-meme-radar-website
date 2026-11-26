@@ -110,6 +110,7 @@
       ? 'Saved market observations · bars show relative liquidity'
       : 'Saved market observations';
     panel.replaceChildren(metrics, create('h5', marketHeading), rows, coverage(history, identity));
+    if(window.RadarHolderHistory)window.RadarHolderHistory.mount(panel,trend);
   }
 
   function storedTransfer(sample) {

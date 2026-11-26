@@ -362,3 +362,9 @@ footer .community-links { justify-content: flex-end; }
 .research-view-context{overflow-wrap:anywhere;font-size:.9rem;color:#a9edff}
 [data-research-views][hidden],#passport-example-link[hidden]{display:none!important}
 @media(max-width:480px){#research-view-tabs button{flex:1 1 28%}.research-view-workspace{padding:.75rem}}
+
+.holder-endpoints{padding:1rem;border:1px solid #24546a;border-radius:12px;background:#0b1b28;overflow-wrap:anywhere}
+.holder-endpoint-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(70px,1fr);gap:12px;align-items:center;margin:.75rem 0}
+.holder-endpoint-row button{min-height:48px;white-space:normal;text-align:left;padding:.65rem;color:#e6faff;background:#123243;border:1px solid #397f94;border-radius:8px}
+.holder-endpoint-row button[aria-pressed=true]{outline:2px solid #62e7d0;outline-offset:2px}
+.holder-endpoint-row meter{width:100%;min-width:0;height:24px}

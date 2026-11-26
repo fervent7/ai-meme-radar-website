@@ -1,0 +1,6 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');
+const {endpointModel}=require('./holder-history.js');
+const fixture=()=>({first:{count:75,observed_at_utc:'2026-11-12T18:00:00Z'},latest:{count:75,observed_at_utc:'2026-11-12T18:05:00Z'},verified_observations:2,status:'UNCHANGED',growth_pct:0});
+test('saved 75 to 75 endpoints remain unchanged without inventing intermediate samples',()=>{const m=endpointModel(fixture());assert.equal(m.pct,0);assert.equal(m.points.length,2);assert.equal(m.status,'UNCHANGED');});
+test('withhold conflicting status, percentage, invalid counts and reversed or duplicate times',()=>{for(const mutate of [x=>x.status='INCREASING',x=>x.growth_pct=10,x=>x.first.count=-1,x=>x.latest.count=1.5,x=>x.verified_observations=1,x=>x.latest.observed_at_utc=x.first.observed_at_utc,x=>x.latest.observed_at_utc='2020-01-01T00:00:00Z',x=>x.first.observed_at_utc='invalid']){const x=fixture();mutate(x);assert.equal(endpointModel(x),null);}assert.equal(endpointModel(null),null);});
+test('zero baseline has unavailable percentage and shrinking counts keep negative change',()=>{let x=fixture();x.first.count=0;x.latest.count=8;x.status='INCREASING';x.growth_pct=null;assert.equal(endpointModel(x).pct,null);x=fixture();x.latest.count=60;x.status='DECLINING';x.growth_pct=-20;assert.equal(endpointModel(x).delta,-15);});

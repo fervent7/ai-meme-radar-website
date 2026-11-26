@@ -420,6 +420,18 @@ try:
                 expect(wallet).to_be_visible();expect(heading).not_to_be_visible()
                 page.get_by_role('tab',name='Holders',exact=True).click()
                 expect(wallet).not_to_be_visible();expect(heading).to_be_visible()
+                comparison=page.get_by_role('region',name='Saved holder endpoint comparison')
+                expect(comparison).to_be_visible()
+                assert comparison.locator('meter').count()==2
+                assert comparison.locator('meter').first.get_attribute('value')=='75'
+                comparison.get_by_role('button',name='Latest saved endpoint · 75 owner addresses',exact=True).click()
+                expect(comparison.get_by_role('status')).to_contain_text('Saved Helius getTokenAccounts lookup')
+                expect(comparison.get_by_role('button',name='Latest saved endpoint · 75 owner addresses',exact=True)).to_have_attribute('aria-pressed','true')
+                comparison.get_by_role('button',name='First saved endpoint · 75 owner addresses',exact=True).focus()
+                page.keyboard.press('Enter')
+                expect(comparison.get_by_role('status')).to_contain_text('First saved endpoint')
+                no_overflow(page)
+                comparison.screenshot(path=str(screenshots/f'holder-endpoints-{w}.png'),animations='disabled')
                 page.get_by_role('tab',name='Liquidity',exact=True).click()
                 expect(page.get_by_role('heading',name='Pool reserve history',exact=True)).to_be_visible()
                 page.get_by_role('tab',name='Passport',exact=True).click()
