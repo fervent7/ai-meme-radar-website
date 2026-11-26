@@ -1,11 +1,163 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080f1f"><meta name="description" content="AI Meme Radar — research emerging tokens with transparent market data, risk evidence and verification status."><title>AI Meme Radar | Token Intelligence</title><link rel="stylesheet" href="styles.css"></head><body><a class="skip-link" href="#research">Skip to token research</a><header class="nav wrap"><a class="brand" href="#home"><span class="brandmark">◉</span> AI MEME <b>RADAR</b></a><button class="menu" id="menu" aria-label="Toggle navigation" aria-expanded="false">☰</button><nav id="nav"><a href="#radar">Live Radar</a><a href="#research">Token Research</a><a href="#test-results">Test results</a><a href="#roadmap">Roadmap</a><a href="#community">Community</a></nav><a class="navcta" href="#research">Launch Research ↗</a></header><main><section class="hero wrap" id="home"><div class="hero-text"><div class="eyebrow"><span class="pulse"></span> TOKEN RESEARCH · IN DEVELOPMENT</div><h1>Discover earlier.<br><em>Research deeper.</em></h1><p>Follow the activity. Check the evidence. Research emerging tokens with clear market snapshots, source attribution, and honest verification status.</p><div class="heroactions"><a class="primary" href="#radar">Explore Live Radar →</a><a class="secondary" href="#research">Research a Token ↗</a></div><div class="trust"><span>◎ Multichain market discovery</span><span>◇ Verification-aware insights</span><span>◈ Risk-first research</span></div></div><div class="hero-panel"><div class="panel-top"><span><span class="pulse"></span> RADAR MONITOR</span><span id="healthBadge">AWAITING DATA</span></div><div class="gridlines" role="img" aria-label="Decorative radar illustration; not live token positions"><div class="radar-ring r1"></div><div class="radar-ring r2"></div><div class="radar-ring r3"></div><div class="sweep"></div><i class="dot d1"></i><i class="dot d2"></i><i class="dot d3"></i><div class="crosshair">+</div></div><div class="panel-bottom"><div><small>STATUS</small><strong id="statusText">Connect backend</strong></div><div><small>SCANS</small><strong id="scansText">—</strong></div><div><small>ALERTS</small><strong id="alertsText">—</strong></div></div></div></section><section class="evidence-strip wrap" aria-label="How to read the evidence"><article><span class="evidence-number">01</span><h2>Market activity</h2><p>Review liquidity, volume and transaction activity from indexed markets.</p><span class="evidence-state">Provider reported</span></article><article><span class="evidence-number">02</span><h2>Verification depth</h2><p>See what is established, what is missing, and what still needs an on-chain check.</p><span class="evidence-state">Evidence first</span></article><article><span class="evidence-number">03</span><h2>Research context</h2><p>A market listing is a starting point. Holder growth and sellability need separate proof.</p><span class="evidence-state">No safety guarantees</span></article></section><section class="metrics wrap" id="radar"><div class="section-head"><div><div class="kicker">01 / DISCOVERY ENGINE</div><h2>Live Radar <span>overview</span></h2><p>Observed data from your Radar backend. Unavailable data is never presented as zero.</p></div><button class="outline" id="refresh">↻ Refresh data</button></div><div class="metric-grid"><article><small>Latest fresh pools</small><strong id="fresh">—</strong><span>Recent scan discovery</span></article><article><small>Alert candidates</small><strong id="candidates">—</strong><span>Before final verification</span></article><article><small>Eligible alerts</small><strong id="eligible">—</strong><span>Strict final safety gate</span></article><article><small>Backend status</small><strong class="status-value" id="connection">Not connected</strong><span id="updated">Waiting for a current response</span></article></div><div class="notice" id="radarNotice">Connecting to the research service. Live metrics appear only when available; missing data stays unknown.</div><div class="section-head sub"><div><h3>Recently observed tokens</h3><p>Research candidates are not recommendations to trade.</p></div></div><div class="tablewrap"><table><thead><tr><th>Token</th><th>Network</th><th>Liquidity</th><th>5m volume</th><th>Risk</th><th>Research</th></tr></thead><tbody id="tokenRows"><tr><td colspan="6" class="empty">Live token data will appear after backend connection.</td></tr></tbody></table></div></section><section class="research-section" id="research"><div class="wrap research-grid"><div><div class="kicker">02 / TOKEN INTELLIGENCE</div><h2>Know what you're <span>looking at.</span></h2><p>Paste a token address to discover indexed markets across supported chains and view market evidence here. Missing security or holder data stays explicitly unknown.</p><div class="features"><div>✓ Market liquidity and trading activity</div><div>✓ Source attribution and freshness</div><div>✓ Verification-aware risk reporting</div><div>✓ No fabricated safety guarantees</div></div></div><div class="search-card"><h3>Multichain Token Research</h3><p>Find indexed trading pools across supported chains. Market snapshots refresh every 30 seconds after a search. Contract safety and holder verification require separate checks.</p><label for="address">Token address</label><input id="address" placeholder="Paste a token address" maxlength="128" autocomplete="off" spellcheck="false"><button class="primary search-btn" id="searchBtn">Research Token →</button><p class="search-help" id="searchHelp" role="status" aria-live="polite">Search supported chains by address. Enter a contract address (0x…) or a Solana mint. Supported results can also open the protected Radar research preview.</p><p id="liveResearchStatus" class="search-help" role="status">Live prices start after a token search · 30-second refresh</p><div id="researchResults" class="research-results" aria-live="polite"></div></div></div></section><section class="wrap roadmap" id="test-results" aria-labelledby="test-results-title">
-<div class="kicker">RESEARCH IN PRACTICE · TEST ENVIRONMENT</div>
-<h2 id="test-results-title">What a Radar lookup actually shows</h2>
-<p>On November 5, 2026, AI Meme Radar V9.45.0 identified the JAGENT trading pool on PancakeSwap and recorded a market observation on BNB Smart Chain.</p>
-<div class="evidence-strip">
-<article><span class="evidence-number">01</span><h3>Pool identified</h3><p>JAGENT · BNB Smart Chain · PancakeSwap</p><a href="https://dexscreener.com/bsc/0xe6efcdef2b720d1eca2b69edb7ef357725680bea">View the source pool →</a></article>
-<article><span class="evidence-number">02</span><h3>Market snapshot</h3><p><strong>$391,779</strong> reported liquidity · <strong>$3,795</strong> five-minute volume · <strong>7 buys / 14 sells</strong>.</p><p>DexScreener snapshot at <time datetime="2026-11-05T10:58:55Z">10:58 UTC</time>. Figures are historical.</p></article>
-<article><span class="evidence-number">03</span><h3>Evidence still needed</h3><p>The lookup returned no verified holder counts. Holder growth, unique buyers, and sellability remain unverified for this example.</p><a href="#roadmap">See what we’re building →</a></article>
-</div>
-</section><section class="wrap roadmap" id="roadmap"><div class="kicker">03 / OUR ROADMAP</div><h2>Built on evidence. <span>Expanded with purpose.</span></h2><div class="steps"><article><span>01</span><h3>Radar & Discovery</h3><p>Token discovery, activity filters and evidence-based alert screening.</p><small>IN DEVELOPMENT</small></article><article><span>02</span><h3>Investor Research</h3><p>On-demand token reports, transparent sources and meaningful risk context.</p><small>IN DEVELOPMENT</small></article><article><span>03</span><h3>Wallet Intelligence</h3><p>Holder concentration, wallet behavior and linked-wallet analysis where verifiable.</p><small>PLANNED</small></article><article><span>04</span><h3>Community & Utility</h3><p>Watchlists, education, reputation and sustainable platform utility.</p><small>PLANNED</small></article></div><p class="roadnote">Features shown as planned are not available yet. Scope and timelines may change as evidence, testing and development progress.</p></section><section class="wrap roadmap" aria-labelledby="research-references"><div class="kicker">RESEARCH REFERENCES</div><h2 id="research-references">Two project case studies</h2><div class="evidence-strip"><article><h3>OTC on Solana</h3><p>Study indexed pools, reported balances and trading activity for this Solana mint. Escrow and off-DEX execution require separate program evidence.</p><p><button type="button" class="outline" data-research-chain="solana" data-research-address="MukLDtJ8Cx9DxLbeyLRSWPSposTMWuwHANbuaudpump">Research OTC markets</button></p><a href="https://solscan.io/token/MukLDtJ8Cx9DxLbeyLRSWPSposTMWuwHANbuaudpump">View token on Solscan →</a></article><article><h3>Programmable V4 on Robinhood Chain</h3><p>Study contract identity, pool fees and liquidity-lock evidence. A pool fee and a token transfer restriction are separate checks.</p><p><button type="button" class="outline" data-research-chain="robinhood" data-research-address="0xc60ba256b44334a0cd2c7242e98b88f031abb006">Research V4 markets</button></p><a href="https://robinhoodchain.blockscout.com/address/0xc60ba256b44334a0cd2c7242e98b88f031abb006">View contract on Blockscout →</a></article><article><h3>Evidence to verify</h3><p>Record the chain, exact pool, observation time and data source. Trading volume describes past activity. Pool reserves show what liquidity is available at the time of the check.</p></article></div></section><section class="community" id="community"><div class="wrap community-inner"><div><div class="kicker">04 / JOIN THE CONVERSATION</div><h2>Research together.<br><span>Build with transparency.</span></h2><p>Follow development updates, share feedback and help shape a more useful research platform.</p></div><div class="community-buttons"><a href="https://t.me/AIMemeRadarCommunity" target="_blank" rel="noopener noreferrer">Join Telegram ↗</a><a href="https://x.com/aimemeradar" target="_blank" rel="noopener noreferrer">Follow on X ↗</a></div></div></section></main><footer class="wrap"><div><strong>◉ AI MEME RADAR</strong><p>Independent token research. Not financial advice. Crypto assets are volatile and may result in total loss.</p></div><div><span>© <span id="year"></span> AI Meme Radar</span><span>aimemeradar.com</span></div></footer><script src="config.js"></script><script src="market-identity.js"></script><script src="app.js?v=6-case-study-lookup"></script></body></html>
-
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080f1f">
+  <meta name="description" content="AI Meme Radar provides multichain token research with source-attributed market and holder evidence.">
+  <title>Evidence-first multichain intelligence | AI Meme Radar</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="brand-icon-64.png">
+  <link rel="apple-touch-icon" href="brand-icon-192.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <script src="site.js" defer></script>
+  <script src="config.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="ecosystem.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="nav wrap site-nav">
+    <a class="brand" href="index.html">
+      <img class="brand-logo" src="brand-wordmark.webp" width="520" height="215" alt="AI Meme Radar — Intelligence Engine">
+    </a>
+    <button class="menu" id="menu" type="button" aria-controls="nav" aria-expanded="false">Menu</button>
+    <nav id="nav" aria-label="Main navigation">
+        <a data-nav-section="home" href="index.html" aria-current="page">Home</a>
+        <a data-nav-section="research" href="research.html">Research</a>
+        <a data-nav-section="automation" href="intelligence.html">Automation</a>
+        <a data-nav-section="ecosystem" href="products.html">Ecosystem</a>
+        <a data-nav-section="developers" href="intelligence.html#developer-contract">Developers</a>
+        <a data-nav-section="investors" href="investors.html">Investors</a>
+      <div class="community-links sidebar-community" role="group" aria-label="Official community channels"><a href="https://x.com/aimemeradar">X</a><a href="https://t.me/AIMemeRadarCommunity">Telegram</a></div>
+    </nav>
+  </header>
+  <main id="main" tabindex="-1">
+<section class="wrap launch-hero" aria-labelledby="showcase-title">
+  <div class="launch-copy">
+    <p class="brand-tagline">Research Before Risk · Review build</p>
+    <h1 id="showcase-title">See the evidence.<br><em>Understand the unknowns.</em></h1>
+    <p class="launch-lead">Multichain intelligence for people who need more than a token chart. Investigate holders, wallet movements, liquidity and security—with a source, time and clear limit for every finding.</p>
+    <div class="launch-actions"><a class="primary" href="research.html">Research a token <span aria-hidden="true">↗</span></a><a class="outline" href="products.html">Explore the product system</a></div>
+    <p class="launch-boundary">In development. This review build is not a public service launch. Live coverage depends on verified backend evidence.</p>
+  </div>
+  <aside class="signal-map" aria-labelledby="signal-map-title">
+    <p class="kicker">The evidence model · Illustrated workflow</p>
+    <h2 id="signal-map-title">A finding is only as useful as its proof.</h2>
+    <ol class="signal-path">
+      <li><span class="signal-dot" aria-hidden="true"></span><div><strong>Observe</strong><p>Chain, token, pool and original block reference</p></div></li>
+      <li><span class="signal-dot" aria-hidden="true"></span><div><strong>Check</strong><p>Holder, liquidity, wallet and security provenance</p></div></li>
+      <li><span class="signal-dot unknown" aria-hidden="true"></span><div><strong>Keep uncertainty visible</strong><p>Missing, stale or revoked evidence stays unavailable</p></div></li>
+    </ol>
+    <p class="signal-caption">Concept illustration—not live token data, a safety rating or trading permission.</p>
+  </aside>
+</section>
+<section class="wrap launch-proof" aria-labelledby="launch-proof-title">
+  <div><p class="kicker">Built, tested, still being verified</p><h2 id="launch-proof-title">Progress you can inspect.</h2><p>Review-only milestones checked 24 November 2026. Passing tests do not establish deployed or live service coverage.</p></div>
+  <div class="launch-proof-grid">
+    <article><span class="feature-state review">Tested · Review only</span><h3>Research evidence journal</h3><p>Saved evidence, scoped history and revocation handling have automated regression coverage. Hosted multichain acceptance remains pending.</p><a href="https://github.com/fervent7/ai-meme-radar/actions/runs/45403472994">Inspect Radar CI evidence ↗</a></article>
+    <article><span class="feature-state review">Tested · Review only</span><h3>Mobile research interface</h3><p>Authenticated history, unavailable states and retry behavior have browser coverage. This redesign still needs its own hosted verification.</p><a href="https://github.com/fervent7/ai-meme-radar-website/pull/3">Inspect website review ↗</a></article>
+    <article><span class="feature-state planned">Launch gate · Not passed</span><h3>Functional intelligence first</h3><p>Genuine provider evidence, per-chain freshness, wallet relationships, rules and connected mobile API checks must pass before launch approval.</p><a href="products.html#launch-gate">See the service acceptance gate ↗</a></article>
+  </div>
+</section>
+<section class="wrap workspace-heading"><p class="kicker">Research workspace</p><h2>Start with what the service can actually show.</h2><p>Unavailable data stays empty. No sample observation is presented as live evidence.</p></section>
+<section class="metrics wrap dashboard-workspace" id="radar" aria-label="Live Radar overview">
+  <div class="metric-grid" aria-label="Scan metrics">
+    <article><small>Fresh pools</small><strong id="fresh">—</strong><span>Latest discovery scan</span></article>
+    <article><small>Alert candidates</small><strong id="candidates">—</strong><span>Before verification</span></article>
+    <article><small>Eligible alerts</small><strong id="eligible">—</strong><span>After the final safety gate</span></article>
+  </div>
+  <section class="market-panel" aria-labelledby="observed-title">
+    <h2 id="observed-title">Recently observed tokens</h2>
+    <p class="table-guide" id="token-table-guide">Scroll horizontally to see all columns.</p>
+    <div class="tablewrap" aria-describedby="token-table-guide" role="region" aria-label="Recently observed tokens" tabindex="0">
+      <table>
+        <thead><tr><th scope="col">Token</th><th scope="col">Network</th><th scope="col">Liquidity</th><th scope="col">5m volume</th><th scope="col">Risk</th><th scope="col">Research</th></tr></thead>
+        <tbody id="tokenRows"><tr><td colspan="6" class="empty">Live token data will appear after backend connection.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+  <aside class="monitor-card" aria-labelledby="monitor-title">
+    <div class="monitor-head">
+      <h2 id="monitor-title">Radar monitor</h2>
+      <span id="healthBadge">Awaiting data</span>
+    </div>
+    <dl class="monitor-readings">
+      <div><dt>Connection</dt><dd id="connection">Not connected</dd></div>
+      <div><dt>Status</dt><dd id="statusText">Unavailable</dd></div>
+      <div><dt>Scans</dt><dd id="scansText">—</dd></div>
+      <div><dt>Alerts</dt><dd id="alertsText">—</dd></div>
+    </dl>
+    <p class="monitor-updated" id="updated">Waiting for a current response</p>
+    <p class="notice" id="radarNotice" role="status">Connecting to the research service.</p>
+    <button class="outline" id="refresh" type="button">Refresh data</button>
+  </aside>
+</section>
+<section class="wrap community-panel" aria-labelledby="dashboard-community-title">
+  <div>
+    <h2 id="dashboard-community-title">Community</h2>
+    <p>Follow research updates and discuss AI Meme Radar with the community.</p>
+  </div>
+  <div class="community-links" role="group" aria-label="Official community channels">
+    <a href="https://x.com/aimemeradar">X</a>
+    <a href="https://t.me/AIMemeRadarCommunity">Telegram</a>
+  </div>
+</section>
+<section class="wrap ecosystem-workspace" aria-labelledby="ecosystem-title">
+  <div class="ecosystem-heading">
+    <div><p class="kicker">Evidence-first services</p><h2 id="ecosystem-title">One research foundation.<br>Useful tools for different needs.</h2></div>
+    <p>AI Meme Radar is building a multichain research ecosystem for people and products. Utility comes from better evidence, repeatable workflows and integration—not token price promises.</p>
+  </div>
+  <div class="service-filter" id="service-filter" hidden role="group" aria-label="Find services for your work">
+    <span>Explore tools for</span>
+    <button type="button" data-audience="all" aria-pressed="true">Everyone</button>
+    <button type="button" data-audience="individuals" aria-pressed="false">Everyday users</button>
+    <button type="button" data-audience="researchers" aria-pressed="false">Researchers</button>
+    <button type="button" data-audience="developers" aria-pressed="false">Developers</button>
+    <button type="button" data-audience="organizations" aria-pressed="false">Teams &amp; businesses</button>
+  </div>
+  <p class="service-results" id="service-results" role="status" aria-live="polite" aria-atomic="true">6 service areas. Review features and planned services are labelled separately.</p>
+  <div class="services-grid" id="service-cards">
+    <article class="service-card" data-service="market" data-audiences="individuals researchers organizations" aria-labelledby="service-market">
+      <div class="service-card-top"><span class="service-number" aria-hidden="true">01</span><span class="feature-state review">Review build</span></div>
+      <h3 id="service-market">Market Intelligence</h3><p class="service-benefit">Compare activity with its evidence.</p><p>Research emerging pools across Solana, BSC, Base and Ethereum. Keep reported market data separate from verified holder observations.</p>
+      <p class="service-audience"><span>Who benefits</span>Everyday users, researchers and project teams</p>
+      <a class="service-link" href="research.html">Open research tools <span aria-hidden="true">↗</span></a>
+    </article>
+    <article class="service-card" data-service="rules" data-audiences="researchers developers organizations" aria-labelledby="service-rules">
+      <div class="service-card-top"><span class="service-number" aria-hidden="true">02</span><span class="feature-state testing">In development</span></div>
+      <h3 id="service-rules">Radar Rules Engine</h3><p class="service-benefit">Make your research criteria repeatable.</p><p>Define holder, liquidity and risk conditions around timestamped evidence. Hosted alerts, webhooks and workflow delivery are still pending.</p>
+      <p class="service-audience"><span>Who benefits</span>Researchers, developers and operations teams</p>
+      <a class="service-link" href="intelligence.html">Explore rule requirements <span aria-hidden="true">↗</span></a>
+    </article>
+    <article class="service-card" data-service="liquidity" data-audiences="individuals researchers organizations" aria-labelledby="service-liquidity">
+      <div class="service-card-top"><span class="service-number" aria-hidden="true">03</span><span class="feature-state testing">In development</span></div>
+      <h3 id="service-liquidity">Radar Liquidity Intelligence</h3><p class="service-benefit">Understand liquidity before trusting a quote.</p><p>Inspect reported liquidity and available pool evidence. Depth, trade-size impact and slippage analysis need further verified integration.</p>
+      <p class="service-audience"><span>Who benefits</span>Users, projects and institutional researchers</p>
+      <a class="service-link" href="liquidity.html">Inspect liquidity research <span aria-hidden="true">↗</span></a>
+    </article>
+    <article class="service-card" data-service="risk" data-audiences="individuals researchers developers organizations" aria-labelledby="service-risk">
+      <div class="service-card-top"><span class="service-number" aria-hidden="true">04</span><span class="feature-state testing">In development</span></div>
+      <h3 id="service-risk">Radar Risk Intelligence</h3><p class="service-benefit">Investigate uncertainty, not just a score.</p><p>Compare holder concentration, wallet movements and security evidence with their source and time. Missing checks remain unavailable.</p>
+      <p class="service-audience"><span>Who benefits</span>Users, analysts, developers and project teams</p>
+      <a class="service-link" href="research.html">Review evidence states <span aria-hidden="true">↗</span></a>
+    </article>
+    <article class="service-card" data-service="developer" data-audiences="developers organizations" aria-labelledby="service-developer">
+      <div class="service-card-top"><span class="service-number" aria-hidden="true">05</span><span class="feature-state planned">Planned</span></div>
+      <h3 id="service-developer">Radar Developer API</h3><p class="service-benefit">Build with traceable research inputs.</p><p>A provenance-rich API and history feed are planned for dashboards and integrations. Public API access, quotas and entitlements are not available.</p>
+      <p class="service-audience"><span>Who benefits</span>Developers, businesses and research platforms</p>
+      <a class="service-link" href="intelligence.html#developer-contract">View the contract preview <span aria-hidden="true">↗</span></a>
+    </article>
+    <article class="service-card" data-service="access" data-audiences="individuals researchers developers organizations" aria-labelledby="service-access">
+      <div class="service-card-top"><span class="service-number" aria-hidden="true">06</span><span class="feature-state planned">Planned</span></div>
+      <h3 id="service-access">Radar Access Services</h3><p class="service-benefit">Support useful tools through service access.</p><p>Potential memberships, API subscriptions and specialist research services could fund ongoing delivery. Pricing and paid access are not launched.</p>
+      <p class="service-audience"><span>Who benefits</span>Users, developers, businesses and institutions</p>
+      <a class="service-link" href="roadmap.html">See the service roadmap <span aria-hidden="true">↗</span></a>
+    </article>
+  </div>
+  <aside class="service-boundary"><strong>Research access, with clear limits.</strong><p>These are review-build tools and development plans, not a public release announcement. No live trading or matching service is offered. The Personal BSC Auto-Trader is a separate private project; research and wallet access grant no trading permission. Future RFQ or execution services require separate safety and legal review. Optional token-gated access is exploratory; no token launch or financial benefit is promised.</p></aside>
+</section>
+  </main>
+  <footer class="wrap"><p>© <span id="year"></span> AI Meme Radar · Research Before Risk</p><nav class="footer-links" aria-label="More information"><a href="community.html">Community</a><a href="roadmap.html">Roadmap</a><a href="liquidity.html">Liquidity Intelligence</a><a href="intelligence.html">Intelligence examples</a><a href="products.html">Commercial ecosystem</a><a href="research.html">Research Terminal</a><a href="index.html">Home</a><a href="investors.html">Investors</a><a href="roadmap.html#wallet-portfolio">Wallet &amp; Portfolio · planned</a><a href="roadmap.html#automated-trading">Public trading · future</a><a href="community.html#support">Support &amp; About</a></nav><div class="community-links"><a href="https://x.com/aimemeradar">X</a><a href="https://t.me/AIMemeRadarCommunity">Telegram</a></div></footer>
+</body>
+</html>

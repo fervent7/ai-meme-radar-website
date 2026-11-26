@@ -1,0 +1,57 @@
+(() => {
+  'use strict';
+
+  const menu = document.getElementById('menu');
+  const nav = document.getElementById('nav');
+  const year = document.getElementById('year');
+  const setOpen = open => {
+    nav.classList.toggle('open', open);
+    menu.setAttribute('aria-expanded', String(open));
+  };
+
+  const mobileNavigation = window.matchMedia('(max-width: 1024px)');
+  const resetOnDesktop = event => {
+    if (!event.matches) setOpen(false);
+  };
+  if (typeof mobileNavigation.addEventListener === 'function') {
+    mobileNavigation.addEventListener('change', resetOnDesktop);
+  } else {
+    mobileNavigation.addListener(resetOnDesktop);
+  }
+
+  menu.addEventListener('click', () => setOpen(menu.getAttribute('aria-expanded') !== 'true'));
+  nav.addEventListener('click', event => {
+    if (event.target.closest('a')) setOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menu.getAttribute('aria-expanded') === 'true') {
+      setOpen(false);
+      menu.focus();
+    }
+  });
+  year.textContent = new Date().getFullYear();
+  const markSection = () => {
+    if (!(window.location?.pathname || '').endsWith('/intelligence.html') || typeof nav.querySelectorAll !== 'function') return;
+    const section=window.location.hash==='#developer-contract'?'developers':'automation';
+    for(const link of nav.querySelectorAll('[data-nav-section]')){
+      if(link.dataset.navSection===section)link.setAttribute('aria-current','page');
+      else link.removeAttribute('aria-current');
+    }
+  };
+  if(typeof window.addEventListener==='function')window.addEventListener('hashchange',markSection);
+  markSection();
+
+  // Preserve shared links to sections that previously lived on the home page.
+  if (document.getElementById('radar')) {
+    const pages = {
+      '#research': 'research.html#research',
+      '#test-results': 'research.html#test-results',
+      '#ecosystem': 'roadmap.html',
+      '#roadmap': 'roadmap.html',
+      '#community': 'community.html',
+      '#research-references': 'liquidity.html#research-references'
+    };
+    const next = pages[window.location.hash];
+    if (next) window.location.replace(next);
+  }
+})();

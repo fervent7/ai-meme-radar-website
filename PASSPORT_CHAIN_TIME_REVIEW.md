@@ -1,0 +1,7 @@
+# Passport chain-time consistency — review only
+
+25 November2026. Saved checks claiming the SAME canonical block/slot must agree on that point's block time. Otherwise current/expired checks become UNKNOWN with CHAIN_POINT_TIME_MISMATCH; a scoped revocation retains precedence. An all-zero EVM block hash is unavailable. No independent provider verification, signed attestation, security clearance or execution permission is added.
+
+The website's actual synthetic passport widget independently checks a current label against the controlled example clock: valid timezone-aware timestamps, source/block/observation ordering, exact finite source-based TTL/expiry, canonical point/hash and same-point time consistency. Conflicts clear all preview cards and expose existing unavailable/retry UI. No Date.now refresh, network authority or fresh evidence is invented. Existing valid shared fixture is unchanged. Future live/authenticated passport API remains unimplemented.
+
+Focused local backend6tests pass, including mismatched time for current and expired records, zero hash, and revoked precedence. Website targeted5tests pass and full82Node tests passed before the final timezone-specific assertion. Hosted browser cases add rejected same-point-time and restored/retry states at390px/1440px; CI must verify them. Synthetic fixture remains explicitly labelled; no genuine chain observation or physical Android acceptance is claimed. PostgreSQL runtime/schema, production, hosting and deployment are unchanged; personal BSC bot remains separate.

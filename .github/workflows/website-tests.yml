@@ -1,0 +1,43 @@
+name: Website research evidence tests
+on:
+  push:
+    branches: [radar-website-research-test, review/verified-research-terminal]
+  pull_request:
+    branches: [radar-website-research-test]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: node --check site.js && node --check app.js && node --check market-identity.js && node --check cached-history.js && node --check website-test-server.cjs
+      - name: Run identity and token evidence checks
+        run: node --test test-*.cjs
+  responsive-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Playwright and Chromium
+        run: |
+          python -m pip install playwright==1.62.0
+          python -m playwright install --with-deps chromium
+      - name: Test six routes and authenticated history at nine viewport sizes
+        run: python check-responsive-browser.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: responsive-whale-pad
+          path: browser-evidence/*.png

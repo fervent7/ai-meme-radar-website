@@ -1,0 +1,15 @@
+# Six-section navigation and shared Research workspace — review only
+
+26November2026. Parent e3fe7ff9c33be31f7288e46d388a67a95ac94106, branch review/verified-research-terminal PR3. Owner comments7167853678/7171240552/7171293354/7171558517 read; no new external messages or approval changes.
+
+One navigation milestone: six primary sections Home, Research, Automation, Ecosystem, Developers, Investors. Existing routes and planned wallet/trading references remain reachable through footer links; Community/Support/About are secondary. Desktop sidebar and existing mobile-collapse/Escape behavior retained. Developers links to the existing contract example, not a claimed portal/sandbox. Automation points to current foundations, not a claimed editable builder. Existing icon/wordmark assets unchanged.
+
+Research has six keyboard/touch tabs: Overview, Wallet DNA, Holders, Liquidity, Risk, Passport. One existing token search and loaded token/network/pool context is retained across switches. Tabs change local evidence visibility, never fetch fresh data, alter source dates or clear/recreate the selected token. Existing history/rate-limit/authentication and data-retention gates stay in place. DOM updates reapply the selected view. No duplicated search, fabricated chart/holder/security/chain evidence or transaction permission.
+
+Wallet DNA exposes the actual saved Solana graph and transaction evidence. Holders and liquidity show existing sourced records; requested charts/depth/impact remain incomplete. Risk retains explicit unknowns; no clearance. Token-specific Passport remains unavailable, with an explicitly separate synthetic example link. The new Investors information route states enquiries/collection unavailable and has no form, submission or fundraising terms.
+
+Local89Node tests passed. Initial navigation mocks exposed a missing optional window.location guard; fixed before commit. Browser regression now includes360px plus previous320–2560px viewports, eight routes, tab/keyboard/evidence visibility, retained token/network/pool and unavailable Passport/enquiry states. Hosted CI must verify screenshots. Synthetic browser fixtures are not genuine provider-backed acceptance or physical Android proof.
+
+Strict interface coverage7/14(50%), NOT >90% and NOT service completion. Wallet DNA now has a dedicated view; Investors is an informational surface with enquiries unavailable. Six-section navigation does not create backend functionality. Full launch-critical 95/100scanner/provider-backed intelligence, complete holder reconciliation, authenticated integration, durable alert/restart/security gates remain unverified.
+
+Bot ae8c03bf and Radar b80ef689 checked unchanged/green; protected bot provider jobs skipped, not full acceptance. Bot earliest COMPLETE_HOLDER_HISTORY_AND_INDEPENDENT_SECURITY_UNAVAILABLE; manual AIN/signed fork evidence remains partial. No unchanged provider probe repeated. No paid use, merge/deploy/domain/configuration, PostgreSQL runtime/schema, signing or production change.

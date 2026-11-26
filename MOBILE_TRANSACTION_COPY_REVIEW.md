@@ -1,0 +1,5 @@
+# Mobile saved-transaction copy control — 24 November 2026
+
+Parent dc26b48e5127bc24ccb7693c0fd5e87d2c9e13d4. Expandable saved-transfer cards now have an explicit48px keyboard/touch button copying the FULL saved transaction signature. Async success announced only after clipboard resolves; unavailable/rejected permission leaves full selectable text and explains manual copy. Pending prevents repeated clicks; finally restores button. No address shortening, credential access, external request or verification upgrade.
+
+64 Node tests passed, including absent clipboard/success/rejection/exact signature/re-enabled control through actual UI handler. Responsive browser suite adds controlled clipboard success and denied-permission checks across existing10viewport/sixroute coverage. Local Playwright browser launch blocked by missing installed browser binary; browser assertions require exact-head CI, not local PASS. Browser clipboard outcomes are explicitly simulated and do not test Android hardware/system clipboard. No deployment or authenticated hosted-data claim; fixtures remain labelled test data. Radar contract/runtime unchanged, bot remains separate.

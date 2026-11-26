@@ -1,0 +1,64 @@
+{
+  "synthetic": true,
+  "radar_revision": "b6c3eaa54eea2a940403e018cf7cd4fc4b038e87",
+  "target": {
+    "chain": "solana",
+    "token_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+  },
+  "history": {
+    "version": "V9.45.0 — Verified Holder Growth Research",
+    "chain": "solana",
+    "contract_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "pools": [
+      {
+        "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "observations": [
+          {
+            "chain": "solana",
+            "contract_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "address_identity_version": 2,
+            "source": "DexScreener token-pairs API",
+            "observed_at_utc": "2026-11-11T11:50:00Z",
+            "liquidity_usd": 4000,
+            "volume_5m_usd": 700,
+            "holder_status": "VERIFIED",
+            "holder_count": 100,
+            "holder_source": "Helius getTokenAccounts",
+            "holder_observed_at_utc": "2026-11-11T11:50:00Z"
+          },
+          {
+            "chain": "solana",
+            "contract_address": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "pool_address": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "address_identity_version": 2,
+            "source": "DexScreener token-pairs API",
+            "observed_at_utc": "2026-11-11T11:59:00Z",
+            "liquidity_usd": 4000,
+            "volume_5m_usd": 700,
+            "holder_status": "VERIFIED",
+            "holder_count": 120,
+            "holder_source": "Helius getTokenAccounts",
+            "holder_observed_at_utc": "2026-11-11T11:59:00Z"
+          }
+        ],
+        "holder_trend": {
+          "status": "INCREASING",
+          "verified_observations": 2,
+          "holder_source": "Helius getTokenAccounts",
+          "first_holder_count": 100,
+          "latest_holder_count": 120,
+          "growth_count": 20,
+          "growth_pct": 20,
+          "first_observed_at_utc": "2026-11-11T11:50:00+00:00",
+          "latest_observed_at_utc": "2026-11-11T11:59:00+00:00",
+          "note": "Verified token-account owner addresses, not unique people; research only."
+        }
+      }
+    ],
+    "history_persistence": "LOCAL_SQLITE_DURABILITY_DEPENDS_ON_DISK",
+    "storage_error": null,
+    "disclosure": "Research-only observations. Supabase data survives Render restarts when PostgreSQL is connected; automatic checks run only while the instance is active and enabled."
+  }
+}
