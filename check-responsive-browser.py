@@ -152,8 +152,9 @@ try:
             if w<=1024:
                 page.keyboard.press('Escape')
             for name in routes[1:] + routes[:1]:
-                if w<=1024: page.locator('#menu').tap()
-                page.locator('#nav a[href="'+name+'"]').click()
+                secondary=name in ('liquidity.html','roadmap.html','community.html')
+                if w<=1024 and not secondary: page.locator('#menu').tap()
+                page.locator(('footer' if secondary else '#nav')+' a[href="'+name+'"]').click()
                 page.wait_for_url(origin+'/'+name)
                 assert page.locator('main h1').count()==1
                 if name == 'intelligence.html':
