@@ -295,8 +295,8 @@ try:
                 movement.screenshot(path=str(screenshots / f'saved-liquidity-{w}.png'),animations='disabled')
                 coverage.screenshot(path=str(screenshots / f'evidence-coverage-{w}.png'), animations='disabled')
             assert page.get_by_text('2026-11-12T18:10:46.104810',exact=False).count()
-            assert page.locator('meter').count()==2
-            assert page.locator('meter').first.evaluate("(e) => e.getBoundingClientRect().width > 100 && Number(e.value) === 1582.105")
+            assert page.locator('.saved-market-rows meter').count()==2
+            assert page.locator('.saved-market-rows meter').first.evaluate("(e) => e.getBoundingClientRect().width > 100 && Number(e.value) === 1582.105")
             page.get_by_role('button', name='Load finalized on-chain evidence').click()
             page.get_by_text('Saved on-chain evidence loaded.', exact=True).wait_for()
             for heading in ('Holder distribution', 'Classified swaps', 'Pool reserve history'):
