@@ -16,6 +16,7 @@
   <script src="research-copy.js" defer></script>
   <script src="cached-history.js" defer></script>
   <script src="wallet-network.js" defer></script>
+  <script src="research-workspace.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -26,21 +27,13 @@
     </a>
     <button class="menu" id="menu" type="button" aria-controls="nav" aria-expanded="false">Menu</button>
     <nav id="nav" aria-label="Main navigation">
-        <a href="index.html">Dashboard</a>
-        <a href="products.html">Products</a>
-        <a href="research.html" aria-current="page">Research Terminal</a>
-        <a href="intelligence.html">Intelligence Studio</a>
-        <a href="liquidity.html">Liquidity Intelligence</a>
-        <a href="roadmap.html">Ecosystem Roadmap</a>
-        <a href="community.html">Community</a>
-      <div class="planned-nav" role="group" aria-label="Planned areas">
-        <a href="roadmap.html#wallet-portfolio">Wallet &amp; Portfolio</a>
-        <a href="roadmap.html#automated-trading">Automated Trading</a>
-      </div>
-      <div class="community-links sidebar-community" role="group" aria-label="Official community channels">
-        <a href="https://x.com/aimemeradar">X</a>
-        <a href="https://t.me/AIMemeRadarCommunity">Telegram</a>
-      </div>
+        <a data-nav-section="home" href="index.html">Home</a>
+        <a data-nav-section="research" href="research.html" aria-current="page">Research</a>
+        <a data-nav-section="automation" href="intelligence.html">Automation</a>
+        <a data-nav-section="ecosystem" href="products.html">Ecosystem</a>
+        <a data-nav-section="developers" href="intelligence.html#developer-contract">Developers</a>
+        <a data-nav-section="investors" href="investors.html">Investors</a>
+      <div class="community-links sidebar-community" role="group" aria-label="Official community channels"><a href="https://x.com/aimemeradar">X</a><a href="https://t.me/AIMemeRadarCommunity">Telegram</a></div>
     </nav>
   </header>
   <main id="main" tabindex="-1">
@@ -75,6 +68,19 @@
       </div>
       <p id="liveResearchStatus" class="search-help" role="status">Live prices start after a token search · 30-second refresh</p>
     </div>
+    <section class="research-view-workspace" aria-label="Research workspace">
+      <div id="research-view-tabs" role="tablist" aria-label="Research views">
+        <button id="research-tab-overview" type="button" role="tab" data-view="overview" aria-controls="researchResults" aria-selected="true">Overview</button>
+        <button id="research-tab-wallet-dna" type="button" role="tab" data-view="wallet-dna" aria-controls="researchResults" aria-selected="false" tabindex="-1">Wallet DNA</button>
+        <button id="research-tab-holders" type="button" role="tab" data-view="holders" aria-controls="researchResults" aria-selected="false" tabindex="-1">Holders</button>
+        <button id="research-tab-liquidity" type="button" role="tab" data-view="liquidity" aria-controls="researchResults" aria-selected="false" tabindex="-1">Liquidity</button>
+        <button id="research-tab-risk" type="button" role="tab" data-view="risk" aria-controls="researchResults" aria-selected="false" tabindex="-1">Risk</button>
+        <button id="research-tab-passport" type="button" role="tab" data-view="passport" aria-controls="researchResults" aria-selected="false" tabindex="-1">Passport</button>
+      </div>
+      <p id="research-view-context" class="research-view-context"></p>
+      <p id="research-view-status" role="status" aria-live="polite">Choose a view to inspect available research evidence.</p>
+      <a id="passport-example-link" href="intelligence.html#passport-preview" hidden>Open the separate synthetic passport example</a>
+    </section>
     <div id="researchResults" class="research-results" aria-live="polite"></div>
   </div>
 </section>
@@ -89,17 +95,7 @@
 </div>
 </section>
   </main>
-  <footer class="wrap">
-    <div><strong>AI Meme Radar · Research Before Risk</strong><p>Independent token research. Crypto assets can lose value.</p></div>
-    <div>
-      <span>© <span id="year"></span> AI Meme Radar</span>
-      <a href="roadmap.html">Development roadmap</a>
-      <div class="community-links" role="group" aria-label="Official community channels">
-        <a href="https://x.com/aimemeradar">X</a>
-        <a href="https://t.me/AIMemeRadarCommunity">Telegram</a>
-      </div>
-    </div>
-  </footer>
+  <footer class="wrap"><p>© <span id="year"></span> AI Meme Radar · Research Before Risk</p><nav class="footer-links" aria-label="More information"><a href="community.html">Community</a><a href="roadmap.html">Roadmap</a><a href="liquidity.html">Liquidity Intelligence</a><a href="intelligence.html">Intelligence examples</a><a href="products.html">Commercial ecosystem</a><a href="research.html">Research Terminal</a><a href="index.html">Home</a><a href="investors.html">Investors</a><a href="roadmap.html#wallet-portfolio">Wallet &amp; Portfolio · planned</a><a href="roadmap.html#automated-trading">Public trading · future</a><a href="community.html#support">Support &amp; About</a></nav><div class="community-links"><a href="https://x.com/aimemeradar">X</a><a href="https://t.me/AIMemeRadarCommunity">Telegram</a></div></footer>
 </body>
 </html>
 

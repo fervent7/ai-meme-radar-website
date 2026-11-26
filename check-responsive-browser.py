@@ -48,7 +48,7 @@ const server = testServer({password:'browser-fixture', radarKey:'backend-fixture
   {chain, contract_address: address, pools: [{pool_address: pool, observations}]})});
 server.listen(0, '127.0.0.1', () => console.log(server.address().port));
 """, mint, pool], stdout=subprocess.PIPE, text=True)
-routes = ['index.html','research.html','intelligence.html','liquidity.html','roadmap.html','community.html','products.html']
+routes = ['index.html','research.html','intelligence.html','liquidity.html','roadmap.html','community.html','products.html','investors.html']
 community_urls = {'X': 'https://x.com/aimemeradar', 'Telegram': 'https://t.me/AIMemeRadarCommunity'}
 origin = 'http://127.0.0.1:' + server.stdout.readline().strip()
 pair = {'chainId':'solana','dexId':'raydium','pairAddress':pool,
@@ -92,7 +92,7 @@ try:
         no_overflow(static)
         fallback.close()
         for w,h in [(1366,768),(1440,900),(1920,1080),(1280,800),(2560,1440),
-                    (768,1024),(1024,768),(320,640),(390,844),(430,932)]:
+                    (768,1024),(1024,768),(320,640),(360,800),(390,844),(430,932)]:
             ctx = browser.new_context(viewport={'width':w,'height':h},has_touch=w<=1024,
                 http_credentials={'username':'reviewer','password':'browser-fixture'})
             ctx.route('**/*',intercept)
@@ -214,7 +214,12 @@ try:
                         no_overflow(page)
 
 
-                assert page.locator('#nav a[aria-current="page"]').get_attribute('href')==name
+                assert page.locator('#nav > a[data-nav-section]').count()==6
+                current=page.locator('footer a[aria-current="page"]') if name in ('community.html','roadmap.html','liquidity.html') else page.locator('#nav a[aria-current="page"]')
+                assert current.get_attribute('href')==name
+                if name=='investors.html':
+                    assert page.get_by_role('button',name='Investor enquiries unavailable',exact=True).is_disabled()
+                    assert page.locator('form').count()==0
                 no_overflow(page)
                 verify_community_links(page.locator('footer'))
                 page.evaluate('scrollTo(0, 0)')
@@ -405,8 +410,30 @@ try:
                 page.unroute('**/api/radar/onchain-history?*',withheld_graph)
                 page.get_by_role('button',name='Load finalized on-chain evidence').click()
                 wallet.get_by_text('Saved pair window: 2026-11-14T22:31:28.000Z',exact=False).wait_for()
-            if w in (390,1440):
+            if w in (360,390,1440):
                 heading = page.get_by_role('heading', name='Holder distribution', exact=True)
+                address_before=page.locator('#address').input_value()
+                network_before=page.locator('#network').input_value()
+                context_before=page.locator('#research-view-context').inner_text()
+                page.get_by_role('tab',name='Wallet DNA',exact=True).click()
+                expect(wallet).to_be_visible();expect(heading).not_to_be_visible()
+                page.get_by_role('tab',name='Holders',exact=True).click()
+                expect(wallet).not_to_be_visible();expect(heading).to_be_visible()
+                page.get_by_role('tab',name='Liquidity',exact=True).click()
+                expect(page.get_by_role('heading',name='Pool reserve history',exact=True)).to_be_visible()
+                page.get_by_role('tab',name='Passport',exact=True).click()
+                assert 'Token-specific passport service is unavailable' in page.locator('#research-view-status').inner_text()
+                expect(page.locator('#passport-example-link')).to_be_visible()
+                assert page.locator('#address').input_value()==address_before
+                assert page.locator('#network').input_value()==network_before
+                assert page.locator('#research-view-context').inner_text()==context_before
+                page.get_by_role('tab',name='Overview',exact=True).click()
+                page.get_by_role('tab',name='Overview',exact=True).press('ArrowRight')
+                expect(page.get_by_role('tab',name='Wallet DNA',exact=True)).to_have_attribute('aria-selected','true')
+                page.get_by_role('tab',name='Wallet DNA',exact=True).press('ArrowLeft')
+                expect(wallet).to_be_visible();expect(heading).to_be_visible()
+                no_overflow(page)
+                page.locator('.research-view-workspace').screenshot(path=str(screenshots/f'research-tabs-{w}.png'),animations='disabled')
                 evidence_panel = heading.locator('..')
                 before = evidence_panel.inner_text()
                 page.route('**/api/radar/onchain-history?*', lambda route: route.fulfill(
@@ -452,7 +479,7 @@ try:
             no_overflow(page)
             if w in (390,1366,1440,1920):
                 page.screenshot(path=str(screenshots / f'whale-pad-{w}.png'),animations='disabled',full_page=True)
-            print(f'{w}x{h}: seven routes, community links, responsive controls, table and Whale Pad saved history passed',flush=True)
+            print(f'{w}x{h}: eight routes, six primary sections, shared research tabs and saved history passed',flush=True)
             ctx.close()
 finally:
     server.terminate()

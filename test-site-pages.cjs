@@ -5,7 +5,7 @@ const { once } = require('node:events');
 const { test } = require('node:test');
 const { testServer } = require('./website-test-server.cjs');
 
-const routes = ['index.html', 'research.html', 'intelligence.html', 'liquidity.html', 'roadmap.html', 'community.html', 'products.html'];
+const routes = ['index.html', 'research.html', 'intelligence.html', 'liquidity.html', 'roadmap.html', 'community.html', 'products.html','investors.html'];
 
 test('review pages and shared navigation are served behind the existing sign-in', async t => {
   const server = testServer({ password: 'website-fixture', radarKey: 'radar-fixture',
@@ -30,6 +30,8 @@ test('review pages and shared navigation are served behind the existing sign-in'
     assert.match(html, /href="roadmap.html#automated-trading"/);
     assert.ok(html.includes('Research Before Risk'));
     const sidebar = html.match(/<nav id="nav"[\s\S]*?<\/nav>/)[0];
+    assert.deepEqual([...sidebar.matchAll(/data-nav-section="([a-z]+)"/g)].map(m=>m[1]),
+      ['home','research','automation','ecosystem','developers','investors']);
     const footer = html.match(/<footer[\s\S]*?<\/footer>/)[0];
     const main = html.match(/<main[\s\S]*?<\/main>/)[0];
     for (const [name, url] of [

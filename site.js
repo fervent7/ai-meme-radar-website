@@ -30,6 +30,16 @@
     }
   });
   year.textContent = new Date().getFullYear();
+  const markSection = () => {
+    if (!(window.location?.pathname || '').endsWith('/intelligence.html') || typeof nav.querySelectorAll !== 'function') return;
+    const section=window.location.hash==='#developer-contract'?'developers':'automation';
+    for(const link of nav.querySelectorAll('[data-nav-section]')){
+      if(link.dataset.navSection===section)link.setAttribute('aria-current','page');
+      else link.removeAttribute('aria-current');
+    }
+  };
+  if(typeof window.addEventListener==='function')window.addEventListener('hashchange',markSection);
+  markSection();
 
   // Preserve shared links to sections that previously lived on the home page.
   if (document.getElementById('radar')) {

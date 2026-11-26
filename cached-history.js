@@ -75,6 +75,7 @@
     const holder = history.latest_holder_observation;
     const trend = history.holder_trend;
     const metrics = create('ul');
+    metrics.setAttribute('data-research-views','holders');
     metrics.append(create('li', holder
       ? 'Verified holder owner addresses: ' + holder.count + ' · ' + holder.observed_at_utc + ' · Helius getTokenAccounts'
       : 'Verified holder count: Unavailable'));
@@ -87,6 +88,7 @@
         ' → ' + trend.latest.observed_at_utc));
     }
     const rows = create('ul');
+    rows.setAttribute('data-research-views','overview liquidity');
     rows.className = 'saved-market-rows';
     const maxLiquidity = Math.max(0, ...history.observations.map(row => row.liquidity_usd ?? 0));
     for (const observation of history.observations) {
@@ -152,6 +154,7 @@
 
   function walletRelationships(graph) {
     const section=create('section');section.className='wallet-relationships';
+    section.setAttribute('data-research-views','wallet-dna');
     section.setAttribute('aria-label','Wallet DNA saved transfer relationships');
     if (graph?.synthetic_example === true) section.append(create('strong','Synthetic contract test data · not a chain observation'));
     section.append(create('h5','Wallet DNA · saved transfer relationships'),
@@ -273,10 +276,14 @@
             ' · Recorded ' + sample.observed_at_utc + ' · ' + sample.source
           : (sample.verification === 'ERROR' ? 'Error · Observation could not be verified · ' : 'Unavailable · ') + sample.observed_at_utc));
       }
-      panel.append(create('h5', label), rows.length ? list : create('p', 'Unavailable'));
+      const heading=create('h5',label),content=rows.length?list:create('p','Unavailable');
+      const view=label==='Holder distribution'?'holders':label==='Pool reserve history'?'liquidity':label==='Classified swaps'?'liquidity risk':'wallet-dna';
+      heading.setAttribute('data-research-views',view);content.setAttribute('data-research-views',view);
+      panel.append(heading,content);
       if (label === 'Recorded token transfers (mint scope)') {
         const note = create('p','Stored records for this mint only; not attributed to the selected pool. History coverage is incomplete. Owner addresses are not people; common ownership and coordinated activity are not established.');
         note.className = 'research-warning';
+        note.setAttribute('data-research-views','wallet-dna');
         panel.append(note);
       }
     }

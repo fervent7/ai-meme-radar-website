@@ -11,6 +11,7 @@ const ASSETS = new Map([
   ['/liquidity.html','liquidity.html'], ['/roadmap.html','roadmap.html'],
   ['/community.html','community.html'], ['/site.js','site.js'],
   ['/wallet-network.js','wallet-network.js'],
+  ['/research-workspace.js','research-workspace.js'], ['/investors.html','investors.html'],
   ['/','index.html'], ['/index.html','index.html'], ['/styles.css','styles.css'],
   ['/ecosystem.js','ecosystem.js'], ['/app.js','app.js'], ['/market-identity.js','market-identity.js'],
   ['/passport-preview.js','passport-preview.js'], ['/passport-preview-fixture.json','passport-preview-fixture.json'], ['/research-copy.js','research-copy.js'], ['/cached-history.js','cached-history.js'], ['/config.js','config.js'],
